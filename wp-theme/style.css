@@ -1,0 +1,16 @@
+/*
+Theme Name: Thai Online Theme
+Theme URI: https://thai-online.org
+Author: Thai Online
+Description: Minimal theme shell for Thai Online Platform. Business logic lives in the platform plugin.
+Version: 1.0.0-lts
+Text Domain: thai-online-theme
+*/
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f5f5;color:#222}
+a{color:#006a3a}
+.site-header,.site-footer{background:#fff;border-bottom:1px solid #ddd}
+.site-footer{border-top:1px solid #ddd;border-bottom:0;margin-top:40px}
+.site-wrap{max-width:1180px;margin:0 auto;padding:16px}
+.site-title{font-size:26px;font-weight:bold}
+.site-nav{margin-top:10px;display:flex;gap:16px;flex-wrap:wrap}
+.site-nav a{text-decoration:none}

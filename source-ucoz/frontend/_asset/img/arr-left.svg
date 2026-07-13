@@ -1,0 +1,17 @@
+<svg width="43" height="43" viewBox="0 0 43 43">
+<defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: none;
+        stroke: #e1e1e1;
+        stroke-width: 3px;
+      }
+
+      .cls-2 {
+        fill-rule: evenodd;
+      }
+    </style>
+  </defs>
+  <circle class="cls-1" cx="21.5" cy="21.5" r="20"/>
+  <path id="Rectangle_7_copy" data-name="Rectangle 7 copy" class="cls-2" d="M880.538,497.993l-4.531-7.493,4.531-7.493" transform="translate(-858.5 -468.5)"/>
+</svg>

@@ -1,0 +1,17 @@
+<svg width="43" height="43" viewBox="0 0 43 43">
+<defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: none;
+        stroke: #e1e1e1;
+        stroke-width: 3px;
+      }
+
+      .cls-1 {
+        fill-rule: evenodd;
+      }
+    </style>
+  </defs>
+  <path class="cls-1" d="M939.3,483.007l4.694,7.493-4.694,7.493" transform="translate(-918.5 -468.5)"/>
+  <circle id="Ellipse_1_copy" data-name="Ellipse 1 copy" class="cls-2" cx="21.5" cy="21.5" r="20"/>
+</svg>

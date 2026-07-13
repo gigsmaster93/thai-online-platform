@@ -1,0 +1,24 @@
+﻿ 
+#order-field-21-block,#order-field-19-block,#order-field-18-block,#order-field-17-block,#order-field-16-block,#order-field-5-block,#order-field-6-block,#order-field-7-block,#order-field-8-block,#order-field-9-block,#order-field-10-block,#order-field-11-block,#order-field-12-block,#order-field-15-block,#order-field-2-block,#order-field-3-block{display:none;}
+ 
+#delivery-list,#togid{display:none;}
+ .methods-list div {text-align:center;}
+ #order-form{margin-bottom: 50px;}
+ .laststep{display:none;} 
+ .filled{opacity:1;}
+ .filled:hover{opacity:1;} 
+
+ 
+ .hrx{margin-top: 25px;margin-bottom: 25px;}
+ 
+ #total-sum { text-align: center; margin-bottom: 5% !important;display:none;}
+ #order-submit{display:none;}
+ .payments{display:none;}
+ 
+#prePay{margin-top: 30px;display:none;}
+#prePay label{padding: 5px;}
+#prePay label:nth-child(2){margin-left: 10px;}
+ 
+ #togid span{color:#2269b0;} 
+ 
+ 

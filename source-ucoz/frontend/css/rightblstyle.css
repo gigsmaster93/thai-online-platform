@@ -1,0 +1,108 @@
+﻿/* Стили правого блока - потом перенести */
+ 
+ .inc {
+ background: #fff url(https://samuitours.ru/img/plus.png) no-repeat center center;
+ right: 0;
+ top: 0;
+ border: 1px solid #cccccc;
+ -webkit-border-top-right-radius: 4px;
+ -webkit-border-bottom-right-radius: 4px;
+ -moz-border-radius-topright: 4px;
+ -moz-border-radius-bottomright: 4px;
+ border-top-right-radius: 4px;
+ border-bottom-right-radius: 4px;
+}
+ 
+ .dec {
+ background: #fff url(https://samuitours.ru/img/minus.png) no-repeat center center;
+ border: 1px solid #cccccc;
+ left: 0;
+ top: 0;
+ -webkit-border-top-left-radius: 4px;
+ -webkit-border-bottom-left-radius: 4px;
+ -moz-border-radius-topleft: 4px;
+ -moz-border-radius-bottomleft: 4px;
+ border-top-left-radius: 4px;
+ border-bottom-left-radius: 4px;
+}
+ 
+.button_inc {
+ text-indent: -9999px;
+ cursor: pointer;float:left;
+ width: 33px;
+ height: 40px;
+ z-index: 9;
+}
+ .rightbl{width: 30%;float: right;padding: 0px;}
+ 
+ input.form-control{width: 50px;float: left;padding: 10px;border-radius: 0px;border-right: 0px;border-left: 0px;background: #e8e1e1;color: #000;}
+
+ .now:hover, #submitOrdType2:hover{
+box-shadow: 0px 2px 1px 1px transparent !important;
+padding-top: 18px !important;
+padding-bottom: 16px !important;
+border-bottom: 1px solid transparent !important;
+border-top: 2px solid #cc1818 !important; }
+ #submitOrdType2{display:block;}
+ .transport, tourVarS{display:none;}
+ 
+ 
+#total span{color: green;font-size: 18pt;}
+#total div{font-size: 12pt;}
+#total i{font-size: 30pt;float: left;margin-top: -10px;margin-left: 10px;margin-right: -15px;}
+#foundCheaper {color: #2578c3;}
+ 
+ .tourVarScnt{margin-top: 0px; margin-bottom: 0px;background: #efecec;
+color: #333;}
+ .tourVarScnt input{margin-right: 5px;}
+ .tourVarScnt label{line-height: 18pt;cursor:pointer;width: 100%;display: block;margin-right: 10px;}
+ #foundCheaperForm{display:none;max-width:450px;}
+ #total{padding:10px;text-align:center;color:#424242;font-size:14pt;margin-top: 20px;display:none;
+ padding: 10px;
+text-align: center;
+color: #424242;
+font-size: 14pt;
+margin-top: 20px;
+background: #fff;
+display: none;
+ }
+ 
+ #tabContainer{width:100%;padding:2%;margin-left:-2%;}
+ #tabContainer>div{text-align:left;border: 1px solid #cecece;background: #fafafa;padding: 2%;cursor: pointer;}
+#tabContainer > div b{text-align:left;padding: 5px 5px 5px 30px; background: url(/img/icons/qst.png) no-repeat 0 50%; background-size: 25px;}
+ #tabContainer>div:hover{background: #fff;}
+ #tabContainer>div .tabContent{text-align:left;display:none;padding-left:2%;}
+ #tabContainer>div.tabActive b{width:100%;margin-bottom:20px;display:block;text-align: left;padding: 5px 5px 5px 30px; background: url(/img/icons/ans.png) no-repeat 0 50%; background-size: 25px;}
+ #tabContainer>div.tabActive .tabContent{display:block;transition: .8s;}
+
+#tabContainer > div.tabActive .tabContent {padding-left:6px;}
+@media all and (max-width: 640px){
+ #tabContainer>div{padding: 4% 2% 4% 2%;}
+ }
+ 
+ .innerBlockY{border: 1px solid rgb(206, 206, 206);border-radius:15px;
+ background: rgb(254, 254, 254) none repeat scroll 0% 0%;padding-bottom: 20px;}
+ 
+ 
+ 
+ h1{text-align: center;
+float: none;
+ color: #fff;margin-top:7%;
+} 
+ 
+ .content > .content-view .flist a:hover, .content > .content-view .slist a:hover, a {
+ color: #d3def5;}
+ 
+ select{padding: 8px 10px; font-size: 12pt;} 
+ 
+.rightbl .right .col-md-6 {margin-bottom:20px;}
+ 
+ .rightbl .right .col-md-6 .form-group label {display: block; margin-bottom: 5px;}
+ 
+
+ 
+ #order-form{height: 335px; overflow: hidden;} 
+ 
+ @media all and (max-width: 420px){
+ #total div {font-size:10pt;}
+ }

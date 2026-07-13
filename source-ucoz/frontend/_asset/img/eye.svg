@@ -1,0 +1,17 @@
+<svg x="0px" y="0px" viewBox="0 0 23.7 13.7" style="enable-background:new 0 0 23.7 13.7;" xml:space="preserve">
+<style type="text/css">	
+		.st0{clip-path:url(#SVGID_2_);fill:none;stroke:#171717;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st1{clip-path:url(#SVGID_2_);fill:#171717;}
+</style>
+<g>
+	<defs>
+		<rect id="SVGID_1_" y="0" width="23.7" height="13.7"/>
+	</defs>
+	<clipPath id="SVGID_2_">
+		<use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
+	</clipPath>
+	<path class="st0" d="M22.7,6.9c0,0-4.9,5.9-10.8,5.9S1,6.9,1,6.9S5.9,1,11.8,1S22.7,6.9,22.7,6.9z"/>
+	<path class="st1" d="M14.4,6.9c0,1.4-1.1,2.5-2.5,2.5S9.3,8.3,9.3,6.9s1.1-2.5,2.5-2.5S14.4,5.5,14.4,6.9"/>
+	<circle class="st0" cx="11.8" cy="6.9" r="2.5"/>
+</g>
+</svg>

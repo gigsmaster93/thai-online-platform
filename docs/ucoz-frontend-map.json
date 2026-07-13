@@ -1,0 +1,191 @@
+{
+  "html_count": 1,
+  "css_count": 24,
+  "js_count": 52,
+  "font_count": 137,
+  "html_files": [
+    "index.html"
+  ],
+  "css_files": [
+    "css/btmPage.css",
+    "css/checkout.css",
+    "css/lib.min.css",
+    "css/main.min.css",
+    "css/mainPage.css",
+    "css/rightblstyle.css",
+    "css/tourpage.css",
+    "css/bottom/1.css",
+    "css/header/1.css",
+    "css/header/2.css",
+    "css/katalog/1.css",
+    "css/pages/1.css",
+    "css/tovar/1.css",
+    "css/tovar/2.css",
+    "css/zakaz/1.css",
+    "js/jquery-ui-1.10.4.custom.min.css",
+    "js/jquery-ui.min.css",
+    "js/masterslider.main.css",
+    "_asset/css/all.css",
+    "_asset/css/app.css",
+    "_asset/css/plugins.css",
+    "_st/my.css",
+    "_st/photo.css",
+    "_st/shop.css"
+  ],
+  "js_files": [
+    "css/sluzheb/1.js",
+    "css/sluzheb/2.js",
+    "css/sluzheb/3.js",
+    "js/allMetrics.js",
+    "js/checkouthelper.js",
+    "js/cookie.js",
+    "js/geoadres.js",
+    "js/goodPage.js",
+    "js/iefixs.min.js",
+    "js/intlTelInput.js",
+    "js/jivosite.js",
+    "js/jquery-ui-1.10.4.custom.min.js",
+    "js/jquery-ui.custom.min.js",
+    "js/jquery.inputmask-multi.min.js",
+    "js/jquery.inputmask.bundle.min.js",
+    "js/lazyload.js",
+    "js/lib.min.js",
+    "js/main.min.js",
+    "js/masterslider.min.js",
+    "js/modernizr.min.js",
+    "js/parallax.min.js",
+    "js/sliderFunc.js",
+    "js/topscripts.js",
+    "js/toursObject.js",
+    "js/uix.js",
+    "js/um.shopSearchHelp.js",
+    "js/utils.js",
+    "js/yandexMetrika.js",
+    "js/bottom/1.js",
+    "js/bottom/2.js",
+    "js/bottom/3.js",
+    "js/bottom/4.js",
+    "js/bottom/5.js",
+    "js/bottom/6.js",
+    "js/bottom/7.js",
+    "js/bottom/8.js",
+    "js/header/1.js",
+    "js/katalog/1.js",
+    "js/sluzheb/1.js",
+    "js/sluzheb/2.js",
+    "js/sluzheb/3.js",
+    "js/tovar/1.js",
+    "js/tovar/2.js",
+    "js/zakaz/1.js",
+    "js/zakaz/2.js",
+    "js/zakaz/3.js",
+    "_asset/js/app.js",
+    "_asset/js/ion.rangeSlider.min.js",
+    "_asset/js/jquery.fancybox.min.js",
+    "_asset/js/jquery.mask.min.js",
+    "_asset/js/jquery.min.js",
+    "_asset/js/slick.min.js"
+  ],
+  "files_with_ucoz_macros": {
+    "js/iefixs.min.js": [
+      "$2$"
+    ],
+    "js/modernizr.min.js": [
+      "$1$"
+    ]
+  },
+  "html_asset_links": {
+    "index.html": [
+      "#",
+      "#SVGID_1_",
+      "#section-benefits",
+      "#section-calculator",
+      "#section-describe",
+      "#section-details",
+      "#section-developer",
+      "#section-experts",
+      "#section-layouts",
+      "#section-main",
+      "#section-numeral",
+      "/_asset/css/all.css",
+      "/_asset/css/app.css",
+      "/_asset/css/plugins.css",
+      "/_asset/img/bank-abs.svg",
+      "/_asset/img/bank-alfa.svg",
+      "/_asset/img/bank-otkr.svg",
+      "/_asset/img/bank-raif.svg",
+      "/_asset/img/bank-ros.svg",
+      "/_asset/img/bank-sber.svg",
+      "/_asset/img/bank-smp.svg",
+      "/_asset/img/bank-tink.svg",
+      "/_asset/img/bank-uni.svg",
+      "/_asset/img/bank-vtb.svg",
+      "/_asset/img/book.png",
+      "/_asset/img/dist.svg",
+      "/_asset/img/download.svg",
+      "/_asset/img/icon-chat.svg",
+      "/_asset/img/icon-design.svg",
+      "/_asset/img/icon-pdf.svg",
+      "/_asset/img/icon-sun.svg",
+      "/_asset/img/icon-termometer.svg",
+      "/_asset/img/layout-1.jpg",
+      "/_asset/img/layout-2.jpg",
+      "/_asset/img/layout-scheme-1.svg",
+      "/_asset/img/presa.svg",
+      "/_asset/img/sct-ben__bottom__arr.svg",
+      "/_asset/img/sct-ben__bottom__car.png",
+      "/_asset/img/sct-ben__bottom__map.png",
+      "/_asset/img/sct-main__info.svg",
+      "/_asset/img/slider-1.jpg",
+      "/_asset/img/slider-2.jpg",
+      "/_asset/img/slider-3.jpg",
+      "/_asset/js/app.js",
+      "/_asset/js/ion.rangeSlider.min.js",
+      "/_asset/js/jquery.fancybox.min.js",
+      "/_asset/js/jquery.mask.min.js",
+      "/_asset/js/jquery.min.js",
+      "/_asset/js/slick.min.js",
+      "https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"
+    ],
+    "css/sluzheb/1.js": [
+      "/.s/img/icon/ajsml.gif"
+    ],
+    "js/goodPage.js": [
+      "javascript://"
+    ],
+    "js/jquery-ui-1.10.4.custom.min.js": [
+      "#"
+    ],
+    "js/jquery-ui.custom.min.js": [
+      "#{href}"
+    ],
+    "js/uix.js": [
+      "#"
+    ],
+    "js/um.shopSearchHelp.js": [
+      "http://s56.ucoz.net/img/icon/ajsml.gif"
+    ],
+    "js/katalog/1.js": [
+      "/bonusprogram"
+    ],
+    "js/tovar/1.js": [
+      "https://thai-online.org/photo/0-0-0-1-2"
+    ],
+    "js/tovar/2.js": [
+      "/bonusprogram"
+    ],
+    "js/zakaz/2.js": [
+      "/bonusprogram"
+    ],
+    "_asset/js/jquery.fancybox.min.js": [
+      "https://twitter.com/intent/tweet?url={{url}}&text={{descr}}",
+      "https://www.facebook.com/sharer/sharer.php?u={{url}}",
+      "https://www.pinterest.com/pin/create/button/?url={{url}}&description={{descr}}&media={{media}}",
+      "javascript:;",
+      "{{src}}"
+    ],
+    "_asset/js/jquery.min.js": [
+      "#"
+    ]
+  }
+}

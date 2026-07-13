@@ -1,0 +1,18 @@
+/* Thai Online Platform frontend baseline */
+.top-platform-page{padding:24px 0}
+.top-container{max-width:1180px;margin:0 auto;padding:0 16px}
+.top-page-title{margin:0 0 22px;font-size:30px;line-height:1.25}
+.top-review-card,.top-faq-item,.top-product-card{background:#fff;border:1px solid #ddd;border-radius:10px;padding:18px;margin:0 0 16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.top-review-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px;color:#444}
+.top-review-body,.top-faq-answer{line-height:1.65}
+.top-shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.top-product-card h2{font-size:20px;margin:0 0 10px}
+.top-product-price{font-weight:700;margin:0 0 12px;color:#0a7a3d}
+.top-button{display:inline-block;padding:9px 14px;border-radius:6px;background:#0a7a3d;color:#fff;text-decoration:none}
+.top-button:hover{opacity:.9;color:#fff}
+@media(max-width:700px){.top-review-head{display:block}.top-page-title{font-size:24px}}
+
+.top-content-card{background:#fff;border:1px solid #ddd;border-radius:10px;padding:18px;margin:0 0 16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.top-content-card h2{margin:0 0 8px;font-size:22px}
+.top-content-date{color:#777;font-size:14px;margin-bottom:12px}
+.top-content-single{background:#fff;border:1px solid #ddd;border-radius:10px;padding:22px;line-height:1.65}

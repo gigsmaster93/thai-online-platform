@@ -1,0 +1,44 @@
+ .su-box {
+ margin: 0 0 1.5em 0;
+ border-width: 2px;
+ border-style: solid;
+}
+.su-box-style-glass .su-box-title {
+ background-image: url(../images/styles/style-glass.png);
+ background-position: 0 50%;
+ background-repeat: repeat-x;
+}
+.su-box-content {
+ background: repeating-linear-gradient(125deg, #ffffff, #d7d7d7, #ffffff 2px);
+ color: #444;
+ padding: 1em;
+}
+.su-box-title {
+ background: #4573D5;
+ font: 17.6px Roboto, sans-serif;
+ color: #FFFFFF;
+ padding: 8.8px 17.6px;
+}
+.su-box2 {
+ margin: 0 0 1.5em 0;
+ border: 1px solid #cecece;
+ border-radius: 5px;
+}
+.su-box2-style-glass .su-box2-title {
+ background-color: #cecece;
+ color: #000000;
+}
+.su-box2-content {
+ color: #444;
+ padding: 1em;
+ font-size: 14px
+}
+.su-box2-title {
+ font: 16px Roboto, sans-serif;
+ color: #444;
+ padding: 8.8px 17.6px;
+}
+.uc-message cMessage img {
+max-width: 100%;
+margin: 5px 0 5px 0;
+}

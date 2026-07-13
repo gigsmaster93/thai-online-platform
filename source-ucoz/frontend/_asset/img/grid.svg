@@ -1,0 +1,11 @@
+<svg width="10" height="10" viewBox="0 0 10 10">
+<defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+        fill-rule: evenodd;
+      }
+    </style>
+  </defs>
+  <path class="cls-1" d="M417.308,882.308H415V880h2.308v2.308Zm3.846,0h-2.308V880h2.308v2.308Zm3.846,0h-2.308V880H425v2.308Zm-7.692,3.846H415v-2.308h2.308v2.308Zm3.846,0h-2.308v-2.308h2.308v2.308Zm3.846,0h-2.308v-2.308H425v2.308ZM417.308,890H415v-2.308h2.308V890Zm3.846,0h-2.308v-2.308h2.308V890ZM425,890h-2.308v-2.308H425V890Z" transform="translate(-415 -880)"/>
+</svg>
