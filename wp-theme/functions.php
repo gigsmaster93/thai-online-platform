@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-define('THAI_ONLINE_THEME_VERSION', '4.3.0');
+define('THAI_ONLINE_THEME_VERSION', '4.3.1');
 require_once get_template_directory() . '/inc/parity.php';
 
 add_action('after_setup_theme', function () {
@@ -11,6 +11,10 @@ add_action('after_setup_theme', function () {
     add_theme_support('html5', ['search-form', 'gallery', 'caption', 'style', 'script']);
     register_nav_menus(['primary' => 'Primary Navigation']);
 });
+
+add_action('init', function () {
+    add_rewrite_rule('^shop/all/([0-9]+)/?$', 'index.php?top_module=shop_all&paged=$matches[1]', 'top');
+}, 20);
 
 add_action('wp_enqueue_scripts', function () {
     wp_dequeue_style('thai-online-platform');
@@ -43,7 +47,7 @@ function thai_online_primary_menu_fallback(): void { ?>
 <ul class="uMenuRoot">
 <li><a href="<?php echo esc_url(home_url('/about')); ?>"><span><i class="fa fa-chevron-circle-right"></i> О Нас</span></a></li>
 <li><a href="<?php echo esc_url(home_url('/shop/all')); ?>"><span><i class="fa fa-globe"></i> Экскурсии и места</span></a><ul class="subM" style="display:none"><li><a href="/shop/short-tour-ekskursii-thailanda-pattaya-2023">Короткие экскурсии</a></li><li><a href="/shop/one-day-tour-thailand-2023">Экскурсии на 1 день</a></li><li><a href="/shop/night-tour-thailand-2023">Экскурсии с ночёвкой</a></li><li><a href="/shop/besplatnye-transfery-2023">Бесплатные трансферы</a></li><li><a href="/301-hotels">Отели и кондоминиумы</a></li><li><a href="/shop/prochie-uslugi-thailand-2023/oformit-visy-v-thailande-2023">Визовые услуги</a></li><li><a href="/301-air-tickets">Авиабилеты</a></li><li><a href="/other_countries_ru">Другие страны</a></li></ul></li>
-<li><a href="/shop/uslugi-taxi-v-thailande-2023"><span><i class="fa fa-car"></i> Такси</span></a></li>
+<li><a href="/shop/uslugi-taxi-v-thailande-2023"><span><i class="fa fa-car"></i> Такси</span></a><ul class="subM" style="display:none"><li><a href="/shop/uslugi-taxi-v-thailande-2023/transfery-na-ostrova-thailand-2023">Трансферы на острова</a></li><li><a href="/shop/uslugi-taxi-v-thailande-2023/zakazat-vstrechu-v-aehroportu-v-thailande-2023">Встреча в аэропорту</a></li><li><a href="/shop/uslugi-taxi-v-thailande-2023/zakazat-taksi-v-bangkok-thailand-2023">Такси Паттайя-Бангкок</a></li><li><a href="/shop/uslugi-taxi-v-thailande-2023/zakazat-taksi-iz-pattaji-v-aehroport-pattaja-2023">Паттайя-аэропорт-Паттайя</a></li><li><a href="/shop/uslugi-taxi-v-thailande-2023/taksi-iz-pattaji-v-aeroporti-2023">Такси Паттайя-аэропорты</a></li><li><a href="/shop/uslugi-taxi-v-thailande-2023/prochie-napravlenija-taksi-thailand-2023">Прочие направления</a></li><li><a href="/301-bus-train-tickets">Автобусы и поезда</a></li><li><a href="https://t.me/+2_YYrwdczltjZDU9" rel="nofollow" target="_blank">Аренда автомобилей</a></li></ul></li>
 <li><a href="/photo"><span><i class="fa fa-camera"></i> Галерея</span></a></li>
 <li><a id="pricelist" target="_blank" href="/thailand_2023_pricelist"><span><i class="fa fa-list-alt"></i> Прайс-Лист</span></a></li>
 <li><a href="/forum"><span><i class="fa fa-comments"></i> Форум</span></a></li>
