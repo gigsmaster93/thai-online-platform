@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-define('THAI_ONLINE_THEME_VERSION', '4.3.1');
+define('THAI_ONLINE_THEME_VERSION', '4.3.2');
 require_once get_template_directory() . '/inc/parity.php';
 
 add_action('after_setup_theme', function () {
@@ -36,10 +36,11 @@ add_action('customize_register', function ($wp_customize) {
         'thai_telegram' => ['Telegram username', 'thaionlinetours'],
         'thai_work_hours' => ['Work hours', '10:00 - 22:00'],
         'thai_footer_about' => ['Footer about text', 'На нашем сайте представлен весь ассортимент экскурсий, выполняемых из Паттайи и из Бангкока для англоязычных и русскоязычных гостей Королевства Таиланд. Помимо туров и путешествий, сегодня у нас можно заказать такси по Таиланду, трансферы на острова, забронировать авиабилеты и отели по всему миру, найти жилье в аренду в Паттайе, забронировать бесплатный трансфер в магазины Паттайи.'],
+        'thai_home_seo_text' => ['Homepage SEO text', 'Купить экскурсии в Паттайе онлайн. Отдохнуть в Тайланде в 2026 году и узнать цены на самые популярные экскурсии в Паттайе, грин парки, 3Д галереи, вечерние шоу Паттайи можно на сервисе "Thai-Online". Удобный поиск по турам позволит Вам в режиме онлайн изучить и заказать самые популярные туры в Паттайе, а также ознакомиться с отзывами на них. Если Вы любитель экзотических путешествий, то в 2026 году мы готовы предложить индивидуальные туры по Тайланду. Для тех, кто предпочитает активный отдых, мы предложим различные программы по дайвингу, полёты на тарзанке, дельтаплане или круиз на лайнере. Помимо этого мы предоставим: русского гида, страховку, такси в любую точку, оформление визы и трансферы. С нами весь Тайланд как на ладони!'],
     ];
     foreach ($settings as $id => [$label, $default]) {
         $wp_customize->add_setting($id, ['default' => $default, 'sanitize_callback' => $id === 'thai_email' ? 'sanitize_email' : 'sanitize_textarea_field', 'transport' => 'refresh']);
-        $wp_customize->add_control($id, ['label' => $label, 'section' => 'thai_branding', 'type' => in_array($id, ['thai_slogan', 'thai_footer_about'], true) ? 'textarea' : 'text']);
+        $wp_customize->add_control($id, ['label' => $label, 'section' => 'thai_branding', 'type' => in_array($id, ['thai_slogan', 'thai_footer_about', 'thai_home_seo_text'], true) ? 'textarea' : 'text']);
     }
 });
 
