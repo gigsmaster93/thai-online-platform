@@ -2,15 +2,13 @@
 Theme Name: Thai Online Theme
 Theme URI: https://thai-online.org
 Author: Thai Online
-Description: Minimal theme shell for Thai Online Platform. Business logic lives in the platform plugin.
-Version: 1.0.0-lts
+Description: Original Thai Online visual layer with WordPress-managed content.
+Version: 4.2.0
 Text Domain: thai-online-theme
 */
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f5f5;color:#222}
-a{color:#006a3a}
-.site-header,.site-footer{background:#fff;border-bottom:1px solid #ddd}
-.site-footer{border-top:1px solid #ddd;border-bottom:0;margin-top:40px}
-.site-wrap{max-width:1180px;margin:0 auto;padding:16px}
-.site-title{font-size:26px;font-weight:bold}
-.site-nav{margin-top:10px;display:flex;gap:16px;flex-wrap:wrap}
-.site-nav a{text-decoration:none}
+
+html{box-sizing:border-box}*,*:before,*:after{box-sizing:inherit}body{margin:0}.top-platform-page{padding:0!important}.top-platform-page .top-container{max-width:none!important;padding:0!important}.top-wp-runtime{min-height:360px}.top-wp-runtime>.top-platform-page,.top-wp-runtime>article{width:100%}.top-content-card,.top-faq-item,.top-review-card,.top-product-card{box-sizing:border-box}.top-content-card{display:block}.top-content-card h2{margin-top:0}.top-content-date{opacity:.72}.top-shop-grid{width:100%}.top-product-card{position:relative}.top-product-price{font-weight:700}.top-button{cursor:pointer}
+#navigation .sub-menu{display:none;list-style:none;margin:0;padding:0;position:absolute;z-index:9999}#navigation li:hover>.sub-menu{display:block}.admin-bar .header{margin-top:32px}
+#preloader{transition:opacity .2s ease}.thai-preloader-hidden{opacity:0!important;pointer-events:none!important;visibility:hidden!important}
+@media(max-width:782px){.admin-bar .header{margin-top:46px}}
+@media(max-width:760px){#navigation .uMenuRoot{display:none}#navigation.top-menu-open .uMenuRoot{display:block}#navigation .sub-menu,#navigation .subM{position:static!important;width:auto!important}}
