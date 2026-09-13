@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-define('THAI_ONLINE_THEME_VERSION', '4.2.0');
+define('THAI_ONLINE_THEME_VERSION', '4.2.1');
 
 add_action('after_setup_theme', function () {
     add_theme_support('title-tag');
@@ -12,26 +12,16 @@ add_action('after_setup_theme', function () {
 });
 
 add_action('wp_enqueue_scripts', function () {
-    // The uCoz visual layer is bundled with this theme so the WordPress markup can use the same classes.
     wp_dequeue_style('thai-online-platform');
     wp_deregister_style('thai-online-platform');
-
     $uri = get_template_directory_uri();
-    wp_enqueue_style('thai-original-bundle', $uri . '/assets/original/original.css', [], THAI_ONLINE_THEME_VERSION);
-    wp_enqueue_style('thai-original-header', $uri . '/assets/original/header-2.css', ['thai-original-bundle'], THAI_ONLINE_THEME_VERSION);
-    wp_enqueue_style('thai-original-main-page', $uri . '/assets/original/mainPage.css', ['thai-original-bundle'], THAI_ONLINE_THEME_VERSION);
-    wp_enqueue_style('thai-original-footer', $uri . '/assets/original/btmPage.css', ['thai-original-bundle'], THAI_ONLINE_THEME_VERSION);
-    wp_enqueue_style('thai-online-theme', get_stylesheet_uri(), ['thai-original-footer'], THAI_ONLINE_THEME_VERSION);
-
+    wp_enqueue_style('thai-original-bundle', $uri . '/assets/original.css', [], THAI_ONLINE_THEME_VERSION);
+    wp_enqueue_style('thai-online-theme', get_stylesheet_uri(), ['thai-original-bundle'], THAI_ONLINE_THEME_VERSION);
     wp_enqueue_script('thai-shell', $uri . '/assets/shell.js', ['jquery'], THAI_ONLINE_THEME_VERSION, true);
 }, 100);
 
 add_action('customize_register', function ($wp_customize) {
-    $wp_customize->add_section('thai_branding', [
-        'title' => 'Thai Online — Header & Contacts',
-        'priority' => 25,
-    ]);
-
+    $wp_customize->add_section('thai_branding', ['title' => 'Thai Online — Header & Contacts', 'priority' => 25]);
     $settings = [
         'thai_brand_name' => ['Brand name', 'Thai-Online'],
         'thai_slogan' => ['Slogan', "Все экскурсии\nбез переплат"],
@@ -42,43 +32,20 @@ add_action('customize_register', function ($wp_customize) {
         'thai_work_hours' => ['Work hours', '10:00 - 22:00'],
         'thai_footer_about' => ['Footer about text', 'На нашем сайте представлен весь ассортимент экскурсий, выполняемых из Паттайи и из Бангкока для англоязычных и русскоязычных гостей Королевства Таиланд.'],
     ];
-
     foreach ($settings as $id => [$label, $default]) {
-        $wp_customize->add_setting($id, [
-            'default' => $default,
-            'sanitize_callback' => $id === 'thai_email' ? 'sanitize_email' : 'sanitize_textarea_field',
-            'transport' => 'refresh',
-        ]);
-        $wp_customize->add_control($id, [
-            'label' => $label,
-            'section' => 'thai_branding',
-            'type' => in_array($id, ['thai_slogan', 'thai_footer_about'], true) ? 'textarea' : 'text',
-        ]);
+        $wp_customize->add_setting($id, ['default' => $default, 'sanitize_callback' => $id === 'thai_email' ? 'sanitize_email' : 'sanitize_textarea_field', 'transport' => 'refresh']);
+        $wp_customize->add_control($id, ['label' => $label, 'section' => 'thai_branding', 'type' => in_array($id, ['thai_slogan', 'thai_footer_about'], true) ? 'textarea' : 'text']);
     }
 });
 
-function thai_online_primary_menu_fallback(): void {
-    ?>
-    <ul class="uMenuRoot">
-        <li><a href="<?php echo esc_url(home_url('/about')); ?>"><span><i class="fa fa-chevron-circle-right"></i> О Нас</span></a></li>
-        <li><a href="<?php echo esc_url(home_url('/shop/all')); ?>"><span><i class="fa fa-globe"></i> Экскурсии и места</span></a>
-            <ul class="subM" style="display:none">
-                <li><a href="/shop/short-tour-ekskursii-thailanda-pattaya-2023">Короткие экскурсии</a></li>
-                <li><a href="/shop/one-day-tour-thailand-2023">Экскурсии на 1 день</a></li>
-                <li><a href="/shop/night-tour-thailand-2023">Экскурсии с ночёвкой</a></li>
-                <li><a href="/shop/besplatnye-transfery-2023">Бесплатные трансферы</a></li>
-                <li><a href="/301-hotels">Отели и кондоминиумы</a></li>
-                <li><a href="/shop/prochie-uslugi-thailand-2023/oformit-visy-v-thailande-2023">Визовые услуги</a></li>
-                <li><a href="/301-air-tickets">Авиабилеты</a></li>
-                <li><a href="/other_countries_ru">Другие страны</a></li>
-            </ul>
-        </li>
-        <li><a href="/shop/uslugi-taxi-v-thailande-2023"><span><i class="fa fa-car"></i> Такси</span></a></li>
-        <li><a href="/photo"><span><i class="fa fa-camera"></i> Галерея</span></a></li>
-        <li><a id="pricelist" target="_blank" href="/thailand_2023_pricelist"><span><i class="fa fa-list-alt"></i> Прайс-Лист</span></a></li>
-        <li><a href="/forum"><span><i class="fa fa-comments"></i> Форум</span></a></li>
-        <li><a href="/gb"><span><i class="fa fa-book"></i> Отзывы</span></a></li>
-        <li><a href="/contact"><span><i class="fa fa-info-circle"></i> Контакты</span></a></li>
-    </ul>
-    <?php
-}
+function thai_online_primary_menu_fallback(): void { ?>
+<ul class="uMenuRoot">
+<li><a href="<?php echo esc_url(home_url('/about')); ?>"><span><i class="fa fa-chevron-circle-right"></i> О Нас</span></a></li>
+<li><a href="<?php echo esc_url(home_url('/shop/all')); ?>"><span><i class="fa fa-globe"></i> Экскурсии и места</span></a><ul class="subM" style="display:none"><li><a href="/shop/short-tour-ekskursii-thailanda-pattaya-2023">Короткие экскурсии</a></li><li><a href="/shop/one-day-tour-thailand-2023">Экскурсии на 1 день</a></li><li><a href="/shop/night-tour-thailand-2023">Экскурсии с ночёвкой</a></li><li><a href="/shop/besplatnye-transfery-2023">Бесплатные трансферы</a></li><li><a href="/301-hotels">Отели и кондоминиумы</a></li><li><a href="/shop/prochie-uslugi-thailand-2023/oformit-visy-v-thailande-2023">Визовые услуги</a></li><li><a href="/301-air-tickets">Авиабилеты</a></li><li><a href="/other_countries_ru">Другие страны</a></li></ul></li>
+<li><a href="/shop/uslugi-taxi-v-thailande-2023"><span><i class="fa fa-car"></i> Такси</span></a></li>
+<li><a href="/photo"><span><i class="fa fa-camera"></i> Галерея</span></a></li>
+<li><a id="pricelist" target="_blank" href="/thailand_2023_pricelist"><span><i class="fa fa-list-alt"></i> Прайс-Лист</span></a></li>
+<li><a href="/forum"><span><i class="fa fa-comments"></i> Форум</span></a></li>
+<li><a href="/gb"><span><i class="fa fa-book"></i> Отзывы</span></a></li>
+<li><a href="/contact"><span><i class="fa fa-info-circle"></i> Контакты</span></a></li>
+</ul><?php }
