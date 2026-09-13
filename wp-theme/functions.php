@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-define('THAI_ONLINE_THEME_VERSION', '4.3.2');
+define('THAI_ONLINE_THEME_VERSION', '4.4.0');
 require_once get_template_directory() . '/inc/parity.php';
 
 add_action('after_setup_theme', function () {
@@ -16,14 +16,70 @@ add_action('init', function () {
     add_rewrite_rule('^shop/all/([0-9]+)/?$', 'index.php?top_module=shop_all&paged=$matches[1]', 'top');
 }, 20);
 
+/* Legacy module routes are real pages, not WordPress 404s. */
+add_filter('pre_handle_404', function ($preempt, $wp_query) {
+    if (get_query_var('top_module')) {
+        $wp_query->is_404 = false;
+        return true;
+    }
+    return $preempt;
+}, 10, 2);
+
+add_filter('pre_get_document_title', function ($title) {
+    $module = get_query_var('top_module');
+    if ($module === 'shop_all') {
+        return 'Все товары - Экскурсии Паттайя ' . wp_date('Y') . ' - Сервис поиска экскурсий в Таиланде';
+    }
+    return $title;
+}, 50);
+
+/* Match the actual uCoz stylesheet stack instead of approximating it. */
 add_action('wp_enqueue_scripts', function () {
-    wp_dequeue_style('thai-online-platform');
-    wp_deregister_style('thai-online-platform');
-    $uri = get_template_directory_uri();
-    wp_enqueue_style('thai-original-bundle', $uri . '/assets/original.css', [], THAI_ONLINE_THEME_VERSION);
-    wp_enqueue_style('thai-online-theme', get_stylesheet_uri(), ['thai-original-bundle'], THAI_ONLINE_THEME_VERSION);
-    wp_enqueue_script('thai-shell', $uri . '/assets/shell.js', ['jquery'], THAI_ONLINE_THEME_VERSION, true);
-}, 100);
+    foreach (['thai-online-platform', 'tocms-frontend', 'wp-block-library', 'wp-block-library-theme', 'classic-theme-styles', 'global-styles'] as $handle) {
+        wp_dequeue_style($handle);
+        wp_deregister_style($handle);
+    }
+
+    $v = THAI_ONLINE_THEME_VERSION;
+    $module = get_query_var('top_module');
+    $is_shop_catalog = ($module === 'shop_all');
+
+    wp_enqueue_style('ucoz-my', home_url('/_st/my.css'), [], $v);
+    $previous = 'ucoz-my';
+
+    if (is_front_page()) {
+        wp_enqueue_style('ucoz-main-page', home_url('/css/mainPage.css'), [$previous], $v);
+        $previous = 'ucoz-main-page';
+    } elseif ($is_shop_catalog) {
+        wp_enqueue_style('ucoz-katalog', home_url('/css/katalog/1.css'), [$previous], $v);
+        $previous = 'ucoz-katalog';
+    }
+
+    wp_enqueue_style('ucoz-base', home_url('/.s/src/base.min.css'), [$previous], $v);
+    wp_enqueue_style('ucoz-layer7', home_url('/.s/src/layer7.min.css'), ['ucoz-base'], $v);
+    wp_enqueue_style('ucoz-ulightbox', home_url('/.s/src/ulightbox/ulightbox.min.css'), ['ucoz-layer7'], $v);
+    wp_enqueue_style('ucoz-social', home_url('/.s/src/social.css'), ['ucoz-ulightbox'], $v);
+    wp_enqueue_style('ucoz-shop', home_url('/_st/shop.css'), ['ucoz-social'], $v);
+    wp_enqueue_style('ucoz-bottom', home_url('/css/bottom/1.css'), ['ucoz-shop'], $v);
+
+    $previous = 'ucoz-bottom';
+    if (!is_front_page()) {
+        wp_enqueue_style('ucoz-header-search', home_url('/css/header/1.css'), [$previous], $v);
+        $previous = 'ucoz-header-search';
+    }
+    wp_enqueue_style('ucoz-header', home_url('/css/header/2.css'), [$previous], $v);
+    wp_enqueue_style('ucoz-bottom-page', home_url('/css/btmPage.css'), ['ucoz-header'], $v);
+    $previous = 'ucoz-bottom-page';
+
+    if (is_front_page()) {
+        /* uCoz loads mainPage.css again after document.ready; keep it last in cascade. */
+        wp_enqueue_style('ucoz-main-page-final', home_url('/css/mainPage.css'), [$previous], $v . '-final');
+        $previous = 'ucoz-main-page-final';
+    }
+
+    wp_enqueue_style('thai-online-theme', get_stylesheet_uri(), [$previous], $v);
+    wp_enqueue_script('thai-shell', get_template_directory_uri() . '/assets/shell.js', ['jquery'], $v, true);
+}, 999);
 
 add_action('customize_register', function ($wp_customize) {
     $wp_customize->add_section('thai_branding', ['title' => 'Thai Online — Header & Contacts', 'priority' => 25]);
