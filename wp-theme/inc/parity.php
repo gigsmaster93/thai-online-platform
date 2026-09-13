@@ -50,19 +50,13 @@ function thai_render_excursion_card($post_id, $prefix = 'all') {
     $url = thai_excursion_url($post_id);
     $image = thai_excursion_card_image($post_id, $ucoz);
     $date = get_the_date('d.m.Y', $post_id);
-    $price_text = $price > 0 ? number_format($price, 2, '.', '') . '฿' : '0.00฿';
+    $price_text = $price > 0 ? number_format($price, 2, '.', '') . '฿' : 'БЕСПЛАТНО';
     ?>
     <div class="list-item" id="<?php echo esc_attr($prefix . '-item-' . $ucoz); ?>">
       <a class="product-url lazyload replacex" data-added-time="<?php echo esc_attr($date); ?>" data-discount-text="—" data-new-text="Новое" data-old-price="" data-price="<?php echo esc_attr(number_format($price, 2, '.', '')); ?>" data-src="<?php echo esc_url($image); ?>" href="<?php echo esc_url($url); ?>" varid="<?php echo esc_attr($ucoz); ?>">
         <div class="sml-price right"><span title="Просмотров"><i class="fa fa-eye"></i> <?php echo esc_html($stats['views']); ?></span> <span title="Количество покупок"><i class="fa fa-cart-arrow-down"></i> <?php echo esc_html($stats['orders']); ?></span></div>
         <div class="sml-price"><span class="<?php echo esc_attr($prefix . '-good-' . $ucoz . '-price'); ?>"><?php echo esc_html($price_text); ?></span></div>
-        <div class="sml-img">
-          <div class="sml-meta">
-            <div class="sml-title"><?php echo esc_html(get_the_title($post_id)); ?></div><br>
-            <span class="buy-it-now" title="Подробнее"><span class="flaticon-search"></span></span>
-            <span class="wish wadd" id="last_add-<?php echo esc_attr($ucoz); ?>-wish" title="В закладки"></span>
-          </div>
-        </div>
+        <div class="sml-img"><div class="sml-meta"><div class="sml-title"><?php echo esc_html(get_the_title($post_id)); ?></div><br><span class="buy-it-now" title="Подробнее"><span class="flaticon-search"></span></span><span class="wish wadd" id="last_add-<?php echo esc_attr($ucoz); ?>-wish" title="В закладки"></span></div></div>
       </a>
     </div>
     <?php
@@ -78,22 +72,23 @@ function thai_parity_categories($home = false) {
         ['/301-tours-to-thai','Купить тур в Таиланд','/img/catPh/mainCats/otpusk-v-tailande.webp'],
         ['/other_countries_ru',$home ? 'Другие города и страны' : 'Другие страны и курорты','/img/catPh/mainCats/other_countries.webp'],
         ['/301-air-tickets',$home ? 'Поиск авиабилетов' : 'Поиск и заказ авиабилетов','/img/catPh/mainCats/avia-bileti-thailand-2020.webp'],
-        ['/301-hotels',$home ? 'Поиск отелей' : 'Поиск и бронь отелей','/img/catPh/mainCats/oteli-pattaja-2020.webp'],
         ['/301-bus-train-tickets','Билеты на автобусы и поезда','/img/catPh/mainCats/bus_and_train_tickets.webp'],
+        ['/301-hotels',$home ? 'Поиск отелей' : 'Поиск и бронь отелей','/img/catPh/mainCats/oteli-pattaja-2020.webp'],
+        ['https://t.me/+2_YYrwdczltjZDU9','Аренда автомобилей','/img/catPh/mainCats/car_rent_thailand.webp'],
         ['/shop/prochie-uslugi-thailand-2023','Прочие услуги','/img/catPh/mainCats/spa-pattaja-2020.webp'],
         ['/shop/prochie-uslugi-thailand-2023/oformit-visy-v-thailande-2023','Бордер-ран и Виза-ран','/img/catPh/mainCats/visa.webp'],
         ['/immigration-to-thailand-2022','Переезд в Таиланд','/img/catPh/mainCats/run-to-thailand.webp'],
         ['/301-currency-exchanger',$home ? 'Самый лучший обменник' : 'Самый выгодный обменник','/img/catPh/mainCats/exchange.webp'],
     ];
+    if ($home) $items[] = ['https://cherehapa.tp.st/N7Hu7MvZ','Страхование туристов','/img/catPh/mainCats/insurance.webp'];
     return apply_filters('thai_parity_categories', $items, $home);
 }
 
 function thai_render_category_grid($home = false) {
-    $class = $home ? 'maincatLog' : '';
-    echo '<div id="catLog" class="' . esc_attr($class) . '">';
-    foreach (thai_parity_categories($home) as $item) {
-        [$url,$title,$image] = $item;
-        echo '<div class="catalog-item list-item"><a href="' . esc_url(home_url($url)) . '" title="' . esc_attr($title) . '"><img class="lazyload replacex" data-src="' . esc_url($image) . '" src="' . esc_url($image) . '" alt="' . esc_attr($title) . '"></a><h3><a href="' . esc_url(home_url($url)) . '">' . esc_html($title) . '</a></h3><div></div></div>';
+    echo '<div id="catLog" class="' . ($home ? 'maincatLog' : '') . '">';
+    foreach (thai_parity_categories($home) as [$url,$title,$image]) {
+        $href = preg_match('#^https?://#', $url) ? $url : home_url($url);
+        echo '<div class="catalog-item list-item"><a href="' . esc_url($href) . '" title="' . esc_attr($title) . '"><img class="lazyload replacex" data-src="' . esc_url($image) . '" src="' . esc_url($image) . '" alt="' . esc_attr($title) . '"></a><h3><a href="' . esc_url($href) . '">' . esc_html($title) . '</a></h3><div></div></div>';
     }
     echo '</div><div class="clr"></div>';
 }
