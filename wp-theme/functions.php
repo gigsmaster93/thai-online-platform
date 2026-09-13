@@ -1,7 +1,8 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-define('THAI_ONLINE_THEME_VERSION', '4.2.1');
+define('THAI_ONLINE_THEME_VERSION', '4.3.0');
+require_once get_template_directory() . '/inc/parity.php';
 
 add_action('after_setup_theme', function () {
     add_theme_support('title-tag');
@@ -30,7 +31,7 @@ add_action('customize_register', function ($wp_customize) {
         'thai_whatsapp' => ['WhatsApp number', '66838383539'],
         'thai_telegram' => ['Telegram username', 'thaionlinetours'],
         'thai_work_hours' => ['Work hours', '10:00 - 22:00'],
-        'thai_footer_about' => ['Footer about text', 'На нашем сайте представлен весь ассортимент экскурсий, выполняемых из Паттайи и из Бангкока для англоязычных и русскоязычных гостей Королевства Таиланд.'],
+        'thai_footer_about' => ['Footer about text', 'На нашем сайте представлен весь ассортимент экскурсий, выполняемых из Паттайи и из Бангкока для англоязычных и русскоязычных гостей Королевства Таиланд. Помимо туров и путешествий, сегодня у нас можно заказать такси по Таиланду, трансферы на острова, забронировать авиабилеты и отели по всему миру, найти жилье в аренду в Паттайе, забронировать бесплатный трансфер в магазины Паттайи.'],
     ];
     foreach ($settings as $id => [$label, $default]) {
         $wp_customize->add_setting($id, ['default' => $default, 'sanitize_callback' => $id === 'thai_email' ? 'sanitize_email' : 'sanitize_textarea_field', 'transport' => 'refresh']);
