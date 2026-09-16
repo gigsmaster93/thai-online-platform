@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-define('THAI_ONLINE_THEME_VERSION', '4.4.0');
+define('THAI_ONLINE_THEME_VERSION', '4.4.4');
 require_once get_template_directory() . '/inc/parity.php';
 
 add_action('after_setup_theme', function () {
@@ -13,7 +13,9 @@ add_action('after_setup_theme', function () {
 });
 
 add_action('init', function () {
-    add_rewrite_rule('^shop/all/([0-9]+)/?$', 'index.php?top_module=shop_all&paged=$matches[1]', 'top');
+    add_rewrite_tag('%top_page%', '([0-9]+)');
+    add_rewrite_rule('^shop/all/?$', 'index.php?top_module=shop_all&top_page=1', 'top');
+    add_rewrite_rule('^shop/all/([0-9]+)/?$', 'index.php?top_module=shop_all&top_page=$matches[1]', 'top');
 }, 20);
 
 /* Legacy module routes are real pages, not WordPress 404s. */
@@ -23,6 +25,30 @@ add_filter('pre_handle_404', function ($preempt, $wp_query) {
         return true;
     }
     return $preempt;
+}, 10, 2);
+
+add_action('wp', function () {
+    if (get_query_var('top_module')) {
+        global $wp_query;
+        if ($wp_query instanceof WP_Query) {
+            $wp_query->is_404 = false;
+        }
+        status_header(200);
+    }
+}, 0);
+
+add_filter('body_class', function ($classes) {
+    if (get_query_var('top_module')) {
+        $classes = array_values(array_diff($classes, ['error404']));
+    }
+    return $classes;
+});
+
+add_filter('redirect_canonical', function ($redirect_url, $requested_url) {
+    if (get_query_var('top_module')) {
+        return false;
+    }
+    return $redirect_url;
 }, 10, 2);
 
 add_filter('pre_get_document_title', function ($title) {
@@ -55,11 +81,7 @@ add_action('wp_enqueue_scripts', function () {
         $previous = 'ucoz-katalog';
     }
 
-    wp_enqueue_style('ucoz-base', home_url('/.s/src/base.min.css'), [$previous], $v);
-    wp_enqueue_style('ucoz-layer7', home_url('/.s/src/layer7.min.css'), ['ucoz-base'], $v);
-    wp_enqueue_style('ucoz-ulightbox', home_url('/.s/src/ulightbox/ulightbox.min.css'), ['ucoz-layer7'], $v);
-    wp_enqueue_style('ucoz-social', home_url('/.s/src/social.css'), ['ucoz-ulightbox'], $v);
-    wp_enqueue_style('ucoz-shop', home_url('/_st/shop.css'), ['ucoz-social'], $v);
+    wp_enqueue_style('ucoz-shop', home_url('/_st/shop.css'), [$previous], $v);
     wp_enqueue_style('ucoz-bottom', home_url('/css/bottom/1.css'), ['ucoz-shop'], $v);
 
     $previous = 'ucoz-bottom';
@@ -68,7 +90,40 @@ add_action('wp_enqueue_scripts', function () {
         $previous = 'ucoz-header-search';
     }
     wp_enqueue_style('ucoz-header', home_url('/css/header/2.css'), [$previous], $v);
-    wp_enqueue_style('ucoz-bottom-page', home_url('/css/btmPage.css'), ['ucoz-header'], $v);
+    $previous = 'ucoz-header';
+
+    if ($module === 'shop_single') {
+        wp_enqueue_style(
+            'ucoz-tovar-2',
+            home_url('/css/tovar/2.css'),
+            [$previous],
+            '525'
+        );
+
+        wp_enqueue_style(
+            'ucoz-tovar-1',
+            home_url('/css/tovar/1.css'),
+            ['ucoz-tovar-2'],
+            '525'
+        );
+
+        wp_enqueue_style(
+            'ucoz-rightbl',
+            home_url('/css/rightblstyle.css'),
+            ['ucoz-tovar-1'],
+            $v
+        );
+
+        $previous = 'ucoz-rightbl';
+    }
+
+    wp_enqueue_style(
+        'ucoz-bottom-page',
+        home_url('/css/btmPage.css'),
+        [$previous],
+        $v
+    );
+
     $previous = 'ucoz-bottom-page';
 
     if (is_front_page()) {
@@ -111,3 +166,36 @@ function thai_online_primary_menu_fallback(): void { ?>
 <li><a href="/gb"><span><i class="fa fa-book"></i> Отзывы</span></a></li>
 <li><a href="/contact"><span><i class="fa fa-info-circle"></i> Контакты</span></a></li>
 </ul><?php }
+
+/* Custom legacy modules must not inherit WordPress home/blog state. */
+add_action('wp', function () {
+    if (!get_query_var('top_module')) {
+        return;
+    }
+
+    global $wp_query;
+
+    if ($wp_query instanceof WP_Query) {
+        $wp_query->is_home       = false;
+        $wp_query->is_front_page = false;
+        $wp_query->is_404        = false;
+    }
+}, 50);
+
+add_filter('body_class', function ($classes) {
+    $module = get_query_var('top_module');
+
+    if (!$module) {
+        return $classes;
+    }
+
+    $classes = array_values(array_diff(
+        $classes,
+        ['home', 'blog', 'error404']
+    ));
+
+    $classes[] = 'thai-module';
+    $classes[] = 'thai-module-' . sanitize_html_class($module);
+
+    return array_unique($classes);
+}, 99);
