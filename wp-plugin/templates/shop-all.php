@@ -5,13 +5,30 @@ get_header();
 
 $sort = isset($_GET['sort']) ? sanitize_key($_GET['sort']) : 'date';
 $order = isset($_GET['order']) && strtolower($_GET['order']) === 'asc' ? 'ASC' : 'DESC';
-$orderby = 'date';
-$meta_key = '';
-if ($sort === 'name') $orderby = 'title';
-if ($sort === 'price') { $orderby = 'meta_value_num'; $meta_key = '_thai_price'; }
+$orderby = 'meta_value_num';
+$meta_key = '_ucoz_shop_id';
+
+if ($sort === 'name') {
+    $orderby = 'title';
+    $meta_key = '';
+}
+
+if ($sort === 'price') {
+    $orderby = 'meta_value_num';
+    $meta_key = '_thai_price';
+}
+
+if ($sort === 'date') {
+    $orderby = 'meta_value_num';
+    $meta_key = '_ucoz_shop_id';
+}
 $min = isset($_GET['min_price']) && $_GET['min_price'] !== '' ? (float) $_GET['min_price'] : null;
 $max = isset($_GET['max_price']) && $_GET['max_price'] !== '' ? (float) $_GET['max_price'] : null;
-$paged = max(1, (int) get_query_var('paged'), isset($_GET['pg']) ? (int)$_GET['pg'] : 1);
+$paged = max(
+    1,
+    (int) get_query_var('top_page'),
+    isset($_GET['pg']) ? (int) $_GET['pg'] : 1
+);
 
 $args = [
     'post_type' => 'thai_excursion',
@@ -72,7 +89,31 @@ $total = (int) $q->found_posts;
 
     <?php if ($q->max_num_pages > 1): ?>
       <div class="plist shop-page-wrap">
-        <?php echo paginate_links(['total'=>$q->max_num_pages,'current'=>$paged,'prev_text'=>'«','next_text'=>'»','add_args'=>array_filter(['sort'=>$sort,'order'=>strtolower($order),'min_price'=>$min,'max_price'=>$max], fn($v)=>$v!==null && $v!=='')]); ?>
+        <?php
+        $pagination = paginate_links([
+            'base'      => untrailingslashit(home_url('/shop/all')) . '/%#%',
+            'format'    => '',
+            'total'     => $q->max_num_pages,
+            'current'   => $paged,
+            'prev_text' => '«',
+            'next_text' => '»',
+            'add_args'  => array_filter([
+                'sort'      => $sort,
+                'order'     => strtolower($order),
+                'min_price' => $min,
+                'max_price' => $max,
+            ], fn($v) => $v !== null && $v !== ''),
+        ]);
+
+        if ($pagination) {
+            $pagination = str_replace(
+                untrailingslashit(home_url('/shop/all')) . '/1',
+                untrailingslashit(home_url('/shop/all')),
+                $pagination
+            );
+            echo $pagination;
+        }
+        ?>
       </div>
     <?php endif; ?>
   </div>
