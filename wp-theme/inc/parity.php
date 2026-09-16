@@ -23,6 +23,9 @@ function thai_excursion_legacy_stats($post_id) {
 }
 
 function thai_excursion_card_image($post_id, $ucoz_id = '') {
+    $override = (string) get_post_meta($post_id, '_thai_card_image', true);
+    if ($override !== '') return $override;
+
     $ucoz_id = (int) $ucoz_id;
     if ($ucoz_id > 0) {
         $dir = $ucoz_id < 100 ? '00' : (string) floor($ucoz_id / 100);
