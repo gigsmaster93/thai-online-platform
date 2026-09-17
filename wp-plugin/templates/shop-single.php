@@ -41,6 +41,7 @@ if ($main_override) {
 }
 
 $content = (string) $p->post_content;
+$has_legacy_product = strpos($content, 'id="main-product-page"') !== false;
 
 $variants_raw = (string) get_post_meta(
     $p->ID,
@@ -118,14 +119,9 @@ foreach (explode('#', $quick_raw) as $fact) {
     </div>
 
     <?php
-    /*
-     * Новые позиции, снятые непосредственно с uCoz,
-     * уже содержат оригинальный #main-product-page.
-     */
-    if (strpos($content, 'id="main-product-page"') !== false) {
-
+    /* Imported uCoz product pages already contain the complete legacy body. */
+    if ($has_legacy_product) {
         echo $content;
-
     } else {
     ?>
 
@@ -159,97 +155,95 @@ foreach (explode('#', $quick_raw) as $fact) {
 
         </div>
 
-    <?php } ?>
+        <section id="calculatey" class="thai-order-calculator">
+            <h2>Узнать стоимость</h2>
 
-    <section id="calculatey" class="thai-order-calculator">
-        <h2>Узнать стоимость</h2>
+            <?php if ($variants): ?>
+                <label for="thai-tour-variant">Вариант тура</label>
 
-        <?php if ($variants): ?>
-            <label for="thai-tour-variant">Вариант тура</label>
+                <select id="thai-tour-variant">
+                    <?php foreach ($variants as $variant): ?>
+                        <option value="<?php echo esc_attr($variant['price']); ?>">
+                            <?php
+                            echo esc_html(
+                                $variant['label'] .
+                                ' — ' .
+                                number_format($variant['price'], 2, '.', '') .
+                                '฿'
+                            );
+                            ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            <?php endif; ?>
 
-            <select id="thai-tour-variant">
-                <?php foreach ($variants as $variant): ?>
-                    <option
-                        value="<?php echo esc_attr($variant['price']); ?>"
-                    >
-                        <?php
-                        echo esc_html(
-                            $variant['label'] .
-                            ' — ' .
-                            number_format($variant['price'], 2, '.', '') .
-                            '฿'
-                        );
-                        ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+            <div class="thai-order-total">
+                Всего:
+                <strong><?php echo esc_html($price_text); ?></strong>
+            </div>
+
+            <a
+                class="basket now thai-book-now"
+                href="https://wa.me/66838383539?text=<?php
+                    echo rawurlencode(
+                        'Хочу забронировать: ' .
+                        $p->post_title .
+                        ' (' .
+                        home_url('/shop/' . $ucoz_id . '/desc/' . $p->post_name) .
+                        ')'
+                    );
+                ?>"
+                target="_blank"
+                rel="noopener"
+            >
+                Забронировать сейчас!
+            </a>
+        </section>
+
+        <section class="thai-product-reviews">
+            <h2>Отзывы о <?php echo esc_html($p->post_title); ?></h2>
+            <p>
+                Прочитать реальные отзывы и поделиться своими впечатлениями
+                о качестве обслуживания.
+            </p>
+        </section>
+
+        <?php
+        $recommended = new WP_Query([
+            'post_type'      => 'thai_excursion',
+            'post_status'    => 'publish',
+            'posts_per_page' => 3,
+            'post__not_in'   => [$p->ID],
+            'orderby'        => 'rand',
+        ]);
+
+        if ($recommended->have_posts()):
+        ?>
+            <div id="recommended_products">
+                <div id="recommended_products_title">
+                    Рекомендуем!
+                </div>
+
+                <div class="goods-list with-clear">
+                    <?php
+                    while ($recommended->have_posts()):
+                        $recommended->the_post();
+
+                        if (function_exists('thai_render_excursion_card')) {
+                            thai_render_excursion_card(
+                                get_the_ID(),
+                                'recommended_products'
+                            );
+                        }
+                    endwhile;
+
+                    wp_reset_postdata();
+                    ?>
+                </div>
+            </div>
         <?php endif; ?>
 
-        <div class="thai-order-total">
-            Всего:
-            <strong><?php echo esc_html($price_text); ?></strong>
-        </div>
-
-        <a
-            class="basket now thai-book-now"
-            href="https://wa.me/66838383539?text=<?php
-                echo rawurlencode(
-                    'Хочу забронировать: ' .
-                    $p->post_title .
-                    ' (' .
-                    home_url('/shop/' . $ucoz_id . '/desc/' . $p->post_name) .
-                    ')'
-                );
-            ?>"
-            target="_blank"
-            rel="noopener"
-        >
-            Забронировать сейчас!
-        </a>
-    </section>
-
-    <section class="thai-product-reviews">
-        <h2>Отзывы о <?php echo esc_html($p->post_title); ?></h2>
-        <p>
-            Прочитать реальные отзывы и поделиться своими впечатлениями
-            о качестве обслуживания.
-        </p>
-    </section>
-
-    <?php
-    $recommended = new WP_Query([
-        'post_type'      => 'thai_excursion',
-        'post_status'    => 'publish',
-        'posts_per_page' => 3,
-        'post__not_in'   => [$p->ID],
-        'orderby'        => 'rand',
-    ]);
-
-    if ($recommended->have_posts()):
-    ?>
-        <div id="recommended_products">
-            <div id="recommended_products_title">
-                Рекомендуем!
-            </div>
-
-            <div class="goods-list with-clear">
-                <?php
-                while ($recommended->have_posts()):
-                    $recommended->the_post();
-
-                    if (function_exists('thai_render_excursion_card')) {
-                        thai_render_excursion_card(
-                            get_the_ID(),
-                            'recommended_products'
-                        );
-                    }
-                endwhile;
-
-                wp_reset_postdata();
-                ?>
-            </div>
-        </div>
-    <?php endif; ?>
+    <?php } ?>
 
 </div>
 </div>
