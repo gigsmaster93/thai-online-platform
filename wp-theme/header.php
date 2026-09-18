@@ -58,4 +58,9 @@ $tg = ltrim(get_theme_mod('thai_telegram', 'thaionlinetours'), '@');
   <div class="videox"><div class="videoOl"></div></div><div class="clr"></div>
   <?php endif; ?>
 </header>
-<div id="land-full" class="page-full width clearfix top-wp-runtime">
+<?php
+$land_classes = get_query_var('top_module') === 'shop_single'
+    ? 'page-full clearfix top-wp-runtime'
+    : 'page-full width clearfix top-wp-runtime';
+?>
+<div id="land-full" class="<?php echo esc_attr($land_classes); ?>">
