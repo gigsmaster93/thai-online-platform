@@ -48,11 +48,12 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 }
 .thai-legacy-reviews{
     clear:both;
-    padding-top:30px;
+    padding-top:0;
 }
-#recommended_products{
+.thai-product-page #recommended_products{
     clear:both;
-    padding-top:25px;
+    padding-top:5px;
+    margin-top:131px;
 }
 
 @media(max-width:1024px){
