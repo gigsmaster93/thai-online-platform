@@ -268,7 +268,7 @@ $render_reviews = static function ($p) {
           <td width="60%" height="25">Отзывов: <b><?php echo esc_html($comment_count); ?></b></td>
           <td align="right" height="25"></td>
         </tr>
-        <tr><td colspan="2" height="10"></td></tr>
+        <?php if (!$comments): ?><tr><td colspan="2" height="10"></td></tr><?php endif; ?>
       </table>
 
       <?php if ($comments): ?>
@@ -288,6 +288,7 @@ $render_reviews = static function ($p) {
         </div>
       <?php endif; ?>
 
+      <?php if ($comments): ?><div style="height:10px"></div><?php endif; ?>
       <div id="postFormContent">
         <form method="post" id="acform" class="shop-com-add thai-comment-form" action="<?php echo esc_url(site_url('/wp-comments-post.php')); ?>">
           <div class="uForm uComForm">

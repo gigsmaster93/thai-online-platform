@@ -3,7 +3,7 @@ Theme Name: Thai Online Theme
 Theme URI: https://thai-online.org
 Author: Thai Online
 Description: Original Thai Online visual layer with WordPress-managed content.
-Version: 4.4.18
+Version: 4.4.19
 Text Domain: thai-online-theme
 */
 
@@ -254,3 +254,17 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 @media(max-width:500px){
     .thai-share-legacy{height:83px}
 }
+
+/* Published review layout from the original comment stylesheet. */
+.thai-legacy-reviews .uc-avatar{float:left;width:50px}
+.thai-legacy-reviews .uc-avatar img{vertical-align:middle;width:50px;border-radius:4px}
+.thai-legacy-reviews .uc-content{margin:0 0 0 65px}
+.thai-legacy-reviews .uc-top img{vertical-align:middle}
+.thai-legacy-reviews .uc-top-right{float:right;white-space:nowrap}
+.thai-legacy-reviews .uc-top-left a,.thai-legacy-reviews .uc-top-left img,.thai-legacy-reviews .uc-top-left span{vertical-align:middle}
+.thai-legacy-reviews .uc-message{margin:8px 0;padding:0}
+.thai-legacy-reviews .uc-answer-link{margin:5px 0 0;text-align:right;font-size:8pt}
+.thai-legacy-reviews .uc-opacity{opacity:.6;filter:alpha(opacity = 60)}
+.thai-legacy-reviews .uComment:after,.thai-legacy-reviews .uComment:before{content:" ";display:table}
+.thai-legacy-reviews .uComment:after{clear:both}
+.thai-legacy-reviews .report-spam-wrap{display:none}
