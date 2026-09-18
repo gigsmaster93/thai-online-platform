@@ -3,9 +3,35 @@ Theme Name: Thai Online Theme
 Theme URI: https://thai-online.org
 Author: Thai Online
 Description: Original Thai Online visual layer with WordPress-managed content.
-Version: 4.4.10
+Version: 4.4.11
 Text Domain: thai-online-theme
 */
+
+
+@font-face{
+    font-family:'Flaticon';
+    src:url('/fonts/Flaticon.eot');
+    src:url('/fonts/Flaticon.eot?#iefix') format('embedded-opentype'),
+        url('/fonts/Flaticon.woff') format('woff'),
+        url('/fonts/Flaticon.ttf') format('truetype');
+    font-weight:400;
+    font-style:normal;
+    font-display:block;
+}
+.flaticon-phone-call:before,
+.flaticon-envelope:before,
+.flaticon-customer-service:before,
+.flaticon-avatar:before{
+    font-family:'Flaticon';
+    font-style:normal;
+    font-weight:400;
+    font-size:18px;
+    margin-left:0;
+}
+.flaticon-phone-call:before{content:'\f1a5'}
+.flaticon-envelope:before{content:'\f166'}
+.flaticon-customer-service:before{content:'\f156'}
+.flaticon-avatar:before{content:'\f10a'}
 
 @font-face{font-family:'FontAwesome';src:url('/css/fonts/fontawesome-webfont.woff2?v=4.3.0') format('woff2'),url('/css/fonts/fontawesome-webfont.woff?v=4.3.0') format('woff');font-weight:normal;font-style:normal;font-display:block}.fa{display:inline-block;font:normal normal normal 14px/1 FontAwesome;text-rendering:auto;-webkit-font-smoothing:antialiased}.fa-phone:before{content:'\f095'}.fa-envelope:before{content:'\f0e0'}.fa-user:before{content:'\f007'}.fa-language:before{content:'\f1ab'}.fa-search:before{content:'\f002'}.fa-eye:before{content:'\f06e'}.fa-cart-arrow-down:before{content:'\f218'}.fa-globe:before{content:'\f0ac'}.fa-car:before{content:'\f1b9'}.fa-camera:before{content:'\f030'}.fa-list-alt:before{content:'\f022'}.fa-comments:before{content:'\f086'}.fa-book:before{content:'\f02d'}.fa-info-circle:before{content:'\f05a'}.fa-chevron-circle-right:before{content:'\f138'}.fa-facebook:before{content:'\f09a'}.fa-instagram:before{content:'\f16d'}.fa-youtube-play:before{content:'\f16a'}.fa-mobile:before{content:'\f10b'}.fa-calendar:before{content:'\f073'}.fa-shield:before{content:'\f132'}.fa-money:before{content:'\f0d6'}
 body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar .header{margin-top:32px}#preloader{transition:opacity .2s ease}.thai-preloader-hidden{opacity:0!important;pointer-events:none!important;visibility:hidden!important}.videox{background-image:url('/img/bgmain.webp')!important;background-position:center!important;background-size:cover!important}.thai-vk{font-family:Arial,sans-serif!important;font-weight:700;font-size:13px}.searchSbmFl{cursor:pointer}
@@ -79,6 +105,8 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 }
 .thai-comment-form .login-with.local{
     display:block;
+    position:relative;
+    color:#2269b0;
     width:30px;
     height:30px;
     margin:0;
@@ -138,7 +166,7 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
     border:1px solid #d6d6d6;
     background:#fff;
     color:#848484;
-    font:12px/20px arial,sans-serif;
+    font:12px/20px arial;
     box-sizing:border-box;
 }
 .thai-comment-form .uf-btn{
@@ -148,7 +176,7 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
     border:1px solid #bfbfbf;
     background:#efefef;
     color:#000;
-    font:14px/19.6px arial,sans-serif;
+    font:14px/19.6px arial;
     cursor:pointer;
 }
 .thai-share-legacy{height:78px;position:relative;text-align:center;width:100%}
