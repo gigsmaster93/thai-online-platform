@@ -40,15 +40,42 @@ function hidePreloader(){
   window.setTimeout(function(){if(p&&p.parentNode)p.parentNode.removeChild(p);},250);
 }
 
+var legacyMediaObserver=null;
+
+function applyLegacyMedia(el){
+  var src=el.getAttribute('data-src');
+  if(!src)return;
+
+  if(el.tagName==='IMG'){
+    if(!el.getAttribute('src'))el.setAttribute('src',src);
+  }else{
+    el.style.backgroundImage='url("'+src.replace(/"/g,'')+'")';
+  }
+
+  el.setAttribute('data-thai-lazy-loaded','1');
+  if(legacyMediaObserver)legacyMediaObserver.unobserve(el);
+}
+
 function loadLegacyMedia(){
-  document.querySelectorAll('[data-src]').forEach(function(el){
-    var src=el.getAttribute('data-src');
-    if(!src)return;
-    if(el.tagName==='IMG'){
-      if(!el.getAttribute('src'))el.setAttribute('src',src);
-    }else{
-      el.style.backgroundImage='url("'+src.replace(/"/g,'')+'")';
-    }
+  var nodes=document.querySelectorAll('[data-src]:not([data-thai-lazy-loaded="1"])');
+
+  if(!('IntersectionObserver' in window)){
+    nodes.forEach(applyLegacyMedia);
+    return;
+  }
+
+  if(!legacyMediaObserver){
+    legacyMediaObserver=new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting)applyLegacyMedia(entry.target);
+      });
+    },{root:null,rootMargin:'250px 0px',threshold:0.01});
+  }
+
+  nodes.forEach(function(el){
+    if(el.getAttribute('data-thai-lazy-bound')==='1')return;
+    el.setAttribute('data-thai-lazy-bound','1');
+    legacyMediaObserver.observe(el);
   });
 }
 
