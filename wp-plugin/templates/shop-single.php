@@ -48,22 +48,20 @@ $content = (string) $p->post_content;
 $has_legacy_product = strpos($content, 'id="main-product-page"') !== false;
 
 $variants_raw = (string) get_post_meta($p->ID, '_thai_price_variants', true);
+$variant_groups = [];
+foreach (explode('%', str_replace('#%', '%', $variants_raw)) as $group_raw) {
+    $group = [];
+    foreach (explode('#', $group_raw) as $entry) {
+        $bits = explode('&', $entry);
+        if (isset($bits[1]) && is_numeric($bits[1])) $group[] = ['label'=>trim($bits[0]), 'price'=>(float)$bits[1]];
+    }
+    if ($group) $variant_groups[] = $group;
+}
 $variants = [];
 
-foreach (explode('#', $variants_raw) as $variant) {
-    $parts = explode('&', $variant);
-
-    if (
-        isset($parts[0], $parts[1]) &&
-        trim($parts[0]) !== '' &&
-        is_numeric($parts[1])
-    ) {
-        $variants[] = [
-            'label' => trim($parts[0]),
-            'price' => (float) $parts[1],
-        ];
-    }
-}
+$variants = $variant_groups[0] ?? [];
+$person_labels = get_post_meta($p->ID, '_thai_person_labels', true);
+if (!is_array($person_labels)) $person_labels = [];
 
 $quick_raw = (string) get_post_meta($p->ID, '_thai_quick_facts', true);
 $quick = [];
@@ -118,10 +116,10 @@ if (count($variants) >= 2) {
             $matched++;
         }
     }
-    $is_person_pricing = ($matched >= 2);
+    $is_person_pricing = ($matched >= 2 || (count($variant_groups) > 1 && count($variants) >= 2));
 }
 
-$render_order_block = static function ($p, $ucoz_id, $price, $price_text, $variants, $is_person_pricing) {
+$render_order_block = static function ($p, $ucoz_id, $price, $price_text, $variants, $is_person_pricing) use ($variant_groups, $person_labels) {
     $product_url = home_url('/shop/' . $ucoz_id . '/desc/' . $p->post_name);
     ?>
     <div class="rightbl thai-legacy-order-block" style="user-select:none;">
@@ -129,11 +127,21 @@ $render_order_block = static function ($p, $ucoz_id, $price, $price_text, $varia
         <div class="innerBlockY">
           <h2 style="text-align:center;text-shadow:1px 1px 2px silver;">Узнать стоимость</h2>
 
+          <?php if (count($variant_groups) > 1): ?>
+            <div class="col-md-6 col-sm-6 col-xs-6 tourVarS"><div class="form-group">
+              <label for="thai-price-group">Вариант тура</label>
+              <select class="numbers-row tourVarScnt" id="thai-price-group">
+                <?php foreach ($variant_groups as $group): ?>
+                  <option data-prices="<?php echo esc_attr(wp_json_encode(array_column($group, 'price'))); ?>" value="<?php echo esc_attr($group[0]['price']); ?>"><?php echo esc_html($group[0]['label']); ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div></div><div class="clr"></div>
+          <?php endif; ?>
           <?php if ($is_person_pricing): ?>
             <div class="thai-person-pricing">
               <?php foreach ($variants as $index => $variant): ?>
                 <?php
-                $qty_label = $variant['label'];
+                $qty_label = $person_labels[$index] ?? $variant['label'];
                 if ((int) $ucoz_id === 511) {
                     $legacy_labels = ['Взрослые', 'Дети 4-11 лет', 'Дети < 4 лет'];
                     $qty_label = $legacy_labels[$index] ?? $qty_label;
@@ -160,7 +168,7 @@ $render_order_block = static function ($p, $ucoz_id, $price, $price_text, $varia
                 <div class="clr"></div>
               <?php endforeach; ?>
             </div>
-          <?php elseif ($variants): ?>
+          <?php elseif ($variants && count($variant_groups) <= 1): ?>
             <div class="col-md-6 col-sm-6 col-xs-6 tourVarS">
               <div class="form-group">
                 <label>Вариант тура</label>
@@ -392,7 +400,7 @@ $render_recommendations = static function ($ucoz_ids) {
           <div class="colIco left" style="width:<?php echo esc_attr($info_width); ?>;margin-left:0;margin-right:0;padding:0;">
             <?php if ($fact['icon'] !== ''): ?><i class="fa fa-<?php echo esc_attr(sanitize_html_class($fact['icon'])); ?>"></i><?php endif; ?>
             <div class="hdr"><?php echo esc_html($fact['label']); ?></div>
-            <div class="txt"><?php echo esc_html($fact['value']); ?></div>
+            <div class="txt"><?php echo wp_kses($fact['value'], ['br'=>[]]); ?></div>
           </div>
         <?php endforeach; ?>
 
@@ -437,7 +445,7 @@ $render_recommendations = static function ($ucoz_ids) {
                 <?php foreach ($quick as $fact): ?>
                   <div class="thai-quick-fact">
                     <strong><?php echo esc_html($fact['label']); ?></strong>
-                    <span><?php echo esc_html($fact['value']); ?></span>
+                    <span><?php echo wp_kses($fact['value'], ['br'=>[]]); ?></span>
                   </div>
                 <?php endforeach; ?>
               </div>

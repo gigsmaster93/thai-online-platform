@@ -98,7 +98,7 @@ function updateLegacyTotal(showTotal){
   });
 
   if(!hasQty){
-    var $variant=$('#thai-tour-variant');
+    var $variant=$('#thai-price-group,#thai-tour-variant').first();
     if($variant.length){
       total=parseFloat($variant.val()||'0');
       if(!isFinite(total))total=0;
@@ -189,6 +189,12 @@ function bindLegacyProduct(){
 
   $('.thai-review-resource').off('change.thai').on('change.thai',function(){
     if(this.value)window.location.href=this.value;
+  });
+
+  $('#thai-price-group').on('change.thai',function(){
+    var prices=JSON.parse($(this).find(':selected').attr('data-prices')||'[]');
+    $('.thai-person-qty').each(function(i){$(this).attr('data-price',prices[i]||0);});
+    updateLegacyTotal(true);
   });
 
   $('#thai-tour-variant').off('change.thai').on('change.thai',function(){ updateLegacyTotal(true); });
