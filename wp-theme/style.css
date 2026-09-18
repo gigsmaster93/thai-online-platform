@@ -53,7 +53,7 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 .thai-product-page #recommended_products{
     clear:both;
     padding-top:5px;
-    margin-top:131px;
+    margin-top:139.6px;
 }
 
 @media(max-width:1024px){
@@ -137,3 +137,9 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 }
 #dscr .slideout{display:none}
 .thai-legacy-order-block .basket.now{display:none}
+
+.thai-product-page .addblockright img{
+    position:relative;
+    left:-10px;
+    top:33.4px;
+}
