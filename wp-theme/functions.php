@@ -107,10 +107,22 @@ add_action('wp_enqueue_scripts', function () {
             '525'
         );
 
+        /*
+         * Product pages depend on legacy tourpage rules for the radio-tab
+         * layout and the desktop/mobile product columns. uCoz injected these
+         * rules through its page stack, so load the preserved asset explicitly.
+         */
+        wp_enqueue_style(
+            'ucoz-tourpage',
+            home_url('/css/tourpage.css'),
+            ['ucoz-tovar-1'],
+            $v
+        );
+
         wp_enqueue_style(
             'ucoz-rightbl',
             home_url('/css/rightblstyle.css'),
-            ['ucoz-tovar-1'],
+            ['ucoz-tourpage'],
             $v
         );
 
