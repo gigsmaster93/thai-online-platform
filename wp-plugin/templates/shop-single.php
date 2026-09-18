@@ -31,13 +31,17 @@ $price = function_exists('thai_excursion_price')
 $price_text = number_format((float) $price, 2, '.', '') . '฿';
 
 $image = '';
+$main_override = (string) get_post_meta($p->ID, '_thai_main_image', true);
 
-$main_override = get_post_meta($p->ID, '_thai_main_image', true);
-
-if ($main_override) {
+if ($main_override !== '') {
     $image = $main_override;
 } elseif (function_exists('thai_excursion_card_image')) {
     $image = thai_excursion_card_image($p->ID, $ucoz_id);
+}
+
+$hero_image = (string) get_post_meta($p->ID, '_thai_hero_image', true);
+if ($hero_image === '') {
+    $hero_image = $image;
 }
 
 $content = (string) $p->post_content;
@@ -85,7 +89,39 @@ if (!$recommended_ids && $ucoz_id === 511) {
     $recommended_ids = [96, 103, 406];
 }
 
-function thai_render_legacy_order_block($p, $ucoz_id, $price, $price_text, $variants) {
+$breadcrumbs = [];
+$breadcrumbs_raw = (string) get_post_meta($p->ID, '_thai_breadcrumbs', true);
+
+if ($breadcrumbs_raw !== '') {
+    foreach (preg_split('/\r?\n/', $breadcrumbs_raw) as $line) {
+        if (trim($line) === '') continue;
+        $parts = array_map('trim', explode('|', $line, 2));
+        $breadcrumbs[] = [
+            'label' => $parts[0],
+            'url'   => $parts[1] ?? '',
+        ];
+    }
+}
+
+if (!$breadcrumbs) {
+    $breadcrumbs = [
+        ['label' => 'Главная', 'url' => '/'],
+        ['label' => 'Экскурсии и места', 'url' => '/shop/all'],
+    ];
+}
+
+$is_person_pricing = false;
+if (count($variants) >= 2) {
+    $matched = 0;
+    foreach ($variants as $variant) {
+        if (preg_match('/взрос|adult|дет|child|инф|infant/iu', $variant['label'])) {
+            $matched++;
+        }
+    }
+    $is_person_pricing = ($matched >= 2);
+}
+
+$render_order_block = static function ($p, $ucoz_id, $price, $price_text, $variants, $is_person_pricing) {
     $product_url = home_url('/shop/' . $ucoz_id . '/desc/' . $p->post_name);
     ?>
     <div class="rightbl thai-legacy-order-block" style="user-select:none;">
@@ -93,7 +129,31 @@ function thai_render_legacy_order_block($p, $ucoz_id, $price, $price_text, $vari
         <div class="innerBlockY">
           <h2 style="text-align:center;text-shadow:1px 1px 2px silver;">Узнать стоимость</h2>
 
-          <?php if ($variants): ?>
+          <?php if ($is_person_pricing): ?>
+            <div class="thai-person-pricing">
+              <?php foreach ($variants as $index => $variant): ?>
+                <div class="col-md-6 col-sm-6 col-xs-6 thai-qty-row">
+                  <div class="form-group">
+                    <label><?php echo esc_html($variant['label']); ?></label>
+                    <div class="numbers-row">
+                      <div class="dec button_inc" role="button" tabindex="0">-</div>
+                      <input
+                        value="<?php echo $index === 0 ? '1' : '0'; ?>"
+                        class="qty2 form-control thai-person-qty"
+                        type="text"
+                        inputmode="numeric"
+                        data-price="<?php echo esc_attr($variant['price']); ?>"
+                        aria-label="<?php echo esc_attr($variant['label']); ?>"
+                      >
+                      <div class="inc button_inc" role="button" tabindex="0">+</div>
+                      <span><b><?php echo esc_html(number_format($variant['price'], 0, '.', '')); ?></b><span>฿</span></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="clr"></div>
+              <?php endforeach; ?>
+            </div>
+          <?php elseif ($variants): ?>
             <div class="col-md-6 col-sm-6 col-xs-6 tourVarS">
               <div class="form-group">
                 <label>Вариант тура</label>
@@ -106,18 +166,8 @@ function thai_render_legacy_order_block($p, $ucoz_id, $price, $price_text, $vari
                 </select>
               </div>
             </div>
-          <?php else: ?>
-            <div class="col-md-6 col-sm-6 col-xs-6 tourVarS">
-              <div class="form-group">
-                <label>Вариант тура</label>
-                <select class="numbers-row tourVarScnt" id="thai-tour-variant">
-                  <option value="<?php echo esc_attr($price); ?>">Основная программа</option>
-                </select>
-              </div>
-            </div>
+            <div class="clr"></div>
           <?php endif; ?>
-
-          <div class="clr"></div>
 
           <div id="total">
             Всего: <span><?php echo esc_html($price_text); ?></span><br>
@@ -140,7 +190,7 @@ function thai_render_legacy_order_block($p, $ucoz_id, $price, $price_text, $vari
               <span>Забронировать сейчас!</span>
             </a>
 
-            <div class="type-select">
+            <div class="type-select visible">
               <select id="select-options">
                 <option value="">Заказать через</option>
                 <option value="telegram">Telegram</option>
@@ -155,10 +205,11 @@ function thai_render_legacy_order_block($p, $ucoz_id, $price, $price_text, $vari
       </div>
     </div>
     <?php
-}
+};
 
-function thai_render_legacy_reviews($p) {
+$render_reviews = static function ($p) {
     ?>
+    <div class="clr"></div>
     <div class="thai-legacy-reviews">
       <h2 id="feedback" style="text-align:center;text-shadow:1px 1px 2px silver;">
         Отзывы о <?php echo esc_html($p->post_title); ?>
@@ -186,12 +237,10 @@ function thai_render_legacy_reviews($p) {
       </table>
     </div>
     <?php
-}
+};
 
-function thai_render_recommendations_by_ucoz_ids($ucoz_ids) {
-    if (!$ucoz_ids) {
-        return;
-    }
+$render_recommendations = static function ($ucoz_ids) {
+    if (!$ucoz_ids) return;
 
     $post_ids = [];
 
@@ -210,9 +259,7 @@ function thai_render_recommendations_by_ucoz_ids($ucoz_ids) {
         }
     }
 
-    if (!$post_ids) {
-        return;
-    }
+    if (!$post_ids) return;
     ?>
     <div id="recommended_products">
       <div id="recommended_products_title" style="text-align:center;font-weight:bold;text-shadow:1px 1px 2px silver;">Рекомендуем!</div><br>
@@ -227,80 +274,91 @@ function thai_render_recommendations_by_ucoz_ids($ucoz_ids) {
       </div>
     </div>
     <?php
-}
+};
 ?>
 
-<div class="page width clearfix thai-product-page">
+<div
+  class="infoblock thai-product-hero"
+  style="<?php
+    echo esc_attr(
+        'user-select:none;background:#3f96dc' .
+        ($hero_image !== '' ? ' url(' . esc_url_raw($hero_image) . ') fixed no-repeat' : '') .
+        ';background-size:cover;background-position:50%;'
+    );
+  ?>"
+>
+  <div class="infoblockOl">
+    <div class="page width clearfix">
+      <div class="left bread">
+        <?php foreach ($breadcrumbs as $index => $crumb): ?>
+          <?php if ($index > 0): ?> &raquo; <?php endif; ?>
+          <?php if ($crumb['url'] !== ''): ?>
+            <a href="<?php echo esc_url(preg_match('#^https?://#', $crumb['url']) ? $crumb['url'] : home_url($crumb['url'])); ?>">
+              <?php echo esc_html($crumb['label']); ?>
+            </a>
+          <?php else: ?>
+            <span><?php echo esc_html($crumb['label']); ?></span>
+          <?php endif; ?>
+        <?php endforeach; ?>
+      </div>
+
+      <h1><?php echo esc_html($p->post_title); ?></h1>
+    </div>
+
+    <div class="page width clearfix infoBl"></div>
+  </div>
+</div>
+
+<div class="page width clearfix thai-product-page" id="maincont">
 <div class="content clearfix" style="width:100%">
 <div class="content-view">
-
-    <div class="thai-breadcrumbs">
-        <a href="<?php echo esc_url(home_url('/')); ?>">Главная</a>
-        »
-        <a href="<?php echo esc_url(home_url('/shop/all')); ?>">Экскурсии и места</a>
-    </div>
-
-    <div class="thai-product-heading clearfix">
-        <h1><?php echo esc_html($p->post_title); ?></h1>
-
-        <div class="product-page-price">
-            <span class="shop-itempage-price">
-                от
-                <span class="id-good-<?php echo esc_attr($ucoz_id); ?>-price"><?php echo esc_html($price_text); ?></span>
-            </span>
-        </div>
-
-        <div class="priceupperbutton">
-            <a class="printBtn" href="#calculatey">Оформить / Рассчитать заказ ↓</a>
-        </div>
-    </div>
 
     <?php if ($has_legacy_product): ?>
 
         <?php echo $content; ?>
 
-        <?php thai_render_legacy_order_block($p, $ucoz_id, $price, $price_text, $variants); ?>
+        <?php $render_order_block($p, $ucoz_id, $price, $price_text, $variants, $is_person_pricing); ?>
 
-        <?php thai_render_legacy_reviews($p); ?>
+        <?php $render_reviews($p); ?>
 
-        <?php thai_render_recommendations_by_ucoz_ids($recommended_ids); ?>
+        <?php $render_recommendations($recommended_ids); ?>
 
     <?php else: ?>
 
-        <div id="main-product-page" class="thai-generated-product">
-
+        <div class="clearfix" id="main-product-page">
+          <div class="left">
             <?php if ($image): ?>
-                <div class="shop-itempage-images">
-                    <a href="<?php echo esc_url($image); ?>">
-                        <img src="<?php echo esc_url($image); ?>" alt="<?php echo esc_attr($p->post_title); ?>">
-                    </a>
-                </div>
+              <div class="shop-itempage-images">
+                <img src="<?php echo esc_url($image); ?>" alt="<?php echo esc_attr($p->post_title); ?>">
+              </div>
             <?php endif; ?>
+          </div>
 
+          <div class="right">
             <?php if ($quick): ?>
-                <div class="thai-quick-facts">
-                    <?php foreach ($quick as $fact): ?>
-                        <div class="thai-quick-fact">
-                            <strong><?php echo esc_html($fact['label']); ?></strong>
-                            <span><?php echo esc_html($fact['value']); ?></span>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
+              <div class="thai-quick-facts">
+                <?php foreach ($quick as $fact): ?>
+                  <div class="thai-quick-fact">
+                    <strong><?php echo esc_html($fact['label']); ?></strong>
+                    <span><?php echo esc_html($fact['value']); ?></span>
+                  </div>
+                <?php endforeach; ?>
+              </div>
             <?php endif; ?>
 
             <div class="thai-product-description">
-                <?php echo apply_filters('the_content', $content); ?>
+              <?php echo apply_filters('the_content', $content); ?>
             </div>
-
+          </div>
         </div>
 
-        <?php thai_render_legacy_order_block($p, $ucoz_id, $price, $price_text, $variants); ?>
+        <?php $render_order_block($p, $ucoz_id, $price, $price_text, $variants, $is_person_pricing); ?>
 
-        <?php thai_render_legacy_reviews($p); ?>
+        <?php $render_reviews($p); ?>
 
         <?php
         if ($recommended_ids) {
-            thai_render_recommendations_by_ucoz_ids($recommended_ids);
+            $render_recommendations($recommended_ids);
         } else {
             $recommended = new WP_Query([
                 'post_type'      => 'thai_excursion',
@@ -311,22 +369,22 @@ function thai_render_recommendations_by_ucoz_ids($ucoz_ids) {
             ]);
 
             if ($recommended->have_posts()): ?>
-                <div id="recommended_products">
-                    <div id="recommended_products_title">Рекомендуем!</div>
-                    <div class="goods-list with-clear">
-                        <?php
-                        while ($recommended->have_posts()) {
-                            $recommended->the_post();
+              <div id="recommended_products">
+                <div id="recommended_products_title">Рекомендуем!</div>
+                <div class="goods-list with-clear">
+                  <?php
+                  while ($recommended->have_posts()) {
+                      $recommended->the_post();
 
-                            if (function_exists('thai_render_excursion_card')) {
-                                thai_render_excursion_card(get_the_ID(), 'recommended_products');
-                            }
-                        }
+                      if (function_exists('thai_render_excursion_card')) {
+                          thai_render_excursion_card(get_the_ID(), 'recommended_products');
+                      }
+                  }
 
-                        wp_reset_postdata();
-                        ?>
-                    </div>
+                  wp_reset_postdata();
+                  ?>
                 </div>
+              </div>
             <?php endif;
         }
         ?>
