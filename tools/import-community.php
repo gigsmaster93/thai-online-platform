@@ -11,7 +11,7 @@ if($mode==='gallery'){
  $aliases=[];
  $existing=top_existing_ids('thai_photo','_ucoz_photo_id');$f=fopen($root.'gallery-prepared.jsonl','r');$count=0;
  while(($line=fgets($f))!==false){$r=json_decode($line,true,512,JSON_THROW_ON_ERROR);if(strpos($r['url'],'/photo/')!==0)$aliases[trim($r['url'],'/')]=[$r['id'],$r['album']];if(isset($existing[$r['id']]))continue;
-  $id=wp_insert_post(wp_slash(['post_type'=>'thai_photo','post_status'=>'publish','post_title'=>$r['title'],'post_content'=>wp_kses_post($r['content']),'post_date'=>date('Y-m-d H:i:s',(int)$r['date']),'meta_input'=>['_ucoz_photo_id'=>$r['id'],'_thai_photo_full'=>$r['full'],'_thai_photo_thumb'=>$r['thumb'],'_thai_legacy_url'=>$r['url'],'_thai_migration_batch'=>'20260918']]),true);
+  $id=wp_insert_post(wp_slash(['post_type'=>'thai_photo','post_status'=>'publish','post_name'=>'photo-'.$r['id'],'post_title'=>$r['title'],'post_content'=>wp_kses_post($r['content']),'post_date'=>date('Y-m-d H:i:s',(int)$r['date']),'meta_input'=>['_ucoz_photo_id'=>$r['id'],'_thai_photo_full'=>$r['full'],'_thai_photo_thumb'=>$r['thumb'],'_thai_legacy_url'=>$r['url'],'_thai_migration_batch'=>'20260918']]),true);
   if(is_wp_error($id))WP_CLI::error($id->get_error_message());
   wp_set_object_terms($id,[$terms[$r['album']]],'thai_photo_album');
   $existing[$r['id']]=$id;$count++;if($count%1000===0)WP_CLI::line('Photos imported: '.$count);
@@ -35,7 +35,7 @@ if($mode==='gallery'){
  $existing=top_existing_ids('thai_forum_topic','_ucoz_forum_id');$rows=json_decode(file_get_contents($root.'forum-prepared.json'),true);$topics=0;$messages=0;
  foreach($rows as $r){
   if(isset($existing[$r['id']])){$id=$existing[$r['id']];}else{
-   $id=wp_insert_post(wp_slash(['post_type'=>'thai_forum_topic','post_status'=>'publish','post_title'=>$r['title'],'post_content'=>'','post_date'=>$r['date'],'meta_input'=>['_ucoz_forum_id'=>$r['id'],'_thai_forum_section'=>$r['section'],'_thai_migration_batch'=>'20260918']]),true);
+   $id=wp_insert_post(wp_slash(['post_type'=>'thai_forum_topic','post_status'=>'publish','post_title'=>$r['title'],'post_content'=>'','post_date'=>$r['date'],'meta_input'=>['_ucoz_forum_id'=>$r['id'],'_thai_forum_section'=>$r['section'],'_thai_forum_updated'=>$r['updated'],'_thai_migration_batch'=>'20260918']]),true);
    if(is_wp_error($id))WP_CLI::error($id->get_error_message());$existing[$r['id']]=$id;$topics++;
   }
   $known=[];foreach(get_comments(['post_id'=>$id,'status'=>'all','number'=>0]) as $c)$known[get_comment_meta($c->comment_ID,'_ucoz_forum_post',true)]=true;

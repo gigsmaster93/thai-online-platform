@@ -9,7 +9,7 @@ class TOP_Community {
         add_action('admin_post_thai_contact', [__CLASS__, 'submit_contact']);
         add_action('admin_post_nopriv_thai_review', [__CLASS__, 'submit_review']);
         add_action('admin_post_thai_review', [__CLASS__, 'submit_review']);
-        add_action('parse_request', static function($wp){$aliases=get_option('thai_photo_aliases',[]);$key=trim($wp->request,'/');if(isset($aliases[$key]))$wp->query_vars=['top_community'=>'photo','top_id'=>$aliases[$key][0],'top_section'=>$aliases[$key][1]];});
+        add_action('parse_request', static function($wp){if(preg_match('~^gb(?:/(?:page/)?([0-9]+))?/?$~',$wp->request,$m)){$wp->query_vars=['top_community'=>'guestbook','top_page'=>max(1,(int)($m[1]??1))];return;}$aliases=get_option('thai_photo_aliases',[]);$key=trim($wp->request,'/');if(isset($aliases[$key]))$wp->query_vars=['top_community'=>'photo','top_id'=>$aliases[$key][0],'top_section'=>$aliases[$key][1]];});
         add_shortcode('thai_contact_form', [__CLASS__, 'contact_form']);
         add_filter('redirect_canonical', static function($url){return get_query_var('top_community') ? false : $url;});
         add_action('wp_enqueue_scripts', static function(){
@@ -71,7 +71,7 @@ class TOP_Community {
         [$name,$body]=self::validate_submission('thai_contact');
         $email=sanitize_email(wp_unslash($_POST['email']??''));
         if(!is_email($email))wp_die('Укажи корректный E-mail.', '', ['response'=>400]);
-        $id=wp_insert_post(wp_slash(['post_type'=>'thai_message','post_status'=>'private','post_title'=>$name,'post_content'=>$body,'meta_input'=>['_thai_email'=>$email]]),true);
+        $id=wp_insert_post(wp_slash(['post_type'=>'thai_message','post_status'=>'private','post_title'=>$name,'post_content'=>$body."\n\nE-mail: ".$email,'meta_input'=>['_thai_email'=>$email]]),true);
         if(is_wp_error($id))wp_die('Не удалось сохранить сообщение. Попробуй позже.', '', ['response'=>500]);
         wp_mail('info@thai-online.org','Обратная связь: '.$name,$body."\n\n".$email,['Reply-To: '.$email]);
         wp_safe_redirect(home_url('/contact?sent=1#support'));exit;
