@@ -13,8 +13,18 @@
         <p>Горячая линия: <a href="tel:0838383539" class="btmtels">083-8383-539</a></p>
         <p>Whatsapp: <a href="https://wa.me/66838383539" class="btmtels">+66-838-383-539</a></p>
         <p>Viber: <a href="viber://add?number=66838383539" class="btmtels">+66-838-383-539</a></p>
-        <p>Telegram: <a href="https://t.me/thaionlinetours" class="btmtels">@thaionlinetours</a></p>
+        <p>Telegram: <a href="tg://resolve?domain=thaionlinetours" class="btmtels">@thaionlinetours</a></p>
+        <p>Skype: <a href="skype:hunterfortornado">Thai-Online</a></p>
         <p>E-mail: <a href="mailto:info@thai-online.org" class="btmmail">info@thai-online.org</a></p>
+        <ul class="sn" style="display:block;height:50px;position:initial;margin-top:10px !important;text-align:left;">
+          <li><a href="https://vk.com/thaibooking" rel="nofollow" title="Мы вКонтакте" target="_blank"><span class="flaticon-vk"></span></a></li>
+          <li><a href="https://www.facebook.com/thaibookingportal/" rel="nofollow" title="Мы на Facebook" target="_blank"><span class="flaticon-facebook-logo"></span></a></li>
+          <li><a href="https://ok.ru/thaionline" title="Мы в Одноклассниках" target="_blank"><span style="font-weight:bold;font-size:20px;">OK</span></a></li>
+          <li><a href="https://www.youtube.com/channel/UCDIGpPr7O6JXF9icDT0bTEA" rel="nofollow" title="Наш Youtube-канал" target="_blank"><span class="flaticon-youtube-symbol"></span></a></li>
+          <li><a href="https://twitter.com/SCPattaya" rel="nofollow" title="Наш Twitter" target="_blank"><span class="flaticon-twitter-black-shape"></span></a></li>
+          <li><a href="https://www.instagram.com/thaionlineorg/" rel="nofollow" title="Мы в Instagram" target="_blank"><span class="fa fa-instagram" style="font-size:20px;padding:3px;"></span></a></li>
+          <li><a href="https://dzen.ru/thaionline/" title="Мы в Дзен" target="_blank"><span class="Y" style="font-weight:bold;font-size:20px;padding:3px;">Y</span></a></li>
+        </ul>
       </div>
     </div>
     <div class="footer-block">
@@ -38,7 +48,7 @@
           <li><a href="<?php echo esc_url(admin_url('profile.php')); ?>">Профиль</a></li>
           <li><a href="<?php echo esc_url(wp_logout_url(home_url('/'))); ?>">Выход</a></li>
         <?php else: ?>
-          <?php if (get_option('users_can_register')): ?><li><a href="<?php echo esc_url(wp_registration_url()); ?>">Регистрация</a></li><?php endif; ?>
+          <li><a href="<?php echo esc_url(wp_registration_url()); ?>">Регистрация</a></li>
           <li><a href="<?php echo esc_url(wp_login_url()); ?>">Вход</a></li>
         <?php endif; ?>
         <li><a href="/shop/wishlist">Избранное</a></li>
