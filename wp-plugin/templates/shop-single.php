@@ -177,7 +177,7 @@ $render_order_block = static function ($p, $ucoz_id, $price, $price_text, $varia
           <?php endif; ?>
 
           <div id="total">
-            Всего: <span><?php echo esc_html($price_text); ?></span><br>
+            Всего: <span><?php echo $is_person_pricing ? '' : esc_html($price_text); ?></span><br>
             <div><i class="fa fa-info-circle" aria-hidden="true"></i> Предложена самая низкая цена!</div>
             <a href="#contacts" id="foundCheaper">Нашли дешевле?</a>
           </div>
