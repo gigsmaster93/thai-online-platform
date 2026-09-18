@@ -29,3 +29,75 @@ html{box-sizing:border-box}*,*:before,*:after{box-sizing:inherit}body{margin:0}.
     height:auto;
     margin:0 0 12px;
 }
+
+
+/* Legacy single-product parity */
+.thai-product-hero .bread a,
+.thai-product-hero .bread span{color:#fff}
+.thai-product-page #total{display:block!important}
+.thai-product-page .shop-itempage-images .thai-legacy-main-image{
+    max-width:500px;
+    margin:0 auto 12px;
+}
+.thai-legacy-order-block .basket.now,
+.thai-legacy-order-block .altorder{
+    color:#fff;
+    text-align:center;
+    display:block;
+    border-radius:20px;
+    margin-top:0;
+    font-size:14pt;
+    cursor:pointer;
+    box-shadow:0 3px 2px 2px #860d0d;
+    background:#cc1818;
+    padding:16px 40px;
+    border:0;
+    border-top:2px solid #cc1818;
+    margin-bottom:-24px;
+    text-decoration:none;
+}
+.thai-legacy-order-block .button-container{position:relative}
+.thai-legacy-order-block .type-select{
+    display:none;
+    position:absolute;
+    inset:0;
+    background:#cc1818;
+    align-items:center;
+    justify-content:center;
+    border-radius:20px;
+}
+.thai-legacy-order-block .button-container:hover .type-select.visible{display:flex}
+.thai-legacy-order-block .type-select.hidden{display:none!important}
+.thai-legacy-order-block .type-select select{
+    font-size:14pt;
+    padding:10px;
+    border-radius:5px;
+}
+.thai-person-pricing .thai-qty-row{
+    float:none;
+    width:100%;
+}
+.thai-person-pricing .form-group{
+    width:170px;
+    margin:0 auto 20px;
+}
+.thai-person-pricing .numbers-row{
+    display:flex;
+    align-items:center;
+}
+.thai-person-pricing .numbers-row>span{
+    margin-left:8px;
+    white-space:nowrap;
+}
+.thai-legacy-reviews{
+    clear:both;
+    padding-top:30px;
+}
+#recommended_products{
+    clear:both;
+    padding-top:25px;
+}
+
+@media(max-width:1024px){
+    .thai-legacy-order-block{width:100%!important;float:none!important}
+}
