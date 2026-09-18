@@ -210,7 +210,7 @@ $render_order_block = static function ($p, $ucoz_id, $price, $price_text, $varia
 $render_reviews = static function ($p) {
     ?>
     <div class="clr"></div>
-    <div class="thai-legacy-reviews">
+    <div class="feedBlock thai-legacy-reviews">
       <h2 id="feedback" style="text-align:center;text-shadow:1px 1px 2px silver;">
         Отзывы о <?php echo esc_html($p->post_title); ?>
       </h2>
