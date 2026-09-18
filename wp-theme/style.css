@@ -8,7 +8,7 @@ Text Domain: thai-online-theme
 */
 
 @font-face{font-family:'FontAwesome';src:url('/css/fonts/fontawesome-webfont.woff2?v=4.3.0') format('woff2'),url('/css/fonts/fontawesome-webfont.woff?v=4.3.0') format('woff');font-weight:normal;font-style:normal;font-display:block}.fa{display:inline-block;font:normal normal normal 14px/1 FontAwesome;text-rendering:auto;-webkit-font-smoothing:antialiased}.fa-phone:before{content:'\f095'}.fa-envelope:before{content:'\f0e0'}.fa-user:before{content:'\f007'}.fa-language:before{content:'\f1ab'}.fa-search:before{content:'\f002'}.fa-eye:before{content:'\f06e'}.fa-cart-arrow-down:before{content:'\f218'}.fa-globe:before{content:'\f0ac'}.fa-car:before{content:'\f1b9'}.fa-camera:before{content:'\f030'}.fa-list-alt:before{content:'\f022'}.fa-comments:before{content:'\f086'}.fa-book:before{content:'\f02d'}.fa-info-circle:before{content:'\f05a'}.fa-chevron-circle-right:before{content:'\f138'}.fa-facebook:before{content:'\f09a'}.fa-instagram:before{content:'\f16d'}.fa-youtube-play:before{content:'\f16a'}.fa-mobile:before{content:'\f10b'}.fa-calendar:before{content:'\f073'}.fa-shield:before{content:'\f132'}.fa-money:before{content:'\f0d6'}
-body{margin:0}.top-wp-runtime{min-height:360px}.admin-bar .header{margin-top:32px}#preloader{transition:opacity .2s ease}.thai-preloader-hidden{opacity:0!important;pointer-events:none!important;visibility:hidden!important}.videox{background-image:url('/img/bgmain.webp')!important;background-position:center!important;background-size:cover!important}.thai-vk{font-family:Arial,sans-serif!important;font-weight:700;font-size:13px}.searchSbmFl{cursor:pointer}
+body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar .header{margin-top:32px}#preloader{transition:opacity .2s ease}.thai-preloader-hidden{opacity:0!important;pointer-events:none!important;visibility:hidden!important}.videox{background-image:url('/img/bgmain.webp')!important;background-position:center!important;background-size:cover!important}.thai-vk{font-family:Arial,sans-serif!important;font-weight:700;font-size:13px}.searchSbmFl{cursor:pointer}
 
 /* uCoz product tile compatibility */
 .product-url{display:block;position:relative;background-position:center!important;background-repeat:no-repeat!important;background-size:cover!important;overflow:hidden}.product-url .sml-img{position:relative}.product-url .sml-meta{position:absolute;left:0;right:0;bottom:0}.product-url .sml-price{position:relative;z-index:2}.buy-it-now .flaticon-search:before{content:'\f002';font-family:'FontAwesome'}.wish:before{content:'\f005';font-family:'FontAwesome'}
@@ -22,40 +22,9 @@ body{margin:0}.top-wp-runtime{min-height:360px}.admin-bar .header{margin-top:32p
 @media(max-width:760px){#navigation .uMenuRoot{display:none}#navigation.top-menu-open .uMenuRoot{display:block}#navigation .sub-menu,#navigation .subM{position:static!important;width:auto!important}.thai-shop-page .flist-item{display:flex}.thai-home-reviews #allEntries>div{width:90%}}
 
 
-/* Legacy single-product main image */
-.thai-product-page .shop-itempage-images .thai-legacy-main-image{
-    display:block;
-    width:100%;
-    height:auto;
-    margin:0 0 12px;
-}
-
-
 /* Legacy single-product parity */
 .thai-product-hero .bread a,
 .thai-product-hero .bread span{color:#fff}
-.thai-product-page #total{display:block!important}
-.thai-product-page .shop-itempage-images .thai-legacy-main-image{
-    max-width:500px;
-    margin:0 auto 12px;
-}
-.thai-legacy-order-block .basket.now,
-.thai-legacy-order-block .altorder{
-    color:#fff;
-    text-align:center;
-    display:block;
-    border-radius:20px;
-    margin-top:0;
-    font-size:14pt;
-    cursor:pointer;
-    box-shadow:0 3px 2px 2px #860d0d;
-    background:#cc1818;
-    padding:16px 40px;
-    border:0;
-    border-top:2px solid #cc1818;
-    margin-bottom:-24px;
-    text-decoration:none;
-}
 .thai-legacy-order-block .button-container{position:relative}
 .thai-legacy-order-block .type-select{
     display:none;
@@ -72,10 +41,6 @@ body{margin:0}.top-wp-runtime{min-height:360px}.admin-bar .header{margin-top:32p
     font-size:14pt;
     padding:10px;
     border-radius:5px;
-}
-.thai-person-pricing .thai-qty-row{
-    float:none;
-    width:100%;
 }
 .thai-person-pricing .form-group{
     width:170px;
@@ -100,4 +65,57 @@ body{margin:0}.top-wp-runtime{min-height:360px}.admin-bar .header{margin-top:32p
 
 @media(max-width:1024px){
     .thai-legacy-order-block{width:100%!important;float:none!important}
+}
+
+
+/* Product page additions that replace dead uCoz backend widgets without changing the legacy layout. */
+.thai-product-page .addblockright img{max-width:350px;height:auto}
+.thai-legacy-reviews #acform{
+    background:#fafafa;
+    border:1px solid #cecece;
+    padding:2%;
+    margin-top:10px;
+}
+.thai-comment-login{margin:0 0 12px}
+.thai-comment-editor{display:flex;gap:12px;align-items:flex-start}
+.thai-comment-avatar{
+    width:46px;height:46px;flex:0 0 46px;
+    background:#d8d8d8;color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:24px;
+}
+.thai-comment-editor textarea{
+    width:100%;min-height:48px;resize:vertical;
+    border:1px solid #d8d8d8;background:#fff;
+    padding:10px;box-sizing:border-box;
+}
+.thai-comment-submit{
+    margin:10px 0 0 58px;
+    padding:8px 18px;
+    border:1px solid #c9c9c9;
+    border-radius:5px;
+    background:#eee;
+    color:#333;
+    cursor:pointer;
+}
+.thai-share-block{text-align:center;margin:22px 0 8px}
+.thai-share-icons{display:flex;gap:4px;justify-content:center;margin-top:6px}
+.thai-share-icons a{
+    min-width:22px;height:22px;padding:0 4px;
+    display:inline-flex;align-items:center;justify-content:center;
+    font:11px/1 Arial,sans-serif;color:#fff!important;
+    background:#2578c3;text-decoration:none;border-radius:2px;
+}
+.thai-share-icons a:nth-child(2){background:#f7931e}
+.thai-share-icons a:nth-child(3){background:#229ed9}
+.thai-share-icons a:nth-child(4){background:#25d366}
+.thai-legacy-reviews .uComment{margin:15px 0!important}
+.thai-legacy-reviews .cDate{float:right;color:#888;font-size:12px}
+.thai-legacy-reviews .cMessage{margin-top:8px}
+.thai-product-hero .infoBl .colIco{box-sizing:border-box}
+@media(max-width:1024px){
+    .thai-product-page .addblockright img{max-width:40%;display:block;margin:0 30%}
+}
+@media(max-width:640px){
+    .thai-product-page .addblockright img{max-width:80%;margin:0 10%}
 }
