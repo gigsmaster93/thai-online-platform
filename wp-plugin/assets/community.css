@@ -33,7 +33,7 @@
 .thai-guestbook .csTop{line-height:1.4}.thai-guestbook #pagesBlock1{font-size:16px}
 @media(max-width:500px){.thai-gb-breadcrumb,.thai-gb-breadcrumb tbody,.thai-gb-breadcrumb tr,.thai-gb-breadcrumb td{display:block;width:100%;margin:auto}.thai-photo-toolbar,.thai-photo-toolbar tbody,.thai-photo-toolbar tr,.thai-photo-toolbar td{display:block;width:100%}.thai-guestbook #pagesBlock1{float:none!important;margin-bottom:22.390625px}}
 
-.thai-forum-home{margin-top:-27px!important}.thai-forum-home table{font-size:14px}
+.thai-forum-home{margin-top:-27px!important}.thai-forum-home .gTable{font-size:14px}
 .thai-forum .forumNameTd{width:auto}.thai-forum .forumDescr{margin:0}.thai-forum .forumIcoTd{width:auto}.thai-forum .forumIcoTd img{width:auto;height:auto}
 .thai-forum .forum-stat{padding:20px}.thai-forum .gTableSubTop{padding:5px;font-size:12px}
 .thai-forum .gTableTop{padding:20px 0 20px 2%;background:#0094fe;font-size:14pt}
@@ -64,3 +64,6 @@
 .thai-forum #forum_filter{clear:right;float:right}
 .thai-forum #filter_by{float:left}
 .thai-forum #forum_filter #filter_by{margin-top:3px}
+
+.thai-forum .clear2{clear:right;float:none;width:100%}
+@media(max-width:600px){.thai-forum .ThrTopButtonsTbl .frmBtns{padding-bottom:26px}}
