@@ -20,6 +20,32 @@ function loadLegacyMedia(){
   });
 }
 
+function updateLegacyTotal(){
+  var total=0;
+  var hasQty=false;
+
+  $('.thai-person-qty').each(function(){
+    hasQty=true;
+    var qty=parseInt(this.value||'0',10);
+    var price=parseFloat($(this).attr('data-price')||'0');
+    if(!isFinite(qty)||qty<0)qty=0;
+    if(!isFinite(price))price=0;
+    total+=qty*price;
+  });
+
+  if(!hasQty){
+    var $variant=$('#thai-tour-variant');
+    if($variant.length){
+      total=parseFloat($variant.val()||'0');
+      if(!isFinite(total))total=0;
+    }
+  }
+
+  if(total>0 || hasQty){
+    $('#total > span').text(total.toFixed(2)+'฿');
+  }
+}
+
 function bindLegacyProduct(){
   $('.contact-messenger').off('click.thai').on('click.thai',function(e){
     e.preventDefault();
@@ -43,10 +69,27 @@ function bindLegacyProduct(){
     if(this.value)window.location.href=this.value;
   });
 
-  $('#thai-tour-variant').off('change.thai').on('change.thai',function(){
-    var n=parseFloat(this.value||0);
-    if(!isFinite(n))return;
-    $('#total > span').text(n.toFixed(2)+'฿');
+  $('#thai-tour-variant').off('change.thai').on('change.thai',updateLegacyTotal);
+
+  $('.thai-person-qty').off('change.thai input.thai').on('change.thai input.thai',function(){
+    var n=parseInt(this.value||'0',10);
+    this.value=String(isFinite(n)&&n>=0?n:0);
+    updateLegacyTotal();
+  });
+
+  $('.thai-qty-row .button_inc').off('click.thai keydown.thai').on('click.thai keydown.thai',function(e){
+    if(e.type==='keydown' && e.key!=='Enter' && e.key!==' ')return;
+    if(e.type==='keydown')e.preventDefault();
+
+    var $input=$(this).siblings('.thai-person-qty');
+    var n=parseInt($input.val()||'0',10);
+    if(!isFinite(n)||n<0)n=0;
+
+    if($(this).hasClass('inc'))n++;
+    if($(this).hasClass('dec'))n=Math.max(0,n-1);
+
+    $input.val(n);
+    updateLegacyTotal();
   });
 
   $('#select-options').off('change.thai').on('change.thai',function(){
@@ -68,6 +111,8 @@ function bindLegacyProduct(){
     $('.basket.now').hide();
     $(this).closest('.type-select').addClass('hidden').removeClass('visible');
   });
+
+  updateLegacyTotal();
 }
 
 $(function(){
