@@ -55,3 +55,12 @@
 @media(max-width:600px){.thai-topic-extra{display:none}.thai-forum .postTdTop:first-child{width:auto!important;margin:0 -4px 10px 0}.thai-forum .posttdMessage{padding:10px 2px 2px}.thai-forum .postTdInfo{display:none}}
 
 .thai-forum .thai-forum-post-wrap{padding:0}
+
+/* uCoz forum base rules required by the preserved forum controls. */
+.thai-forum .forum-pages{list-style:none;margin:0;padding:0}
+.thai-forum .forum-pages li{display:inline-block;margin:2px 0}
+.thai-forum .forum-pages li.pagesInfo{padding-left:7px;padding-right:7px}
+.thai-forum #forum_filter form{float:left}
+.thai-forum #forum_filter{clear:right;float:right}
+.thai-forum #filter_by{float:left}
+.thai-forum #forum_filter #filter_by{margin-top:3px}
