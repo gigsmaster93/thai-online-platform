@@ -57,8 +57,6 @@ foreach (explode('%', str_replace('#%', '%', $variants_raw)) as $group_raw) {
     }
     if ($group) $variant_groups[] = $group;
 }
-$variants = [];
-
 $variants = $variant_groups[0] ?? [];
 $person_labels = get_post_meta($p->ID, '_thai_person_labels', true);
 if (!is_array($person_labels)) $person_labels = [];
@@ -276,6 +274,11 @@ $render_reviews = static function ($p) {
       <?php if ($comments): ?>
         <div id="allEntries">
           <?php foreach ($comments as $comment): ?>
+            <?php $legacy_review = get_comment_meta($comment->comment_ID, '_thai_legacy_template', true);
+            if ($legacy_review) {
+                echo str_replace(['THAI_COMMENT_BODY', 'THAI_COMMENT_AUTHOR'], [wp_kses_post($comment->comment_content), esc_html($comment->comment_author)], $legacy_review);
+                continue;
+            } ?>
             <div class="uComment cBlock1">
               <b><?php echo esc_html($comment->comment_author); ?></b>
               <span class="cDate"><?php echo esc_html(get_comment_date('d.m.Y H:i', $comment)); ?></span>
