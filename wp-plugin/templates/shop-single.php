@@ -279,14 +279,25 @@ $render_reviews = static function ($p) {
 
       <div id="postFormContent">
         <form method="post" id="acform" class="shop-com-add thai-comment-form" action="<?php echo esc_url(site_url('/wp-comments-post.php')); ?>">
-          <div class="thai-comment-login">Войдите:</div>
-          <div class="thai-comment-editor">
-            <div class="thai-comment-avatar"><i class="fa fa-user"></i></div>
-            <textarea name="comment" required placeholder="Оставьте ваш комментарий..."></textarea>
+          <div class="uForm uComForm">
+            <div class="uauth-small-links uauth-links-set1">
+              Войдите:
+              <span class="login-with local" aria-hidden="true"><i></i></span>
+            </div>
+            <div class="uComForm-inner">
+              <span class="ucf-avatar">
+                <img src="/wp-content/uploads/thai-live/noavatar.png" alt="avatar" width="50" height="50">
+              </span>
+              <div class="ucf-content ucf-start-content">
+                <ul class="uf-form ucf-form">
+                  <li><textarea class="uf-txt-input commFl js-start-txt" name="comment" required placeholder="Оставьте ваш комментарий..."></textarea></li>
+                  <li><button class="uf-btn" type="submit">Отправить</button></li>
+                </ul>
+              </div>
+            </div>
           </div>
           <input type="hidden" name="comment_post_ID" value="<?php echo esc_attr($p->ID); ?>">
           <input type="hidden" name="comment_parent" value="0">
-          <button type="submit" class="thai-comment-submit">Отправить</button>
         </form>
       </div>
 
