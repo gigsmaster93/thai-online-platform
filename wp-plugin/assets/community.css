@@ -41,3 +41,5 @@
 @media(max-width:600px){.thai-forum-home{margin-top:0!important}.thai-forum-nav,.thai-forum .forum-stat-update{display:none}.thai-forum .forumNameTd{font-size:14px}}
 
 .thai-gallery-sidebar a{display:inline;margin:0}.thai-gallery-sidebar .sidebar-popular a{display:block}.thai-gallery-sidebar .sidebar-popular img{object-fit:cover}.thai-gallery-sidebar{margin-top:0}
+
+.thai-gallery .photo-title{height:27px}.thai-forum .gTableSubTop{font-size:10px;padding:10px 0;text-align:center}
