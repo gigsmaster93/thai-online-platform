@@ -79,7 +79,7 @@ function loadLegacyMedia(){
   });
 }
 
-function updateLegacyTotal(){
+function updateLegacyTotal(showTotal){
   var total=0;
   var hasQty=false;
 
@@ -89,7 +89,10 @@ function updateLegacyTotal(){
     var price=parseFloat($(this).attr('data-price')||'0');
     if(!isFinite(qty)||qty<0)qty=0;
     if(!isFinite(price))price=0;
-    total+=qty*price;
+
+    var lineTotal=qty*price;
+    total+=lineTotal;
+    $(this).closest('.numbers-row').find('.thai-line-total').text(lineTotal.toFixed(2));
   });
 
   if(!hasQty){
@@ -100,8 +103,11 @@ function updateLegacyTotal(){
     }
   }
 
-  if(total>0 || hasQty){
-    $('#total > span').text(total.toFixed(2)+'฿');
+  var formatted=(Math.round(total)===total)?String(total):total.toFixed(2);
+  $('#total > span').text(formatted+' ฿');
+
+  if(showTotal){
+    $('#total').show();
   }
 }
 
@@ -184,12 +190,12 @@ function bindLegacyProduct(){
     if(this.value)window.location.href=this.value;
   });
 
-  $('#thai-tour-variant').off('change.thai').on('change.thai',updateLegacyTotal);
+  $('#thai-tour-variant').off('change.thai').on('change.thai',function(){ updateLegacyTotal(true); });
 
   $('.thai-person-qty').off('change.thai input.thai').on('change.thai input.thai',function(){
     var n=parseInt(this.value||'0',10);
     this.value=String(isFinite(n)&&n>=0?n:0);
-    updateLegacyTotal();
+    updateLegacyTotal(true);
   });
 
   $('.thai-qty-row .button_inc').off('click.thai keydown.thai').on('click.thai keydown.thai',function(e){
@@ -204,7 +210,7 @@ function bindLegacyProduct(){
     if($(this).hasClass('dec'))n=Math.max(0,n-1);
 
     $input.val(n);
-    updateLegacyTotal();
+    updateLegacyTotal(true);
   });
 
   $('#select-options').off('change.thai').on('change.thai',function(){
@@ -227,7 +233,7 @@ function bindLegacyProduct(){
     $(this).closest('.type-select').addClass('hidden').removeClass('visible');
   });
 
-  updateLegacyTotal();
+  updateLegacyTotal(false);
 }
 
 $(function(){
