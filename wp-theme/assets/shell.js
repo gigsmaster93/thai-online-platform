@@ -92,7 +92,9 @@ function updateLegacyTotal(showTotal){
 
     var lineTotal=qty*price;
     total+=lineTotal;
-    $(this).closest('.numbers-row').find('.thai-line-total').text(lineTotal.toFixed(2));
+    if(showTotal){
+      $(this).closest('.numbers-row').find('.thai-line-total').text(lineTotal.toFixed(2));
+    }
   });
 
   if(!hasQty){
@@ -103,10 +105,9 @@ function updateLegacyTotal(showTotal){
     }
   }
 
-  var formatted=(Math.round(total)===total)?String(total):total.toFixed(2);
-  $('#total > span').text(formatted+' ฿');
-
   if(showTotal){
+    var formatted=(Math.round(total)===total)?String(total):total.toFixed(2);
+    $('#total > span').text(formatted+' ฿');
     $('#total').show();
   }
 }
