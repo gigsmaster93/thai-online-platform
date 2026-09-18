@@ -53,3 +53,5 @@
 .thai-forum .eAttach{font-size:12px;margin-top:12px;overflow-wrap:anywhere}
 @media(max-width:834px){.thai-contact-page{margin-top:0!important}.thai-contact-page .content{width:100%}}
 @media(max-width:600px){.thai-topic-extra{display:none}.thai-forum .postTdTop:first-child{width:auto!important;margin:0 -4px 10px 0}.thai-forum .posttdMessage{padding:10px 2px 2px}.thai-forum .postTdInfo{display:none}}
+
+.thai-forum .thai-forum-post-wrap{padding:0}
