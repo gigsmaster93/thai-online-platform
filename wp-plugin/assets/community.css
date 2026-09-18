@@ -19,7 +19,7 @@
 .thai-gallery .photo-block{padding:5px;background:white;border-radius:5px;box-shadow:0 1px 4px #bbb}
 .thai-gallery .photo-block img{width:250px;height:200px;object-fit:cover;max-width:100%}
 .thai-gallery .ph-details{padding:8px;font-size:12px}.thai-gallery .thai-entry-toolbar{margin:0 0 4px;font-size:12px}
-.thai-forum.forumContent .gTable{width:100%;margin-top:40px}.thai-forum .forumNameTd{padding:20px;background:#fafafa;width:56%}
+.thai-forum .forumContent .gTable{width:100%;margin-top:40px}.thai-forum .forumNameTd{padding:20px;background:#fafafa;width:56%}
 .thai-forum .forumNameTd>a{font-size:16px}.thai-forum .forumDescr{margin:10px 0}.thai-forum .forumIcoTd{width:60px;text-align:center}
 .thai-forum .forumIcoTd img{width:45px;height:45px;object-fit:contain}.thai-forum .forum-stat{text-align:center;padding:12px;background:#fafafa}
 .thai-forum .gTableSubTop{background:#eee;padding:8px;font-size:12px}.thai-forum .gTableTop{padding:24px;text-transform:uppercase;font-size:20px}

@@ -30,7 +30,7 @@ $forum_switches=static function($pages,$page,$pattern,$suffix=''){
 };
 $crumbs=[];if($section){$sid=$section;$seen=[];while($sid&&isset($sections[$sid])&&!isset($seen[$sid])){$seen[$sid]=1;$crumbs[]=['id'=>$sid,'name'=>$sections[$sid]['name']];$sid=(int)($sections[$sid]['parent']??0);}$crumbs=array_reverse($crumbs);}
 get_header(); ?>
-<div class="page width clearfix thai-forum forumContent thai-forum-home">
+<div class="page width clearfix thai-forum thai-forum-home"><div class="forumContent">
 <table class="thai-forum-nav" border="0" cellpadding="0" height="30" cellspacing="0" width="100%"><tr><td align="right">[ <a href="/forum">Разделы форума</a> · <a href="/contact">Связаться с администрацией</a> ]</td></tr></table><br>
 <div class="ad-forum"><p style="text-align:center"><a href="https://affiliate.klook.com/redirect?aid=28346&amp;aff_adid=1164008&amp;k_site=https%3A%2F%2Fwww.klook.com%2F"><img src="/images/klook-on-good-page-horiz.png" alt="Pattaya excursions" title="Plan your holidays right now" style="width:60%"></a></p></div><br>
 <?php if($section&&$topic_id): ?>
@@ -81,5 +81,5 @@ foreach($comments as $c){$number++;$legacy=(int)get_comment_meta($c->comment_ID,
 <?php } ?></table></div></div>
 <?php TOP_Community::pagination(get_comments_number($post_id),20,$current_page,'/forum/'.$section.'-'.$topic_id.'-{page}');}wp_reset_postdata();endif; ?>
 <?php if($section)TOP_Community::forum_form($section,$topic_id); ?>
-</div>
+</div></div>
 <?php get_footer(); ?>
