@@ -1,18 +1,16 @@
 <?php
 if (!defined('ABSPATH')) exit;
 $section=(int)get_query_var('top_section');$topic_id=(int)get_query_var('top_id');$current_page=TOP_Community::page();$sections=get_option('thai_forum_sections',[]);
-$args=['post_type'=>'thai_forum_topic','post_status'=>'publish','posts_per_page'=>30,'paged'=>$current_page,'orderby'=>'meta_value_num','meta_key'=>'_thai_forum_updated','order'=>'DESC'];
+$args=['post_type'=>'thai_forum_topic','post_status'=>'publish','posts_per_page'=>50,'paged'=>$current_page,'orderby'=>'meta_value_num','meta_key'=>'_thai_forum_updated','order'=>'DESC'];
 if($topic_id){$args['meta_key']='_ucoz_forum_id';$args['meta_value']=$topic_id;$args['posts_per_page']=1;$args['paged']=1;}
 elseif($section){$args['meta_query']=[['key'=>'_thai_forum_section','value'=>$section]];}
 $q=($topic_id||$section)?new WP_Query($args):null;if($topic_id&&!$q->have_posts())status_header(404);
 get_header(); ?>
-<div class="page width clearfix thai-forum forumContent<?php if(!$section)echo ' thai-forum-home'; ?>">
-<?php if($section): ?><p><a href="/">Главная</a> &raquo; <a href="/forum">Форум</a><?php if(isset($sections[$section]))echo ' &raquo; '.esc_html($sections[$section]['name']); ?></p><?php else: ?>
+<div class="page width clearfix thai-forum forumContent thai-forum-home">
 <table class="thai-forum-nav" border="0" cellpadding="0" height="30" cellspacing="0" width="100%"><tr><td align="right">[ <a href="/forum">Разделы форума</a> · <a href="/contact">Связаться с администрацией</a> ]</td></tr></table><br>
 <div class="ad-forum"><p style="text-align:center"><a href="https://affiliate.klook.com/redirect?aid=28346&amp;aff_adid=1164008&amp;k_site=https%3A%2F%2Fwww.klook.com%2F"><img src="/images/klook-on-good-page-horiz.png" alt="Pattaya excursions" title="Plan your holidays right now" style="width:60%"></a></p></div><br>
-<?php endif; ?>
+<?php if($section): ?><div class="thai-forum-actions"><a href="#forum-form"><?php echo $topic_id?'Ответить':'Создать тему'; ?></a></div><div class="thai-forum-path"><a href="/forum">Форум</a> &raquo; <a href="/forum/<?php echo (int)$section; ?>"><?php echo esc_html($sections[$section]['name']??'Раздел'); ?></a></div><?php endif; ?>
 <?php if(!$topic_id): ?>
-<?php if($section)echo '<h1>'.esc_html($sections[$section]['name']??'Форум').'</h1>'; ?>
 <?php
 // Aggregate only published topics; moderation drafts do not affect public counters.
 global $wpdb;
@@ -38,13 +36,19 @@ foreach($groups as $group){
  echo '</table></div></div><br>';
 }
 ?>
-<?php if($q){echo '<table class="gTable" width="100%" cellspacing="1" cellpadding="8"><tr><th class="gTableTop">Тема</th><th class="gTableTop">Сообщений</th></tr>';while($q->have_posts()){$q->the_post();$tid=(int)get_post_meta(get_the_ID(),'_ucoz_forum_id',true);echo '<tr><td class="threadNametd"><a class="threadLink" href="/forum/'.$section.'-'.$tid.'-1">'.esc_html(get_the_title()).'</a></td><td class="threadPostTd">'.get_comments_number().'</td></tr>';}echo '</table>';TOP_Community::pagination($q->found_posts,30,$current_page,'/forum/'.$section.'-0-{page}');wp_reset_postdata();} ?>
-<?php else: while($q->have_posts()){$q->the_post(); ?>
-<h1><?php the_title(); ?></h1>
-<?php if(get_the_content())echo '<div class="postTable posttdMessage"><b>'.esc_html(get_post_meta(get_the_ID(),'_thai_forum_author',true)).'</b>'.wp_kses_post(wpautop(get_the_content())).'</div>'; $post_id=get_the_ID();$comments=get_comments(['post_id'=>$post_id,'status'=>'approve','orderby'=>'comment_date','order'=>'ASC','number'=>20,'offset'=>($current_page-1)*20]);
-foreach($comments as $c){ ?>
-<table class="postTable" width="100%" cellspacing="1" cellpadding="8" id="post<?php echo (int)get_comment_meta($c->comment_ID,'_ucoz_forum_post',true); ?>"><tr><td class="postTdTop" width="23%"><?php echo esc_html($c->comment_author); ?></td><td class="postTdTop"><?php echo esc_html(get_comment_date('d.m.Y H:i',$c)); ?></td></tr><tr><td class="posttdMessage" colspan="2"><?php echo wp_kses_post($c->comment_content); ?></td></tr></table>
-<?php }TOP_Community::pagination(get_comments_number($post_id),20,$current_page,'/forum/'.$section.'-'.$topic_id.'-{page}');}wp_reset_postdata();endif; ?>
+<?php if($q){ ?>
+<div class="gDivLeft"><div class="gDivRight"><table class="gTable forum-topics-table" width="100%" cellspacing="1" cellpadding="0"><tr><td class="gTableTop" colspan="6"><?php echo esc_html($sections[$section]['name']??'Темы'); ?></td></tr><tr><td class="gTableSubTop thai-topic-extra" width="8%"></td><td class="gTableSubTop">Тема</td><td class="gTableSubTop thai-topic-extra" width="7%">Ответы</td><td class="gTableSubTop thai-topic-extra" width="6%">Просмотры</td><td class="gTableSubTop thai-topic-extra" width="14%">Автор темы</td><td class="gTableSubTop thai-topic-extra" width="21%">Обновления</td></tr>
+<?php while($q->have_posts()){$q->the_post();$pid=get_the_ID();$tid=(int)get_post_meta($pid,'_ucoz_forum_id',true);$url='/forum/'.$section.'-'.$tid.'-1';$total=(int)get_comments_number($pid);$replies=get_the_content()?$total:max(0,$total-1);$last=get_comments(['post_id'=>$pid,'status'=>'approve','number'=>1,'orderby'=>'comment_date','order'=>'DESC']);$last=$last[0]??null;$views=get_post_meta($pid,'_thai_forum_views',true); ?>
+<tr><td class="threadIcoTd thai-topic-extra" align="center"><img src="/.s/img/fr/ic/1/f_norm_nonew.gif" alt=""></td><td class="threadNametd"><a class="threadLink" href="<?php echo esc_url($url); ?>"><?php the_title(); ?></a><div class="threadDescr"><?php echo esc_html(get_post_meta($pid,'_thai_forum_description',true)); ?></div></td><td class="threadPostTd thai-topic-extra" align="center"><?php echo $replies; ?></td><td class="threadViewTd thai-topic-extra" align="center"><?php echo $views!==''?(int)$views:'—'; ?></td><td class="threadAuthTd thai-topic-extra" align="center"><?php echo esc_html(get_post_meta($pid,'_thai_forum_author',true)); ?></td><td class="threadLastPostTd thai-topic-extra"><a href="<?php echo esc_url('/forum/'.$section.'-'.$tid.'-'.max(1,(int)ceil($total/20))); ?>"><?php echo esc_html($last?get_comment_date('d.m.Y H:i',$last):get_the_date('d.m.Y H:i')); ?></a><?php if($last)echo '<br>Сообщение от: '.esc_html($last->comment_author); ?></td></tr>
+<?php } ?></table></div></div>
+<?php TOP_Community::pagination($q->found_posts,50,$current_page,'/forum/'.$section.'-0-{page}');wp_reset_postdata();} ?>
+<?php else: while($q->have_posts()){$q->the_post();$post_id=get_the_ID(); ?>
+<div class="gDivLeft"><div class="gDivRight"><table class="gTable threadpage-posts-table" width="100%" cellspacing="1" cellpadding="0"><tr><td class="gTableTop"><span class="forum-title"><?php the_title(); ?></span></td></tr>
+<?php if(get_the_content()&&$current_page===1)echo '<tr><td class="thai-forum-post-wrap"><div class="ucoz-forum-post">'.wp_kses_post(wpautop(get_the_content())).'</div></td></tr>'; $comments=get_comments(['post_id'=>$post_id,'status'=>'approve','orderby'=>'comment_date','order'=>'ASC','number'=>20,'offset'=>($current_page-1)*20]);$number=($current_page-1)*20;
+foreach($comments as $c){$number++;$legacy=(int)get_comment_meta($c->comment_ID,'_ucoz_forum_post',true);$anchor=$legacy?'post'.$legacy:'comment'.$c->comment_ID;$avatar=get_comment_meta($c->comment_ID,'_thai_forum_avatar',true);$rank=get_comment_meta($c->comment_ID,'_thai_forum_rank',true);$attachments=get_comment_meta($c->comment_ID,'_thai_forum_attachments',true); ?>
+<tr id="<?php echo esc_attr($anchor); ?>"><td class="thai-forum-post-wrap"><table class="postTable" width="100%" cellspacing="1" cellpadding="2"><tr><td class="postTdTop" width="23%" align="center"><span class="postUser"><?php echo esc_html($c->comment_author); ?></span></td><td class="postTdTop">Дата: <?php echo esc_html(get_comment_date('d.m.Y H:i',$c)); ?> | Сообщение # <a href="#<?php echo esc_attr($anchor); ?>"><?php echo $number; ?></a></td></tr><tr><td class="postTdInfo" valign="top"><?php if($avatar)echo '<img class="userAvatar" src="'.esc_url($avatar).'" alt="'.esc_attr($c->comment_author).'">';if($rank)echo '<div class="postRankName">'.esc_html($rank).'</div>'; ?></td><td class="posttdMessage" valign="top"><span class="ucoz-forum-post"><?php echo wp_kses_post($c->comment_content); ?></span><?php echo wp_kses_post($attachments); ?></td></tr><tr><td class="postBottom"></td><td class="postBottom"><a href="#forum-form">Ответить</a> <a href="#land-full" style="float:right">Вверх</a></td></tr></table></td></tr>
+<?php } ?></table></div></div>
+<?php TOP_Community::pagination(get_comments_number($post_id),20,$current_page,'/forum/'.$section.'-'.$topic_id.'-{page}');}wp_reset_postdata();endif; ?>
 <?php if($section)TOP_Community::forum_form($section,$topic_id); ?>
 </div>
 <?php get_footer(); ?>
