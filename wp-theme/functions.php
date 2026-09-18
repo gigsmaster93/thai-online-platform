@@ -53,11 +53,59 @@ add_filter('redirect_canonical', function ($redirect_url, $requested_url) {
 
 add_filter('pre_get_document_title', function ($title) {
     $module = get_query_var('top_module');
+
     if ($module === 'shop_all') {
         return 'Все товары - Экскурсии Паттайя ' . wp_date('Y') . ' - Сервис поиска экскурсий в Таиланде';
     }
+
+    if ($module === 'shop_single') {
+        $ucoz_id = (int) get_query_var('top_id');
+        $posts = get_posts([
+            'post_type'      => 'thai_excursion',
+            'post_status'    => 'publish',
+            'meta_key'       => '_ucoz_shop_id',
+            'meta_value'     => $ucoz_id,
+            'posts_per_page' => 1,
+        ]);
+
+        if ($posts) {
+            $seo_title = (string) get_post_meta($posts[0]->ID, '_thai_seo_title', true);
+
+            if ($seo_title !== '') {
+                return $seo_title;
+            }
+
+            return get_the_title($posts[0]) . ' - Экскурсии Таиланд Паттайя ' . wp_date('Y') . ' прайс лист с ценами описаниями отзывами';
+        }
+    }
+
     return $title;
 }, 50);
+
+add_action('wp_head', function () {
+    if (get_query_var('top_module') !== 'shop_single') {
+        return;
+    }
+
+    $ucoz_id = (int) get_query_var('top_id');
+    $posts = get_posts([
+        'post_type'      => 'thai_excursion',
+        'post_status'    => 'publish',
+        'meta_key'       => '_ucoz_shop_id',
+        'meta_value'     => $ucoz_id,
+        'posts_per_page' => 1,
+    ]);
+
+    if (!$posts) {
+        return;
+    }
+
+    $description = (string) get_post_meta($posts[0]->ID, '_thai_seo_description', true);
+
+    if ($description !== '') {
+        echo '<meta name="description" content="' . esc_attr($description) . '">' . "\n";
+    }
+}, 20);
 
 /* Match the actual uCoz stylesheet stack instead of approximating it. */
 add_action('wp_enqueue_scripts', function () {
