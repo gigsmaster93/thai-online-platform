@@ -44,15 +44,7 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 }
 .thai-person-pricing .form-group{
     width:170px;
-    margin:0 auto 20px;
-}
-.thai-person-pricing .numbers-row{
-    display:flex;
-    align-items:center;
-}
-.thai-person-pricing .numbers-row>span{
-    margin-left:8px;
-    white-space:nowrap;
+    margin:auto;
 }
 .thai-legacy-reviews{
     clear:both;
@@ -69,7 +61,7 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 
 
 /* Product page additions that replace dead uCoz backend widgets without changing the legacy layout. */
-.thai-product-page .addblockright img{max-width:350px;height:auto}
+.thai-product-page .addblockright img{height:auto}
 .thai-legacy-reviews #acform{
     background:#fafafa;
     border:1px solid #cecece;
@@ -119,3 +111,28 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 @media(max-width:640px){
     .thai-product-page .addblockright img{max-width:80%;margin:0 10%}
 }
+
+
+/* Exact inline rules present on the original uCoz product page. */
+#dscr h2{
+    font-size:20px;
+    font-weight:500;
+    padding:0 0 0 29px;
+    text-shadow:1px 1px 2px silver;
+    background-image:url('/img/icons/thaflag1.png');
+    background-size:25px;
+    background-repeat:no-repeat;
+    background-position-y:top;
+}
+#dscr h3{
+    font-size:18px;
+    font-weight:500;
+    padding:0 0 0 27px;
+    text-shadow:1px 1px 2px silver;
+    background-image:url('/img/icons/thaflag1.png');
+    background-size:23px;
+    background-repeat:no-repeat;
+    background-position-y:top;
+}
+#dscr .slideout{display:none}
+.thai-legacy-order-block .basket.now{display:none}
