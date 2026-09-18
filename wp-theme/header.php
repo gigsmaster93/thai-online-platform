@@ -27,18 +27,18 @@ $tg = ltrim(get_theme_mod('thai_telegram', 'thaionlinetours'), '@');
       </div>
       <div class="clearfix right">
         <div id="top-head-text" class="left"><div id="tht-area">
-          <a href="#" id="tellnk"><span class="fa fa-phone top-text-icon"></span><span class="tht-up-text tohide">Позвонить</span></a>
+          <a href="#" id="tellnk"><span class="flaticon-phone-call top-text-icon"></span><span class="tht-up-text tohide">Позвонить</span></a>
           <div id="telblock" style="display:none;position:absolute">
-            <a href="tel:<?php echo esc_attr($phone); ?>"><span class="fa fa-phone top-text-icon"></span><span class="tht-up-text"><?php echo esc_html($phone); ?></span></a>
+            <a href="tel:<?php echo esc_attr($phone); ?>"><span class="flaticon-phone-call top-text-icon"></span><span class="tht-up-text"><?php echo esc_html($phone); ?></span></a>
             <a href="https://wa.me/<?php echo esc_attr($wa); ?>"><span class="tel-icos tel-wh top-text-icon"></span><span class="tht-up-text"><?php echo esc_html($phone); ?></span></a>
             <a href="viber://add?number=<?php echo esc_attr($wa); ?>"><span class="tel-icos tel-vib top-text-icon"></span><span class="tht-up-text"><?php echo esc_html($phone); ?></span></a>
             <a href="https://t.me/<?php echo esc_attr($tg); ?>"><span class="tel-icos tel-tg top-text-icon"></span><span class="tht-up-text">@<?php echo esc_html($tg); ?></span></a>
           </div>
-          <a href="mailto:<?php echo esc_attr($email); ?>" class="topmail"><span class="fa fa-envelope top-text-icon"></span><span class="tht-up-text tohide"><?php echo esc_html($email); ?></span></a>
+          <a href="mailto:<?php echo esc_attr($email); ?>" class="topmail"><span class="flaticon-envelope top-text-icon"></span><span class="tht-up-text tohide"><?php echo esc_html($email); ?></span></a>
         </div></div>
         <div id="top-head-manage" class="right clearfix">
-          <div id="shop-header-currency"><a href="#" class="utml bl"><span class="fa fa-language top-text-icon"></span><span class="tht-up-text tohide">Язык</span></a><div class="drop-area"><div class="drop-area-main"><div id="shop-currency"><div class="tac"><small>Выберите желаемый язык:</small></div><div id="newVals"><div id="curValue"><ul></ul></div><ul><li class="selected"><a href="<?php echo esc_url(home_url('/')); ?>"><div class="val">RU</div><div class="flag rub"></div></a></li><li><a href="https://thai-online.tours"><div class="val">EN</div><div class="flag usd"></div></a></li></ul></div></div></div></div></div>
-          <div id="shop-header-profile"><a href="#" class="utml bl"><span class="fa fa-user top-text-icon"></span><span class="tht-up-text tohide">Мой аккаунт</span></a><div class="drop-area"><div class="drop-area-main"><ul class="account-links"><?php if (is_user_logged_in()): ?><li><a href="<?php echo esc_url(admin_url('profile.php')); ?>">Профиль</a></li><li><a href="<?php echo esc_url(wp_logout_url(home_url('/'))); ?>">Выход</a></li><?php else: ?><li><a href="<?php echo esc_url(wp_login_url()); ?>">Вход</a></li><?php if (get_option('users_can_register')): ?><li><a href="<?php echo esc_url(wp_registration_url()); ?>">Регистрация</a></li><?php endif; ?><?php endif; ?></ul></div></div></div>
+          <div id="shop-header-currency"><a href="#" class="utml bl"><span class="flaticon-customer-service top-text-icon"></span><span class="tht-up-text tohide">Язык</span></a><div class="drop-area"><div class="drop-area-main"><div id="shop-currency"><div class="tac"><small>Выберите желаемый язык:</small></div><div id="newVals"><div id="curValue"><ul></ul></div><ul><li class="selected"><a href="<?php echo esc_url(home_url('/')); ?>"><div class="val">RU</div><div class="flag rub"></div></a></li><li><a href="https://thai-online.tours"><div class="val">EN</div><div class="flag usd"></div></a></li></ul></div></div></div></div></div>
+          <div id="shop-header-profile"><a href="#" class="utml bl"><span class="flaticon-avatar top-text-icon"></span><span class="tht-up-text tohide">Мой аккаунт</span></a><div class="drop-area"><div class="drop-area-main"><ul class="account-links"><?php if (is_user_logged_in()): ?><li><a href="<?php echo esc_url(admin_url('profile.php')); ?>">Профиль</a></li><li><a href="<?php echo esc_url(wp_logout_url(home_url('/'))); ?>">Выход</a></li><?php else: ?><li><a href="<?php echo esc_url(wp_login_url()); ?>">Вход</a></li><?php if (get_option('users_can_register')): ?><li><a href="<?php echo esc_url(wp_registration_url()); ?>">Регистрация</a></li><?php endif; ?><?php endif; ?></ul></div></div></div>
         </div>
       </div>
       <?php if (!is_front_page()): ?>
