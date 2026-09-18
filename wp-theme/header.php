@@ -59,7 +59,7 @@ $tg = ltrim(get_theme_mod('thai_telegram', 'thaionlinetours'), '@');
   <?php endif; ?>
 </header>
 <?php
-$land_classes = get_query_var('top_module') === 'shop_single'
+$land_classes = (get_query_var('top_module') === 'shop_single' || get_query_var('top_community'))
     ? 'page-full clearfix top-wp-runtime'
     : 'page-full width clearfix top-wp-runtime';
 ?>

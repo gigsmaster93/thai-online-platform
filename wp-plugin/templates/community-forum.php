@@ -6,14 +6,30 @@ if($topic_id){$args['meta_key']='_ucoz_forum_id';$args['meta_value']=$topic_id;$
 elseif($section){$args['meta_query']=[['key'=>'_thai_forum_section','value'=>$section]];}
 $q=($topic_id||$section)?new WP_Query($args):null;if($topic_id&&!$q->have_posts())status_header(404);
 get_header(); ?>
-<div class="page width clearfix thai-forum">
+<div class="page width clearfix thai-forum forumContent">
 <p><a href="/">Главная</a> &raquo; <a href="/forum">Форум</a><?php if(isset($sections[$section]))echo ' &raquo; '.esc_html($sections[$section]['name']); ?></p>
 <?php if(!$topic_id): ?>
 <h1><?php echo esc_html($sections[$section]['name']??'Форум'); ?></h1>
-<table class="gTable forum-section-table" width="100%" cellspacing="1" cellpadding="8">
-<tr><th class="gTableTop">Раздел</th></tr>
-<?php foreach($sections as $sid=>$s){if((int)$s['parent']!==$section)continue;echo '<tr><td class="forumNameTd"><a class="forum" href="/forum/'.(int)$sid.'">'.esc_html($s['name']).'</a><div class="forumDescr">'.wp_kses_post($s['description']).'</div></td></tr>';} ?>
-</table>
+<?php
+// Aggregate only published topics; moderation drafts do not affect public counters.
+global $wpdb;
+$stats=[];
+foreach($wpdb->get_results("SELECT m.meta_value section, COUNT(*) topics, SUM(p.comment_count) replies FROM {$wpdb->posts} p JOIN {$wpdb->postmeta} m ON m.post_id=p.ID AND m.meta_key='_thai_forum_section' WHERE p.post_type='thai_forum_topic' AND p.post_status='publish' GROUP BY m.meta_value") as $row)$stats[(int)$row->section]=$row;
+$groups=$section?[$section]:array_unique(array_merge([3,37,4,5,13,51,1],array_keys(array_filter($sections,static function($s){return !(int)$s['parent'];}))));
+foreach($groups as $group){
+ if(!isset($sections[$group]))continue;
+ $children=array_filter($sections,static function($s)use($group){return (int)$s['parent']===$group;});if(!$children)continue;
+ echo '<table class="gTable forum-section-table" cellspacing="1" cellpadding="0"><tr><td class="gTableTop" colspan="4"><a class="catLink forum-title" href="/forum/'.(int)$group.'">'.esc_html($sections[$group]['name']).'</a></td></tr><tr><td class="gTableSubTop forum-stat-head"></td><td class="gTableSubTop">Форум</td><td class="gTableSubTop forum-stat-head">Темы</td><td class="gTableSubTop forum-stat-head">Ответы</td></tr>';
+ foreach($children as $sid=>$s){
+  echo '<tr><td class="forumIcoTd"><img src="/img/th_ico.png" alt=""></td><td class="forumNameTd"><a class="forum" href="/forum/'.(int)$sid.'">'.esc_html($s['name']).'</a>';
+  if(!filter_var($s['description'],FILTER_VALIDATE_URL))echo '<div class="forumDescr">'.wp_kses_post($s['description']).'</div>';
+  $sub=[];foreach($sections as $cid=>$child)if((int)$child['parent']===(int)$sid)$sub[]='<a href="/forum/'.(int)$cid.'">'.esc_html($child['name']).'</a>';
+  if($sub)echo '<div class="forumDescr">Подфорумы: '.implode(', ',$sub).'</div>';
+  echo '</td><td class="forum-stat">'.(int)($stats[$sid]->topics??0).'</td><td class="forum-stat">'.(int)($stats[$sid]->replies??0).'</td></tr>';
+ }
+ echo '</table>';
+}
+?>
 <?php if($q){echo '<table class="gTable" width="100%" cellspacing="1" cellpadding="8"><tr><th class="gTableTop">Тема</th><th class="gTableTop">Сообщений</th></tr>';while($q->have_posts()){$q->the_post();$tid=(int)get_post_meta(get_the_ID(),'_ucoz_forum_id',true);echo '<tr><td class="threadNametd"><a class="threadLink" href="/forum/'.$section.'-'.$tid.'-1">'.esc_html(get_the_title()).'</a></td><td class="threadPostTd">'.get_comments_number().'</td></tr>';}echo '</table>';TOP_Community::pagination($q->found_posts,30,$current_page,'/forum/'.$section.'-0-{page}');wp_reset_postdata();} ?>
 <?php else: while($q->have_posts()){$q->the_post(); ?>
 <h1><?php the_title(); ?></h1>

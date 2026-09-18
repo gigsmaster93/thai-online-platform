@@ -17,7 +17,7 @@ class TOP_Community {
         add_shortcode('thai_contact_form', [__CLASS__, 'contact_form']);
         add_filter('redirect_canonical', static function($url){return get_query_var('top_community') ? false : $url;});
         add_action('wp_enqueue_scripts', static function(){
-            if(get_query_var('top_community') || is_page('contact')) wp_enqueue_style('thai-community',plugins_url('assets/community.css',TOP_PLUGIN_FILE),[], '1.0');
+            if(get_query_var('top_community') || is_page('contact')) wp_enqueue_style('thai-community',plugins_url('assets/community.css',TOP_PLUGIN_FILE),[], '4.4.27');
             if(is_page('contact')) wp_enqueue_style('thai-contact-legacy',home_url('/css/pages/1.css'),[], '52535335');
         },1000);
     }
@@ -57,7 +57,7 @@ class TOP_Community {
     public static function pagination($total,$per,$page,$url) {
         $pages=(int)ceil($total/$per);if($pages<2)return;
         echo '<nav class="thai-community-pages" aria-label="Страницы">';
-        foreach(array_unique([1,max(1,$page-1),$page,min($pages,$page+1),$pages]) as $n) {
+        foreach(($pages<=10?range(1,$pages):array_unique([1,max(1,$page-1),$page,min($pages,$page+1),$pages])) as $n) {
             echo $n===$page?'<b class="swchItemA">'.$n.'</b>':'<a class="swchItem" href="'.esc_url(str_replace('{page}',(string)$n,$url)).'">'.$n.'</a>';
         }
         echo '</nav>';
