@@ -3,6 +3,8 @@ if (!defined('ABSPATH')) exit;
 class TOP_Community {
     public static function boot() {
         add_action('init', [__CLASS__, 'routes'], 30);
+        add_action('admin_post_nopriv_thai_booking', [__CLASS__, 'submit_booking']);
+        add_action('admin_post_thai_booking', [__CLASS__, 'submit_booking']);
         add_action('admin_post_nopriv_thai_forum', [__CLASS__, 'submit_forum']);
         add_action('admin_post_thai_forum', [__CLASS__, 'submit_forum']);
         add_filter('template_include', [__CLASS__, 'template'], 100);
@@ -111,6 +113,28 @@ class TOP_Community {
         echo '<input type="hidden" name="action" value="thai_forum"><input type="hidden" name="section" value="'.(int)$section.'"><input type="hidden" name="topic" value="'.(int)$topic.'"><p hidden><input name="website" tabindex="-1" autocomplete="off" aria-label="Website"></p><p><label>Ваше имя<br><input name="name" maxlength="100" required></label></p>';
         if(!$topic)echo '<p><label>Название темы<br><input name="title" maxlength="200" required></label></p>';
         echo '<p><label>Сообщение<br><textarea name="message" rows="6" minlength="5" maxlength="10000" required></textarea></label></p><p>Сообщения публикуются после проверки модератором.</p><button type="submit">Отправить</button></form>';
+    }
+    public static function submit_booking() {
+        $product=get_post(absint($_POST['product']??0));
+        if(!$product||$product->post_type!=='thai_excursion'||$product->post_status!=='publish')wp_die('Экскурсия не найдена.', '', ['response'=>404]);
+        if(empty($_POST['policy']))wp_die('Подтверди согласие с пользовательским соглашением.', '', ['response'=>400]);
+        $labels=['date'=>'Дата выезда','quantity'=>'Количество человек','hotel'=>'Отель','room'=>'Комната','email'=>'E-mail','phone'=>'Телефон','wishes'=>'Пожелания'];$values=[];$lines=[];
+        foreach($labels as $key=>$label){$values[$key]=sanitize_textarea_field(wp_unslash($_POST[$key]??''));$lines[]=$label.': '.$values[$key];}
+        if(!preg_match('/^\d{4}-\d{2}-\d{2}$/',$values['date'])||!ctype_digit($values['quantity'])||(int)$values['quantity']<1||(int)$values['quantity']>1000||!$values['phone'])wp_die('Заполни дату, количество человек и телефон.', '', ['response'=>400]);
+        if($values['email']&&!is_email($values['email']))wp_die('Укажи корректный E-mail.', '', ['response'=>400]);
+        $_POST['name']=wp_slash('Заявка: '.mb_substr($product->post_title,0,85));$_POST['message']=wp_slash(implode("\n",$lines));
+        [$name,$body]=self::validate_submission('thai_booking');
+        $saved=wp_insert_post(wp_slash(['post_type'=>'thai_message','post_status'=>'private','post_title'=>$name,'post_content'=>$body,'meta_input'=>['_thai_product'=>$product->ID,'_thai_email'=>$values['email']]]),true);
+        if(!$saved||is_wp_error($saved))wp_die('Не удалось сохранить заявку.', '', ['response'=>500]);
+        wp_mail('info@thai-online.org',$name,$body,$values['email']?['Reply-To: '.$values['email']]:[]);
+        $id=get_post_meta($product->ID,'_ucoz_shop_id',true);
+        wp_safe_redirect(home_url('/shop/'.(int)$id.'/desc/'.$product->post_name.'?booked=1#calculatey'));exit;
+    }
+    public static function booking_form($product) {
+        if(isset($_GET['booked']))echo '<p role="status">Заявка принята. Мы свяжемся с тобой для подтверждения.</p>';
+        echo '<form class="thai-booking-form" method="post" action="'.esc_url(admin_url('admin-post.php')).'">';wp_nonce_field('thai_booking');
+        echo '<input type="hidden" name="action" value="thai_booking"><input type="hidden" name="product" value="'.(int)$product->ID.'"><p hidden><input name="website" tabindex="-1" autocomplete="off" aria-label="Website"></p>';
+        echo '<input type="date" name="date" aria-label="Дата выезда" required style="width:95%"><br><br><input type="number" name="quantity" placeholder="Количество человек" aria-label="Количество человек" min="1" max="1000" required style="width:95%;margin-bottom:5px"><br><input name="hotel" placeholder="Отель" aria-label="Отель" maxlength="200" style="width:95%;margin-bottom:5px"><br><input name="room" placeholder="Комната" aria-label="Комната" maxlength="50" style="width:95%"><br><br><input type="email" name="email" placeholder="E-mail" aria-label="E-mail" maxlength="200" style="width:95%;margin-bottom:5px"><br><input type="tel" name="phone" placeholder="Телефон" aria-label="Телефон" maxlength="60" required style="width:95%"><br><br><textarea name="wishes" rows="7" placeholder="Пожелания" aria-label="Пожелания" maxlength="5000" style="width:95%"></textarea><br><br><label><input type="checkbox" name="policy" value="1" required> <a href="/index/0-4" target="_blank" rel="noopener" style="color:green">Согласен с Пользовательским соглашением</a></label><br><br><input type="submit" value="Заказать!" style="width:100%"></form>';
     }
     public static function contact_form() {
         ob_start();

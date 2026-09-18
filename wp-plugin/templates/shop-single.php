@@ -110,19 +110,29 @@ $is_person_pricing = false;
 if (count($variants) >= 2) {
     $matched = 0;
     foreach ($variants as $variant) {
-        if (preg_match('/взрос|adult|дет|child|инф|infant/iu', $variant['label'])) {
+        if (preg_match('/взрос|adult|дет|реб|млад|child|инф|infant/iu', $variant['label'])) {
             $matched++;
         }
     }
     $is_person_pricing = ($matched >= 2 || (count($variant_groups) > 1 && count($variants) >= 2));
 }
 
-$render_order_block = static function ($p, $ucoz_id, $price, $price_text, $variants, $is_person_pricing) use ($variant_groups, $person_labels) {
+$is_person_pricing = $is_person_pricing || (!empty($person_labels) && !empty($variants));
+$is_booking_form = get_post_meta($p->ID, '_thai_order_type', true) === 'form';
+$hero_price_label = 'Взрослый';
+if (!in_array($ucoz_id,[510,511],true) && $variant_groups) {
+    $lowest = $variant_groups[0][0];
+    foreach($variant_groups as $group) if($group[0]['price'] < $lowest['price']) $lowest=$group[0];
+    $hero_price_label=$lowest['label'];
+}
+
+$render_order_block = static function ($p, $ucoz_id, $price, $price_text, $variants, $is_person_pricing) use ($variant_groups, $person_labels, $is_booking_form) {
     $product_url = home_url('/shop/' . $ucoz_id . '/desc/' . $p->post_name);
     ?>
     <div class="rightbl thai-legacy-order-block" style="user-select:none;">
       <div class="right" id="calculatey">
         <div class="innerBlockY">
+          <?php if($is_booking_form): ?><h2 style="text-align:center;">Заказать</h2><?php TOP_Community::booking_form($p); else: ?>
           <h2 style="text-align:center;text-shadow:1px 1px 2px silver;">Узнать стоимость</h2>
 
           <?php if (count($variant_groups) > 1): ?>
@@ -214,6 +224,7 @@ $render_order_block = static function ($p, $ucoz_id, $price, $price_text, $varia
               </select>
             </div>
           </div>
+          <?php endif; ?>
         </div>
 
         <br>
@@ -399,7 +410,7 @@ $render_recommendations = static function ($ucoz_ids) {
 
     <div class="page width clearfix infoBl">
       <?php if ($quick): ?>
-        <?php $info_width = 'calc(' . (100 / (count($quick) + 1)) . '% - 1px)'; ?>
+        <?php $info_width = 'calc(' . (100 / (count($quick) + ($variants ? 1 : 0))) . '% - 1px)'; ?>
         <?php foreach ($quick as $fact): ?>
           <div class="colIco left" style="width:<?php echo esc_attr($info_width); ?>;margin-left:0;margin-right:0;padding:0;">
             <?php if ($fact['icon'] !== ''): ?><i class="fa fa-<?php echo esc_attr(sanitize_html_class($fact['icon'])); ?>"></i><?php endif; ?>
@@ -408,11 +419,11 @@ $render_recommendations = static function ($ucoz_ids) {
           </div>
         <?php endforeach; ?>
 
-        <div class="colIco right" style="width:<?php echo esc_attr($info_width); ?>;margin-left:0;margin-right:0;padding:0;">
+        <?php if($variants): ?><div class="colIco right" style="width:<?php echo esc_attr($info_width); ?>;margin-left:0;margin-right:0;padding:0;">
           <i class="fa fa-male"></i>
-          <div class="hdr">Взрослый</div>
+          <div class="hdr"><?php echo esc_html($hero_price_label); ?></div>
           <div class="cont">от <?php echo esc_html(number_format((float) $price, 0, '.', '')); ?>฿</div>
-        </div>
+        </div><?php endif; ?>
       <?php endif; ?>
     </div>
   </div>

@@ -3,7 +3,7 @@ Theme Name: Thai Online Theme
 Theme URI: https://thai-online.org
 Author: Thai Online
 Description: Original Thai Online visual layer with WordPress-managed content.
-Version: 4.4.23
+Version: 4.4.24
 Text Domain: thai-online-theme
 */
 
@@ -268,3 +268,6 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 .thai-legacy-reviews .uComment:after,.thai-legacy-reviews .uComment:before{content:" ";display:table}
 .thai-legacy-reviews .uComment:after{clear:both}
 .thai-legacy-reviews .report-spam-wrap{display:none}
+
+.thai-product-hero .infoBl .colIco .txt{padding-left:0}
+.thai-product-page .thai-booking-form{text-align:center}.thai-booking-form input:not([type=checkbox]),.thai-booking-form textarea{max-width:95%;box-sizing:border-box}
