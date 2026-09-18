@@ -3,6 +3,8 @@ if (!defined('ABSPATH')) exit;
 class TOP_Community {
     public static function boot() {
         add_action('init', [__CLASS__, 'routes'], 30);
+        add_action('admin_post_nopriv_thai_forum', [__CLASS__, 'submit_forum']);
+        add_action('admin_post_thai_forum', [__CLASS__, 'submit_forum']);
         add_filter('template_include', [__CLASS__, 'template'], 100);
         add_filter('document_title_parts', [__CLASS__, 'title'], 100);
         add_action('admin_post_nopriv_thai_contact', [__CLASS__, 'submit_contact']);
@@ -18,6 +20,7 @@ class TOP_Community {
         },1000);
     }
     public static function routes() {
+        add_post_type_support('thai_forum_topic','comments');
         register_taxonomy('thai_photo_album', ['thai_photo'], ['label'=>'Photo Albums','hierarchical'=>true,'public'=>true,'rewrite'=>false,'show_in_rest'=>true]);
         register_post_type('thai_message', ['label'=>'Support Inbox','public'=>false,'show_ui'=>true,'show_in_menu'=>'thai-online','supports'=>['title','editor'],'capability_type'=>'post']);
         add_rewrite_tag('%top_community%', '([^&]+)');
@@ -81,6 +84,33 @@ class TOP_Community {
         $id=wp_insert_post(wp_slash(['post_type'=>'thai_guestbook','post_status'=>'pending','post_title'=>$name,'post_content'=>$body,'meta_input'=>['_thai_live_review'=>1]]),true);
         if(is_wp_error($id))wp_die('Не удалось сохранить отзыв.', '', ['response'=>500]);
         wp_safe_redirect(home_url('/gb?submitted=1#sign'));exit;
+    }
+    public static function submit_forum() {
+        [$name,$body]=self::validate_submission('thai_forum');
+        $section=absint($_POST['section']??0);$topic=absint($_POST['topic']??0);
+        $sections=get_option('thai_forum_sections',[]);
+        if(!isset($sections[$section]))wp_die('Раздел не найден.', '', ['response'=>404]);
+        if($topic){
+            $ids=get_posts(['post_type'=>'thai_forum_topic','post_status'=>'publish','meta_key'=>'_ucoz_forum_id','meta_value'=>$topic,'numberposts'=>1,'fields'=>'ids']);
+            if(!$ids||(int)get_post_meta($ids[0],'_thai_forum_section',true)!==$section)wp_die('Тема не найдена.', '', ['response'=>404]);
+            $saved=wp_insert_comment(['comment_post_ID'=>$ids[0],'comment_author'=>$name,'comment_content'=>$body,'comment_approved'=>0,'comment_type'=>'comment']);
+        }else{
+            $title=sanitize_text_field(wp_unslash($_POST['title']??''));
+            if(!$title||mb_strlen($title)>200)wp_die('Укажи название темы.', '', ['response'=>400]);
+            $saved=wp_insert_post(wp_slash(['post_type'=>'thai_forum_topic','post_status'=>'pending','post_title'=>$title,'post_content'=>$body,'meta_input'=>['_thai_forum_section'=>$section,'_thai_forum_author'=>$name,'_thai_forum_updated'=>time()]]),true);
+            if(!is_wp_error($saved)&&$saved)update_post_meta($saved,'_ucoz_forum_id',1000000000+$saved);
+        }
+        if(!$saved||is_wp_error($saved))wp_die('Не удалось сохранить сообщение.', '', ['response'=>500]);
+        wp_safe_redirect(home_url('/forum/'.($topic?$section.'-'.$topic.'-1':$section).'?submitted=1#forum-form'));exit;
+    }
+    public static function forum_form($section,$topic=0) {
+        if(!isset(get_option('thai_forum_sections',[])[$section]))return;
+        if(isset($_GET['submitted']))echo '<p role="status">Сообщение отправлено на проверку и появится после одобрения.</p>';
+        echo '<form id="forum-form" class="thai-forum-form" method="post" action="'.esc_url(admin_url('admin-post.php')).'"><h2>'.($topic?'Ответить в теме':'Создать тему').'</h2>';
+        wp_nonce_field('thai_forum');
+        echo '<input type="hidden" name="action" value="thai_forum"><input type="hidden" name="section" value="'.(int)$section.'"><input type="hidden" name="topic" value="'.(int)$topic.'"><p hidden><input name="website" tabindex="-1" autocomplete="off" aria-label="Website"></p><p><label>Ваше имя<br><input name="name" maxlength="100" required></label></p>';
+        if(!$topic)echo '<p><label>Название темы<br><input name="title" maxlength="200" required></label></p>';
+        echo '<p><label>Сообщение<br><textarea name="message" rows="6" minlength="5" maxlength="10000" required></textarea></label></p><p>Сообщения публикуются после проверки модератором.</p><button type="submit">Отправить</button></form>';
     }
     public static function contact_form() {
         ob_start();

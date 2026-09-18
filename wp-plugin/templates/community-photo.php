@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) exit;
 $photo_id=(int)get_query_var('top_id');$album=(int)get_query_var('top_section');$page=TOP_Community::page();
 $term=$album?get_term_by('slug','album-'.$album,'thai_photo_album'):null;
 $args=['post_type'=>'thai_photo','post_status'=>'publish','posts_per_page'=>50,'paged'=>$page,'orderby'=>'title','order'=>'ASC'];
-if($photo_id){$args['meta_key']='_ucoz_photo_id';$args['meta_value']=$photo_id;$args['posts_per_page']=1;}
+if($photo_id){$args['meta_key']='_ucoz_photo_id';$args['meta_value']=$photo_id;$args['posts_per_page']=1;$args['paged']=1;}
 elseif($term)$args['tax_query']=[['taxonomy'=>'thai_photo_album','terms'=>$term->term_id,'include_children'=>true]];
 $q=new WP_Query($args);if($photo_id&&!$q->have_posts())status_header(404);
 get_header(); ?>

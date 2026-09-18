@@ -34,7 +34,7 @@ if($mode==='gallery'){
  $sections=json_decode(file_get_contents($root.'forum-sections-prepared.json'),true);update_option('thai_forum_sections',$sections,false);
  $existing=top_existing_ids('thai_forum_topic','_ucoz_forum_id');$rows=json_decode(file_get_contents($root.'forum-prepared.json'),true);$topics=0;$messages=0;
  foreach($rows as $r){
-  if(isset($existing[$r['id']])){$id=$existing[$r['id']];}else{
+  if(isset($existing[$r['id']])){$id=$existing[$r['id']];update_post_meta($id,'_thai_forum_updated',$r['updated']);}else{
    $id=wp_insert_post(wp_slash(['post_type'=>'thai_forum_topic','post_status'=>'publish','post_title'=>$r['title'],'post_content'=>'','post_date'=>$r['date'],'meta_input'=>['_ucoz_forum_id'=>$r['id'],'_thai_forum_section'=>$r['section'],'_thai_forum_updated'=>$r['updated'],'_thai_migration_batch'=>'20260918']]),true);
    if(is_wp_error($id))WP_CLI::error($id->get_error_message());$existing[$r['id']]=$id;$topics++;
   }
