@@ -50,11 +50,6 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
     clear:both;
     padding-top:0;
 }
-.thai-product-page #recommended_products{
-    clear:both;
-    padding-top:5px;
-    margin-top:139.6px;
-}
 
 @media(max-width:1024px){
     .thai-legacy-order-block{width:100%!important;float:none!important}
@@ -67,9 +62,11 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
     background:#fafafa;
     border:1px solid #cecece;
     padding:2%;
-    margin-top:10px;
+    margin:0;
+    min-height:230.375px;
+    box-sizing:border-box;
 }
-.thai-comment-login{margin:0 0 12px}
+.thai-comment-login{margin:10px 0 12px}
 .thai-comment-editor{display:flex;gap:12px;align-items:flex-start}
 .thai-comment-avatar{
     width:46px;height:46px;flex:0 0 46px;
@@ -91,12 +88,16 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
     color:#333;
     cursor:pointer;
 }
-.thai-share-block{text-align:center;margin:22px 0 8px}
-.thai-share-icons{display:flex;gap:4px;justify-content:center;margin-top:6px}
+.thai-share-legacy{height:78px;position:relative;text-align:center;width:100%}
+.thai-share-legacy .sharetxt{width:100%;height:54px;line-height:54px;margin-right:20px}
+.thai-share-icons{
+    position:absolute;left:0;right:0;top:54px;height:24px;
+    display:flex;gap:4px;justify-content:center;margin:0
+}
 .thai-share-icons a{
-    min-width:22px;height:22px;padding:0 4px;
+    width:24px;height:24px;min-width:24px;padding:0;
     display:inline-flex;align-items:center;justify-content:center;
-    font:11px/1 Arial,sans-serif;color:#fff!important;
+    font:10px/1 Arial,sans-serif;color:#fff!important;
     background:#2578c3;text-decoration:none;border-radius:2px;
 }
 .thai-share-icons a:nth-child(2){background:#f7931e}
@@ -138,8 +139,3 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 #dscr .slideout{display:none}
 .thai-legacy-order-block .basket.now{display:none}
 
-.thai-product-page .addblockright img{
-    position:relative;
-    left:-10px;
-    top:33.4px;
-}
