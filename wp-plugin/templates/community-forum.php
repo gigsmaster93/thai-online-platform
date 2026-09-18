@@ -1,15 +1,46 @@
 <?php
 if (!defined('ABSPATH')) exit;
 $section=(int)get_query_var('top_section');$topic_id=(int)get_query_var('top_id');$current_page=TOP_Community::page();$sections=get_option('thai_forum_sections',[]);
+$forum_q=$topic_id?'':sanitize_text_field(wp_unslash($_GET['forum_q']??''));$forum_by=max(1,min(4,(int)($_GET['forum_by']??1)));
 $args=['post_type'=>'thai_forum_topic','post_status'=>'publish','posts_per_page'=>50,'paged'=>$current_page,'orderby'=>'meta_value_num','meta_key'=>'_thai_forum_updated','order'=>'DESC'];
 if($topic_id){$args['meta_key']='_ucoz_forum_id';$args['meta_value']=$topic_id;$args['posts_per_page']=1;$args['paged']=1;}
-elseif($section){$args['meta_query']=[['key'=>'_thai_forum_section','value'=>$section]];}
+elseif($section){
+    $args['meta_query']=[['key'=>'_thai_forum_section','value'=>$section]];
+    if($forum_q!==''){
+        if($forum_by===2)$args['meta_query'][]=['key'=>'_thai_forum_description','value'=>$forum_q,'compare'=>'LIKE'];
+        elseif($forum_by===3)$args['meta_query'][]=['key'=>'_thai_forum_author','value'=>$forum_q,'compare'=>'LIKE'];
+        elseif($forum_by===4){
+            global $wpdb;$like='%'.$wpdb->esc_like($forum_q).'%';
+            $reply_posts=$wpdb->get_col($wpdb->prepare("SELECT DISTINCT comment_post_ID FROM {$wpdb->comments} WHERE comment_approved='1' AND comment_author LIKE %s",$like));
+            $args['post__in']=$reply_posts?array_map('intval',$reply_posts):[0];
+        }else $args['s']=$forum_q;
+    }
+}
 $q=($topic_id||$section)?new WP_Query($args):null;if($topic_id&&!$q->have_posts())status_header(404);
+$topic_post=($topic_id&&$q&&$q->posts)?$q->posts[0]:null;
+$forum_total_pages=$topic_post?max(1,(int)ceil(get_comments_number($topic_post->ID)/20)):($q?max(1,(int)ceil($q->found_posts/50)):1);
+$forum_page_url=$topic_id?'/forum/'.$section.'-'.$topic_id.'-{page}':'/forum/'.$section.'-0-{page}';
+$filter_suffix=(!$topic_id&&$forum_q!=='')?'?'.http_build_query(['forum_by'=>$forum_by,'forum_q'=>$forum_q]):'';
+$forum_switches=static function($pages,$page,$pattern,$suffix=''){
+    echo '<ul class="switches switchesTbl forum-pages"><li class="pagesInfo">Страница <span class="curPage">'.(int)$page.'</span> из <span class="numPages">'.(int)$pages.'</span></li>';
+    $nums=$pages<=7?range(1,$pages):array_unique([1,max(1,$page-1),$page,min($pages,$page+1),$pages]);sort($nums);$prev=0;
+    foreach($nums as $n){if($prev&&$n>$prev+1)echo '<li class="switch"><span>…</span></li>';$href=str_replace('{page}',(string)$n,$pattern).$suffix;echo $n===$page?'<li class="switchActive">'.$n.'</li>':'<li class="switch"><a class="switchDigit" href="'.esc_url($href).'">'.$n.'</a></li>';$prev=$n;}
+    if($page<$pages){$href=str_replace('{page}',(string)($page+1),$pattern).$suffix;echo '<li class="switch switch-next"><a class="switchNext" href="'.esc_url($href).'" title="Следующая"><span>»</span></a></li>';}
+    echo '</ul>';
+};
+$crumbs=[];if($section){$sid=$section;$seen=[];while($sid&&isset($sections[$sid])&&!isset($seen[$sid])){$seen[$sid]=1;$crumbs[]=['id'=>$sid,'name'=>$sections[$sid]['name']];$sid=(int)($sections[$sid]['parent']??0);}$crumbs=array_reverse($crumbs);}
 get_header(); ?>
 <div class="page width clearfix thai-forum forumContent thai-forum-home">
 <table class="thai-forum-nav" border="0" cellpadding="0" height="30" cellspacing="0" width="100%"><tr><td align="right">[ <a href="/forum">Разделы форума</a> · <a href="/contact">Связаться с администрацией</a> ]</td></tr></table><br>
 <div class="ad-forum"><p style="text-align:center"><a href="https://affiliate.klook.com/redirect?aid=28346&amp;aff_adid=1164008&amp;k_site=https%3A%2F%2Fwww.klook.com%2F"><img src="/images/klook-on-good-page-horiz.png" alt="Pattaya excursions" title="Plan your holidays right now" style="width:60%"></a></p></div><br>
-<?php if($section): ?><div class="thai-forum-actions"><a href="#forum-form"><?php echo $topic_id?'Ответить':'Создать тему'; ?></a></div><div class="thai-forum-path"><a href="/forum">Форум</a> &raquo; <a href="/forum/<?php echo (int)$section; ?>"><?php echo esc_html($sections[$section]['name']??'Раздел'); ?></a></div><?php endif; ?>
+<?php if($section&&$topic_id): ?>
+<table class="ThrTopButtonsTbl" border="0" width="100%" cellspacing="0" cellpadding="0"><tr class="ThrTopButtonsRow1"><td width="50%" class="ThrTopButtonsCl11"><?php $forum_switches($forum_total_pages,$current_page,$forum_page_url); ?></td><td align="right" class="frmBtns ThrTopButtonsCl12"><div><a href="#forum-form"><img alt="" style="margin:0;padding:0;border:0" title="Ответить" src="/img/forum_buttons/t_reply.png"></a> <a href="<?php echo esc_url('/forum/'.$section.'#forum-form'); ?>"><img alt="" style="margin:0;padding:0;border:0" title="Новая тема" src="/img/forum_buttons/t_new.png"></a></div></td></tr></table>
+<table class="ThrForumBarTbl" border="0" width="100%" cellspacing="0" cellpadding="0"><tr class="ThrForumBarRow1"><td class="forumNamesBar ThrForumBarCl11 breadcrumbs" style="padding-top:3px;padding-bottom:5px"><a class="forumBar breadcrumb-item" href="/forum/">Форум</a><?php foreach($crumbs as $crumb)echo ' <span class="breadcrumb-sep">&raquo;</span> <a class="forumBar breadcrumb-item" href="/forum/'.(int)$crumb['id'].'">'.esc_html($crumb['name']).'</a>'; if($topic_post){$desc=get_post_meta($topic_post->ID,'_thai_forum_description',true);echo ' <span class="breadcrumb-sep">&raquo;</span> <a class="forumBarA" href="'.esc_url($forum_page_url?str_replace('{page}',(string)$current_page,$forum_page_url):'#').'">'.esc_html($topic_post->post_title).'</a>';if($desc)echo ' <span class="thDescr">('.esc_html($desc).')</span>';} ?></td></tr></table>
+<?php elseif($section): ?>
+<table class="FrmTopButtonsTbl" border="0" width="100%" cellspacing="0" cellpadding="0"><tr class="FrmTopButtonsRow1"><td class="FrmTopButtonsCl11" width="50%"><?php $forum_switches($forum_total_pages,$current_page,$forum_page_url,$filter_suffix); ?></td><td align="right" class="frmBtns FrmTopButtonsCl12"><div><a href="#forum-form"><img alt="" style="margin:0;padding:0;border:0" title="Новая тема" src="/img/forum_buttons/t_new.png"></a></div></td></tr></table>
+<table class="FrmForumBarTbl" border="0" width="100%" cellspacing="0" cellpadding="0"><tr class="FrmForumBarRow1"><td class="forumNamesBar FrmForumBarCl11 breadcrumbs" style="padding-top:3px;padding-bottom:5px"><a class="forumBar breadcrumb-item" href="/forum/">Форум</a><?php foreach($crumbs as $i=>$crumb){$last=$i===array_key_last($crumbs);echo ' <span class="breadcrumb-sep">&raquo;</span> <a class="'.($last?'forumBarA breadcrumb-curr':'forumBar breadcrumb-item').'" href="/forum/'.(int)$crumb['id'].'">'.esc_html($crumb['name']).'</a>';} ?></td></tr></table>
+<div id="forum_filter"><span id="filter_by">Фильтр по:</span><form method="get" action="<?php echo esc_url('/forum/'.$section); ?>"><select id="forum_filter_select" name="forum_by"><option value="1"<?php selected($forum_by,1); ?>>Названию темы</option><option value="2"<?php selected($forum_by,2); ?>>Описанию</option><option value="3"<?php selected($forum_by,3); ?>>Автору темы</option><option value="4"<?php selected($forum_by,4); ?>>Автору ответа</option></select><input type="text" id="filter_word" name="forum_q" value="<?php echo esc_attr($forum_q); ?>"><input type="submit" value="Ok"></form></div><div class="clear2"></div>
+<?php endif; ?>
 <?php if(!$topic_id): ?>
 <?php
 // Aggregate only published topics; moderation drafts do not affect public counters.
