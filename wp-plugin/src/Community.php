@@ -17,7 +17,7 @@ class TOP_Community {
         add_shortcode('thai_contact_form', [__CLASS__, 'contact_form']);
         add_filter('redirect_canonical', static function($url){return get_query_var('top_community') ? false : $url;});
         add_action('wp_enqueue_scripts', static function(){
-            if(get_query_var('top_community') || is_page('contact')) wp_enqueue_style('thai-community',plugins_url('assets/community.css',TOP_PLUGIN_FILE),[], '4.4.27');
+            if(get_query_var('top_community') || is_page('contact')) wp_enqueue_style('thai-community',plugins_url('assets/community.css',TOP_PLUGIN_FILE),[], '4.4.28');
             if(is_page('contact')) wp_enqueue_style('thai-contact-legacy',home_url('/css/pages/1.css'),[], '52535335');
         },1000);
     }
@@ -61,6 +61,14 @@ class TOP_Community {
             echo $n===$page?'<b class="swchItemA">'.$n.'</b>':'<a class="swchItem" href="'.esc_url(str_replace('{page}',(string)$n,$url)).'">'.$n.'</a>';
         }
         echo '</nav>';
+    }
+    public static function legacy_pages($total,$per,$page,$url) {
+        $pages=(int)ceil($total/$per);if($pages<2)return;
+        $numbers=$pages<=10?range(1,$pages):array_unique(array_merge([1,2,3],range(max(1,$page-1),min($pages,$page+1)),[$pages-1,$pages]));sort($numbers);
+        $previous=0;echo '<span class="thai-legacy-pages">';
+        foreach($numbers as $n){if($previous&&$n>$previous+1)echo '<span class="swchItemDots"><span>...</span></span> ';$label='<span>'.$n.'</span>';echo $n===$page?'<b class="swchItemA">'.$label.'</b> ':'<a class="swchItem" href="'.esc_url(str_replace('{page}',(string)$n,$url)).'">'.$label.'</a> ';$previous=$n;}
+        if($page<$pages)echo '<a class="swchItem swchItem-next" href="'.esc_url(str_replace('{page}',(string)($page+1),$url)).'"><span>»</span></a>';
+        echo '</span>';
     }
     private static function validate_submission($action) {
         if($_SERVER['REQUEST_METHOD']!=='POST'||!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce']??'')),$action))wp_die('Обнови страницу и попробуй ещё раз.', '', ['response'=>403]);

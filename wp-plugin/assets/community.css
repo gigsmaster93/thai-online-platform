@@ -27,3 +27,17 @@
 @media(max-width:834px){.thai-gallery-page .content,.thai-gallery-sidebar{width:100%;float:none}.thai-gallery-sidebar{clear:both}.thai-guestbook #allEntries>div{width:75%;padding:20px}}
 @media(max-width:600px){.thai-forum.page.width{width:100%}.thai-forum .forumIcoTd,.thai-forum .forum-stat,.thai-forum .forum-stat-head{display:none}.thai-forum .forumNameTd{width:auto}.thai-forum .gTableTop{font-size:18px}.thai-gallery .thai-photo-grid{grid-template-columns:1fr}}
 @media(max-width:500px){.thai-guestbook #allEntries>div{width:87%;padding:20px;margin:20px auto}.thai-guestbook #allEntries table,.thai-guestbook #allEntries tbody,.thai-guestbook #allEntries tr,.thai-guestbook #allEntries td{display:block;width:100%;margin:auto}.thai-guestbook #sign{width:95%}}
+
+/* Preserve the original navigation flow, including mobile line wrapping. */
+.thai-gb-breadcrumb,.thai-photo-toolbar{font-size:12px}.thai-gallery-page .content-view{margin-top:0}
+.thai-guestbook .csTop{line-height:1.4}.thai-guestbook #pagesBlock1{font-size:16px}
+@media(max-width:500px){.thai-gb-breadcrumb,.thai-gb-breadcrumb tbody,.thai-gb-breadcrumb tr,.thai-gb-breadcrumb td{display:block;width:100%;margin:auto}.thai-photo-toolbar,.thai-photo-toolbar tbody,.thai-photo-toolbar tr,.thai-photo-toolbar td{display:block;width:100%}.thai-guestbook #pagesBlock1{float:none!important;margin-bottom:22.390625px}}
+
+.thai-forum-home{margin-top:-27px!important}.thai-forum-home table{font-size:14px}
+.thai-forum .forumNameTd{width:auto}.thai-forum .forumDescr{margin:0}.thai-forum .forumIcoTd{width:auto}.thai-forum .forumIcoTd img{width:auto;height:auto}
+.thai-forum .forum-stat{padding:20px}.thai-forum .gTableSubTop{padding:5px;font-size:12px}
+.thai-forum .gTableTop{padding:20px 0 20px 2%;background:#0094fe;font-size:14pt}
+@media(max-width:834px){.thai-forum .ad-forum img{width:96%!important}}
+@media(max-width:600px){.thai-forum-home{margin-top:0!important}.thai-forum-nav,.thai-forum .forum-stat-update{display:none}.thai-forum .forumNameTd{font-size:14px}}
+
+.thai-gallery-sidebar a{display:inline;margin:0}.thai-gallery-sidebar .sidebar-popular a{display:block}.thai-gallery-sidebar .sidebar-popular img{object-fit:cover}.thai-gallery-sidebar{margin-top:0}
