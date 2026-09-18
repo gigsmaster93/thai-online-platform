@@ -1,6 +1,38 @@
 (function($){
 'use strict';
 
+function getCookie(name){
+  var match=document.cookie.match(new RegExp('(?:^|; )'+name.replace(/([.$?*|{}()\[\]\\/+^])/g,'\\$1')+'=([^;]*)'));
+  return match?decodeURIComponent(match[1]):undefined;
+}
+
+function setCookie(name,value,days){
+  var expires='';
+  if(days){
+    var d=new Date();
+    d.setTime(d.getTime()+days*24*60*60*1000);
+    expires='; expires='+d.toUTCString();
+  }
+  document.cookie=name+'='+encodeURIComponent(value)+expires+'; path=/';
+}
+
+function bindCookieNotice(){
+  var $notice=$('.notification--cookie');
+  if(!$notice.length)return;
+
+  if(!getCookie('notif')){
+    $notice.show().removeClass('hide');
+  }else{
+    $notice.hide();
+  }
+
+  $notice.find('.notification_close').off('click.thaiCookie').on('click.thaiCookie',function(){
+    setCookie('notif','1',365);
+    $notice.addClass('hide');
+    window.setTimeout(function(){$notice.hide();},250);
+  });
+}
+
 function hidePreloader(){
   var p=document.getElementById('preloader');
   if(!p)return;
@@ -172,6 +204,7 @@ function bindLegacyProduct(){
 }
 
 $(function(){
+  bindCookieNotice();
   loadLegacyMedia();
   legacyGridWidth();
   bindLegacyProduct();
@@ -180,7 +213,6 @@ $(function(){
   $('#tellnk').on('click',function(e){e.preventDefault();$('#telblock').stop(true,true).toggle();});
   $('#shop-header-currency > a,#shop-header-profile > a').on('click',function(e){e.preventDefault();$(this).siblings('.drop-area').stop(true,true).toggle();});
   $('#navigation li').on('mouseenter',function(){$(this).children('.subM,.sub-menu').stop(true,true).show();}).on('mouseleave',function(){$(this).children('.subM,.sub-menu').stop(true,true).hide();});
-  $('.notification_close').on('click',function(){$(this).closest('.notification').hide();});
   $('#up-me').on('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
   $('.goods-tab > ul a').on('click',function(e){e.preventDefault();var id=$(this).attr('href');$('.goods-tab > ul li').removeClass('active');$(this).parent().addClass('active');$('.goods-tab > .tab-body').hide();$(id).show();loadLegacyMedia();});
   window.setTimeout(hidePreloader,800);
