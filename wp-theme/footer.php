@@ -55,7 +55,9 @@
       </ul></div>
     </div>
   </div>
-  <div class="copyrights width clearfix"><div class="left">2016-<?php echo esc_html(wp_date('Y')); ?> © Thai-Online. Все права защищены. При перепосте активная ссылка на сайт обязательна.</div></div>
+  <div class="copyrights width clearfix"><div class="left">2016-<?php echo esc_html(wp_date('Y')); ?>
+    <div class="right"></div>&copy; Thai-Online. Все права защищены. При перепосте активная ссылка на сайт обязательна.<br>
+  </div></div>
   <div id="up-me" title="Наверх"></div>
 </footer>
 <?php wp_footer(); ?>
