@@ -60,6 +60,12 @@ foreach (explode('%', str_replace('#%', '%', $variants_raw)) as $group_raw) {
 $variants = $variant_groups[0] ?? [];
 $person_labels = get_post_meta($p->ID, '_thai_person_labels', true);
 if (!is_array($person_labels)) $person_labels = [];
+$transport_variants=[];
+foreach(explode('#',(string)get_post_meta($p->ID,'_thai_transport_variants',true)) as $entry){$bits=explode('&',$entry);if(count($bits)>=2&&is_numeric($bits[1]))$transport_variants[]=['label'=>str_replace('--',"'",$bits[0]),'price'=>(float)$bits[1]];}
+$show_hero_price=!empty($variants)&&!$transport_variants;
+if($transport_variants){$variants=[['label'=>'Человек','price'=>0]];$person_labels=['Человек'];}
+$transport_per_person=in_array($ucoz_id,[197,240,241,238,237,236,242,239,247],true);
+
 
 $quick_raw = (string) get_post_meta($p->ID, '_thai_quick_facts', true);
 $quick = [];
@@ -126,15 +132,21 @@ if (!in_array($ucoz_id,[510,511],true) && $variant_groups) {
     $hero_price_label=$lowest['label'];
 }
 
-$render_order_block = static function ($p, $ucoz_id, $price, $price_text, $variants, $is_person_pricing) use ($variant_groups, $person_labels, $is_booking_form) {
+$render_order_block = static function ($p, $ucoz_id, $price, $price_text, $variants, $is_person_pricing) use ($variant_groups, $person_labels, $is_booking_form, $transport_variants, $transport_per_person) {
     $product_url = home_url('/shop/' . $ucoz_id . '/desc/' . $p->post_name);
     ?>
     <div class="rightbl thai-legacy-order-block" style="user-select:none;">
       <div class="right" id="calculatey">
         <div class="innerBlockY">
-          <?php if($is_booking_form): ?><h2 style="text-align:center;">Заказать</h2><?php TOP_Community::booking_form($p); else: ?>
+          <?php if($is_booking_form): ?><h2 style="text-align:center;">Заказать</h2><div id="order-form"><?php TOP_Community::booking_form($p); ?></div><?php else: ?>
           <h2 style="text-align:center;text-shadow:1px 1px 2px silver;">Узнать стоимость</h2>
 
+          <?php if($transport_variants): ?>
+            <div class="col-md-6 col-sm-6 col-xs-6 transport" style="display:block"><div class="form-group"><label for="thai-transport">Вариант транспорта</label><div class="numbers-row"><select id="thai-transport" class="qty2 counting"><option value="0">- выбрать -</option>
+            <?php foreach($transport_variants as $transport): $capacity=['Седан'=>3,'Минивэн'=>6,'Минибас'=>13];$word=explode(' ',$transport['label'])[0]; ?>
+              <option value="<?php echo esc_attr($transport['price']); ?>" data-capacity="<?php echo (int)($capacity[$word]??13); ?>"><?php echo esc_html($transport['label']); ?></option>
+            <?php endforeach; ?></select></div></div></div><div class="clr"></div>
+          <?php endif; ?>
           <?php if (count($variant_groups) > 1): ?>
             <div class="col-md-6 col-sm-6 col-xs-6 tourVarS"><div class="form-group">
               <label for="thai-price-group">Вариант тура</label>
@@ -166,6 +178,7 @@ $render_order_block = static function ($p, $ucoz_id, $price, $price_text, $varia
                         type="text"
                         inputmode="numeric"
                         data-price="<?php echo esc_attr($variant['price']); ?>"
+                        <?php if($transport_variants)echo 'data-transport="1" data-fixed-price="'.($transport_per_person?'0':'1').'" min="1" max="13"'; ?>
                         aria-label="<?php echo esc_attr($qty_label); ?>"
                       >
                       <div class="inc button_inc" role="button" tabindex="0">+</div>
@@ -410,7 +423,7 @@ $render_recommendations = static function ($ucoz_ids) {
 
     <div class="page width clearfix infoBl">
       <?php if ($quick): ?>
-        <?php $info_width = 'calc(' . (100 / (count($quick) + ($variants ? 1 : 0))) . '% - 1px)'; ?>
+        <?php $info_width = 'calc(' . (100 / (count($quick) + ($show_hero_price ? 1 : 0))) . '% - 1px)'; ?>
         <?php foreach ($quick as $fact): ?>
           <div class="colIco left" style="width:<?php echo esc_attr($info_width); ?>;margin-left:0;margin-right:0;padding:0;">
             <?php if ($fact['icon'] !== ''): ?><i class="fa fa-<?php echo esc_attr(sanitize_html_class($fact['icon'])); ?>"></i><?php endif; ?>
@@ -419,7 +432,7 @@ $render_recommendations = static function ($ucoz_ids) {
           </div>
         <?php endforeach; ?>
 
-        <?php if($variants): ?><div class="colIco right" style="width:<?php echo esc_attr($info_width); ?>;margin-left:0;margin-right:0;padding:0;">
+        <?php if($show_hero_price): ?><div class="colIco right" style="width:<?php echo esc_attr($info_width); ?>;margin-left:0;margin-right:0;padding:0;">
           <i class="fa fa-male"></i>
           <div class="hdr"><?php echo esc_html($hero_price_label); ?></div>
           <div class="cont">от <?php echo esc_html(number_format((float) $price, 0, '.', '')); ?>฿</div>

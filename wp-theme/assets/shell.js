@@ -90,10 +90,12 @@ function updateLegacyTotal(showTotal){
     if(!isFinite(qty)||qty<0)qty=0;
     if(!isFinite(price))price=0;
 
-    var lineTotal=qty*price;
+    var max=parseInt($(this).attr('max')||'0',10),min=parseInt($(this).attr('min')||'0',10);
+    if(max>0)qty=Math.min(qty,max);if(min>0)qty=Math.max(qty,min);this.value=String(qty);
+    var lineTotal=$(this).attr('data-fixed-price')==='1'?(qty>0?price:0):qty*price;
     total+=lineTotal;
     if(showTotal){
-      $(this).closest('.numbers-row').find('.thai-line-total').text(lineTotal.toFixed(2));
+      $(this).closest('.numbers-row').find('.thai-line-total').text($(this).attr('data-transport')==='1'?String(price):lineTotal.toFixed(2));
     }
   });
 
@@ -191,7 +193,10 @@ function bindLegacyProduct(){
     if(this.value)window.location.href=this.value;
   });
 
-  $('#thai-price-group').on('change.thai',function(){
+  $('#thai-transport').off('change.thai').on('change.thai',function(){
+    var $opt=$(this).find(':selected');$('.thai-person-qty[data-transport]').attr('data-price',this.value).attr('max',$opt.attr('data-capacity')||13);updateLegacyTotal(true);
+  });
+  $('#thai-price-group').off('change.thai').on('change.thai',function(){
     var prices=JSON.parse($(this).find(':selected').attr('data-prices')||'[]');
     $('.thai-person-qty').each(function(i){$(this).attr('data-price',prices[i]||0);});
     updateLegacyTotal(true);
