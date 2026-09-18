@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-define('THAI_ONLINE_THEME_VERSION', '4.4.19');
+define('THAI_ONLINE_THEME_VERSION', '4.4.20');
 require_once get_template_directory() . '/inc/parity.php';
 
 add_action('after_setup_theme', function () {
@@ -58,7 +58,7 @@ add_filter('redirect_canonical', function ($redirect_url, $requested_url) {
 }, 10, 2);
 
 add_filter('pre_get_document_title', function ($title) {
-    $module = get_query_var('top_module');
+    $module = get_query_var('top_module') ?: get_query_var('top_community');
 
     if (is_front_page()) {
         $year = (int) wp_date('Y');
@@ -126,7 +126,7 @@ add_action('wp_enqueue_scripts', function () {
     }
 
     $v = THAI_ONLINE_THEME_VERSION;
-    $module = get_query_var('top_module');
+    $module = get_query_var('top_module') ?: get_query_var('top_community');
     $is_shop_catalog = ($module === 'shop_all');
 
     wp_enqueue_style('ucoz-my', home_url('/_st/my.css'), [], $v);
@@ -240,7 +240,7 @@ function thai_online_primary_menu_fallback(): void { ?>
 
 /* Custom legacy modules must not inherit WordPress home/blog state. */
 add_action('wp', function () {
-    if (!get_query_var('top_module')) {
+    if (!get_query_var('top_module') && !get_query_var('top_community')) {
         return;
     }
 
@@ -254,7 +254,7 @@ add_action('wp', function () {
 }, 50);
 
 add_filter('body_class', function ($classes) {
-    $module = get_query_var('top_module');
+    $module = get_query_var('top_module') ?: get_query_var('top_community');
 
     if (!$module) {
         return $classes;

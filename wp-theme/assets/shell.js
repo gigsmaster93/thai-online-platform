@@ -272,3 +272,6 @@ window.addEventListener('resize',function(){
 });
 
 })(jQuery);
+
+// Native image viewer for migrated photo albums.
+document.addEventListener('click',function(e){var a=e.target.closest('a.thai-lightbox');if(!a||typeof HTMLDialogElement==='undefined')return;e.preventDefault();var d=document.createElement('dialog');d.className='thai-lightbox-dialog';var close=document.createElement('button');close.type='button';close.textContent='Закрыть';close.onclick=function(){d.close();};var img=document.createElement('img');img.src=a.href;img.alt=a.querySelector('img')?.alt||'';d.append(close,img);document.body.appendChild(d);d.addEventListener('close',function(){d.remove();});d.addEventListener('click',function(ev){if(ev.target===d)d.close();});d.showModal();});

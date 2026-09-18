@@ -15,6 +15,7 @@ define('TOP_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
 require_once TOP_PLUGIN_DIR . 'src/Core.php';
 require_once TOP_PLUGIN_DIR . 'src/CLI.php';
+require_once TOP_PLUGIN_DIR . 'src/Community.php';
 
 add_action('plugins_loaded', ['TOP_Core', 'boot']);
 register_activation_hook(__FILE__, ['TOP_Core', 'activate']);
