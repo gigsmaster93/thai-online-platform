@@ -209,15 +209,15 @@ $render_order_block = static function ($p, $ucoz_id, $price, $price_text, $varia
             </div>
           </div>
         </div>
-      </div>
 
-      <br>
-      <div class="addblockright" style="max-width:350px;justify-content:center;display:contents;">
-        <p style="text-align:center;">
-          <a href="https://affiliate.klook.com/redirect?aid=28346&aff_adid=1164008&k_site=https%3A%2F%2Fwww.klook.com%2F" rel="nofollow" target="_blank">
-            <img src="/images/klook-on-good-page.png" width="100%" alt="Pattaya excursions" title="Plan you holidays right now">
-          </a>
-        </p>
+        <br>
+        <div class="addblockright" style="max-width:350px;justify-content:center;display:contents;">
+          <p style="text-align:center;">
+            <a href="https://affiliate.klook.com/redirect?aid=28346&aff_adid=1164008&k_site=https%3A%2F%2Fwww.klook.com%2F" rel="nofollow" target="_blank">
+              <img src="/images/klook-on-good-page.png" width="100%" alt="Pattaya excursions" title="Plan you holidays right now">
+            </a>
+          </p>
+        </div>
       </div>
     </div>
     <?php
@@ -262,6 +262,7 @@ $render_reviews = static function ($p) {
           <td width="60%" height="25">Отзывов: <b><?php echo esc_html($comment_count); ?></b></td>
           <td align="right" height="25"></td>
         </tr>
+        <tr><td colspan="2" height="10"></td></tr>
       </table>
 
       <?php if ($comments): ?>
@@ -289,16 +290,21 @@ $render_reviews = static function ($p) {
         </form>
       </div>
 
-      <div class="thai-share-block">
-        <div>Поделиться:</div>
-        <div class="thai-share-icons">
-          <a href="https://vk.com/share.php?url=<?php echo rawurlencode(get_permalink($p)); ?>" target="_blank" rel="noopener" aria-label="VK">VK</a>
-          <a href="https://connect.ok.ru/offer?url=<?php echo rawurlencode(get_permalink($p)); ?>" target="_blank" rel="noopener" aria-label="OK">OK</a>
-          <a href="https://t.me/share/url?url=<?php echo rawurlencode(get_permalink($p)); ?>" target="_blank" rel="noopener" aria-label="Telegram"><i class="fa fa-paper-plane"></i></a>
-          <a href="https://wa.me/?text=<?php echo rawurlencode(get_permalink($p)); ?>" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa fa-whatsapp"></i></a>
-        </div>
+    </div>
+
+    <div class="clr"></div>
+
+    <div class="thai-share-legacy" style="text-align:center;width:100%;">
+      <div class="sharetxt" style="width:100%;">Поделиться: </div><br>
+      <div class="thai-share-icons">
+        <a href="https://vk.com/share.php?url=<?php echo rawurlencode(get_permalink($p)); ?>" target="_blank" rel="noopener" aria-label="VK">VK</a>
+        <a href="https://connect.ok.ru/offer?url=<?php echo rawurlencode(get_permalink($p)); ?>" target="_blank" rel="noopener" aria-label="OK">OK</a>
+        <a href="https://t.me/share/url?url=<?php echo rawurlencode(get_permalink($p)); ?>" target="_blank" rel="noopener" aria-label="Telegram"><i class="fa fa-paper-plane"></i></a>
+        <a href="https://wa.me/?text=<?php echo rawurlencode(get_permalink($p)); ?>" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa fa-whatsapp"></i></a>
       </div>
     </div>
+
+    <hr><br><br>
     <?php
 };
 
