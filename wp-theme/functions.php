@@ -54,6 +54,11 @@ add_filter('redirect_canonical', function ($redirect_url, $requested_url) {
 add_filter('pre_get_document_title', function ($title) {
     $module = get_query_var('top_module');
 
+    if (is_front_page()) {
+        $year = (int) wp_date('Y');
+        return 'Экскурсии в Паттайе Таиланде ' . ($year - 1) . '-' . $year . ' цены описание отзывы';
+    }
+
     if ($module === 'shop_all') {
         return 'Все товары - Экскурсии Паттайя ' . wp_date('Y') . ' - Сервис поиска экскурсий в Таиланде';
     }
