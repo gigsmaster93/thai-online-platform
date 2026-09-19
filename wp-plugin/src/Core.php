@@ -170,7 +170,7 @@ class TOP_Core {
             set_query_var('top_module', '');
             status_header(404);
             nocache_headers();
-            return get_404_template();
+            return (get_404_template() ?: TOP_PLUGIN_DIR . 'templates/not-found.php');
         }
         if (isset($map[$module])) {
             $file = TOP_PLUGIN_DIR . $map[$module];

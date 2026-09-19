@@ -56,7 +56,7 @@ if ($paged > 1 && $paged > max(1, (int) $q->max_num_pages)) {
     set_query_var('top_module', '');
     status_header(404);
     nocache_headers();
-    include get_404_template();
+    include (get_404_template() ?: TOP_PLUGIN_DIR . 'templates/not-found.php');
     return;
 }
 status_header(200);
