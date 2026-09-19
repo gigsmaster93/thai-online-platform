@@ -96,6 +96,10 @@
 .thai-gallery .phd-rating{background-image:url(photopage/uico-rating.png);padding-left:18px;margin-right:0;position:relative}
 
 /* Legacy single-photo layout. */
+.thai-photo-detail .content-view{margin-top:20px}
+.thai-photo-detail .thai-photo-breadcrumb{display:inline}
+.thai-photo-detail .u-center{text-align:center}
+
 .thai-photo-detail .thai-photo-breadcrumb{font-size:16px}
 .thai-photo-detail #adv{display:block;font-size:14pt;cursor:pointer;box-shadow:0 3px 2px 2px #860d0d;background:#cc1818;color:#fff!important;padding:16px 40px;border:1px solid #db3939;text-align:center;font-weight:bold;text-decoration:none;box-sizing:border-box;width:100%;margin:0 0 10px}
 .thai-photo-detail #adv:hover{padding-top:20px;padding-bottom:12px;box-shadow:0 1px 2px 1px #860d0d}
