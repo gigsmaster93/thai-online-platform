@@ -1,5 +1,6 @@
 <?php
 if (!defined('ABSPATH')) exit;
+require_once __DIR__ . '/ShopCategories.php';
 
 class TOP_Core {
     public static function boot() {
@@ -131,6 +132,7 @@ class TOP_Core {
     }
 
     public static function register_routes() {
+        add_rewrite_rule('^other_countries_ru/?$', 'index.php?top_module=legacy_page&top_id=19', 'top');
         add_rewrite_rule('^gb/?$', 'index.php?top_module=guestbook', 'top');
         add_rewrite_rule('^faq/?$', 'index.php?top_module=faq', 'top');
         add_rewrite_rule('^faq/([0-9]+)-([0-9]+)/?$', 'index.php?top_module=faq_single&top_id=$matches[2]', 'top');
@@ -154,6 +156,7 @@ class TOP_Core {
             'faq' => 'templates/faq.php',
             'faq_single' => 'templates/faq-single.php',
             'shop_all' => 'templates/shop-all.php',
+            'shop_category' => 'templates/shop-all.php',
             'shop_single' => 'templates/shop-single.php',
             'news' => 'templates/news.php',
             'news_single' => 'templates/news-single.php',
@@ -161,6 +164,14 @@ class TOP_Core {
             'publ_single' => 'templates/publ-single.php',
             'legacy_page' => 'templates/legacy-page.php',
         ];
+        if ($module === 'shop_category' && !TOP_Shop_Categories::term()) {
+            global $wp_query;
+            $wp_query->set_404();
+            set_query_var('top_module', '');
+            status_header(404);
+            nocache_headers();
+            return get_404_template();
+        }
         if (isset($map[$module])) {
             $file = TOP_PLUGIN_DIR . $map[$module];
             if (file_exists($file)) return $file;

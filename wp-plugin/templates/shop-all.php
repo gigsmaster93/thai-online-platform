@@ -1,10 +1,11 @@
 <?php
 if (!defined('ABSPATH')) exit;
-status_header(200);
-get_header();
+$category = get_query_var('top_module') === 'shop_category' ? TOP_Shop_Categories::term() : null;
+$category_data = $category ? TOP_Shop_Categories::data($category) : [];
+$catalog_url = home_url($category ? TOP_Shop_Categories::path($category) : '/shop/all');
 
-$sort = isset($_GET['sort']) ? sanitize_key($_GET['sort']) : 'date';
-$order = isset($_GET['order']) && strtolower($_GET['order']) === 'asc' ? 'ASC' : 'DESC';
+$sort = isset($_GET['sort']) ? sanitize_key($_GET['sort']) : ($category ? 'name' : 'date');
+$order = isset($_GET['order']) ? (strtolower($_GET['order']) === 'asc' ? 'ASC' : 'DESC') : ($category ? 'ASC' : 'DESC');
 $orderby = 'meta_value_num';
 $meta_key = '_ucoz_shop_id';
 
@@ -45,43 +46,61 @@ if ($min !== null || $max !== null) {
     if ($max !== null) $range[] = ['key'=>'_thai_price','value'=>$max,'compare'=>'<=','type'=>'NUMERIC'];
     $args['meta_query'] = $range;
 }
+if ($category) {
+    $args['tax_query'] = [['taxonomy'=>'thai_excursion_cat', 'field'=>'term_id', 'terms'=>[$category->term_id], 'include_children'=>true]];
+}
 $q = new WP_Query($args);
+if ($paged > 1 && $paged > max(1, (int) $q->max_num_pages)) {
+    global $wp_query;
+    $wp_query->set_404();
+    set_query_var('top_module', '');
+    status_header(404);
+    nocache_headers();
+    include get_404_template();
+    return;
+}
+status_header(200);
+get_header();
 $total = (int) $q->found_posts;
 ?>
 <div class="content clearfix thai-shop-page">
   <div class="content-view">
     <div class="topbar" style="width:100%">
-      <div class="thai-breadcrumbs"><a href="<?php echo esc_url(home_url('/')); ?>">Главная</a> » <a class="current" href="<?php echo esc_url(home_url('/shop/all')); ?>">Все товары</a></div>
-      <div style="text-align:center"><img id="catImgX" alt=""></div>
+      <div class="thai-breadcrumbs"><a href="<?php echo esc_url(home_url('/')); ?>">Главная</a> » <a class="current" href="<?php echo esc_url($catalog_url); ?>"><?php echo $category ? esc_html($category->name) : 'Все товары'; ?></a></div>
+      <div style="text-align:center"><img id="catImgX" <?php if (!empty($category_data['image'])): ?>src="<?php echo esc_url($category_data['image']); ?>"<?php endif; ?> alt="<?php echo $category ? esc_attr($category->name) : ''; ?>"></div>
       <div><h1 class="catalog-header-title" style="text-align:center;margin:0">Паттайя экскурсии <?php echo esc_html(wp_date('Y')); ?></h1></div>
       <div class="clr"></div>
+      <?php if (!empty($category_data['description'])): ?><div class="shop-cat-descr with-clear"><?php echo wp_kses_post($category_data['description']); ?></div><div class="clr"></div><?php endif; ?>
       <div class="shop-product-num"><b><span class="ne_cont"><?php echo esc_html($total); ?></span></b> позиций(-ии) в каталоге</div>
     </div>
 
+    <?php if ($category): TOP_Shop_Categories::render_children($category); else: ?>
     <hr class="hidempty">
     <h2 class="catshdr hidempty">Категории</h2>
     <?php if (function_exists('thai_render_category_grid')) thai_render_category_grid(false); ?>
+    <?php endif; ?>
     <hr>
 
     <div class="shop-sort-selector"><span class="slist">Сортировка:
-      <a class="<?php echo $sort==='name' ? 'active' : ''; ?>" href="<?php echo esc_url(add_query_arg(['sort'=>'name','order'=>$sort==='name' && $order==='ASC' ? 'desc' : 'asc'], home_url('/shop/all'))); ?>">Наименование</a> ·
-      <a class="<?php echo $sort==='price' ? 'active' : ''; ?>" href="<?php echo esc_url(add_query_arg(['sort'=>'price','order'=>$sort==='price' && $order==='ASC' ? 'desc' : 'asc'], home_url('/shop/all'))); ?>">Цена</a> ·
-      <a class="<?php echo $sort==='date' ? 'active' : ''; ?>" href="<?php echo esc_url(add_query_arg(['sort'=>'date','order'=>$sort==='date' && $order==='DESC' ? 'asc' : 'desc'], home_url('/shop/all'))); ?>"><?php echo $sort==='date' && $order==='DESC' ? '↓ ' : ''; ?>Дата добавления</a>
+      <a class="<?php echo $sort==='name' ? 'active' : ''; ?>" href="<?php echo esc_url(add_query_arg(['sort'=>'name','order'=>$sort==='name' && $order==='ASC' ? 'desc' : 'asc'], $catalog_url)); ?>">Наименование</a> ·
+      <a class="<?php echo $sort==='price' ? 'active' : ''; ?>" href="<?php echo esc_url(add_query_arg(['sort'=>'price','order'=>$sort==='price' && $order==='ASC' ? 'desc' : 'asc'], $catalog_url)); ?>">Цена</a> ·
+      <a class="<?php echo $sort==='date' ? 'active' : ''; ?>" href="<?php echo esc_url(add_query_arg(['sort'=>'date','order'=>$sort==='date' && $order==='DESC' ? 'asc' : 'desc'], $catalog_url)); ?>"><?php echo $sort==='date' && $order==='DESC' ? '↓ ' : ''; ?>Дата добавления</a>
     </span></div>
 
     <div id="slider-range"></div>
-    <div class="flist"><form class="flist-item" id="flist-item-price" method="get" action="<?php echo esc_url(home_url('/shop/all')); ?>">
+    <div class="flist"><form class="flist-item" id="flist-item-price" method="get" action="<?php echo esc_url($catalog_url); ?>">
       <span class="flist-label" id="flist-label-price">Цена:</span>
       <input class="price_filter" name="min_price" id="price_min" type="number" min="0" value="<?php echo $min !== null ? esc_attr($min) : ''; ?>" placeholder="от">
       <input class="price_filter" name="max_price" id="price_max" type="number" min="0" value="<?php echo $max !== null ? esc_attr($max) : ''; ?>" placeholder="до">
       <input type="hidden" name="sort" value="<?php echo esc_attr($sort); ?>">
       <input type="hidden" name="order" value="<?php echo esc_attr(strtolower($order)); ?>">
       <button type="submit">Фильтровать</button>
-      <a class="thai-filter-reset" href="<?php echo esc_url(home_url('/shop/all')); ?>">Сбросить</a>
+      <a class="thai-filter-reset" href="<?php echo esc_url($catalog_url); ?>">Сбросить</a>
     </form></div>
     <hr>
 
     <div id="goods_cont"><div class="goods-list with-clear">
+      <?php if (!$q->have_posts()): ?><p class="thai-catalog-empty">По выбранным условиям экскурсии не найдены.</p><?php endif; ?>
       <?php while ($q->have_posts()): $q->the_post(); ?>
         <?php if (function_exists('thai_render_excursion_card')) thai_render_excursion_card(get_the_ID(), 'all'); ?>
       <?php endwhile; wp_reset_postdata(); ?>
@@ -91,8 +110,8 @@ $total = (int) $q->found_posts;
       <div class="plist shop-page-wrap">
         <?php
         $pagination = paginate_links([
-            'base'      => untrailingslashit(home_url('/shop/all')) . '/%#%',
-            'format'    => '',
+            'base'      => untrailingslashit($catalog_url) . '%_%',
+            'format'    => $category ? ';%#%' : '/%#%',
             'total'     => $q->max_num_pages,
             'current'   => $paged,
             'prev_text' => '«',
@@ -106,11 +125,6 @@ $total = (int) $q->found_posts;
         ]);
 
         if ($pagination) {
-            $pagination = str_replace(
-                untrailingslashit(home_url('/shop/all')) . '/1',
-                untrailingslashit(home_url('/shop/all')),
-                $pagination
-            );
             echo $pagination;
         }
         ?>
