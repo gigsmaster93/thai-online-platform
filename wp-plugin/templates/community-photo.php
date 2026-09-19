@@ -25,7 +25,7 @@ else { ?>
 <a href="<?php echo esc_url($full); ?>" data-title="<?php echo esc_attr($image_title); ?>" data-alt="<?php echo esc_attr($image_alt); ?>" class="ulightbox ph-link thai-lightbox" data-url="<?php echo esc_url($url); ?>" title="<?php echo esc_attr($link_title); ?>">
 <span class="ph-tc"><span class="ph-data"><span class="ph-date"><?php echo esc_html($date_display); ?></span><span class="ph-descr"><?php echo esc_html($descr); ?></span><span class="ph-author"><?php echo esc_html($author); ?></span></span></span>
 </a></span>
-<span class="ph-details ph-js-details"><span class="phd-views"><?php echo esc_html($views); ?></span><a href="<?php echo esc_url($url.'#comments'); ?>" class="phd-comments"><?php echo esc_html($comments); ?></a><span class="phd-rating"><span id="entRating<?php echo $legacy_id; ?>"><?php echo esc_html($rating); ?></span></span></span>
+<span class="ph-details ph-js-details"><span class="phd-views"><?php echo esc_html($views); ?></span> <a href="<?php echo esc_url($url.'#comments'); ?>" class="phd-comments"><?php echo esc_html($comments); ?></a> <span class="phd-rating"><span id="entRating<?php echo $legacy_id; ?>"><?php echo esc_html($rating); ?></span></span></span>
 </span></span></div></li>
 <?php }}wp_reset_postdata();if(!$photo_id){echo '</ul></div>';TOP_Community::pagination($q->found_posts,50,$current_page,($term?get_term_meta($term->term_id,'_thai_legacy_url',true):'/photo/').'?page{page}');} ?>
 </div></div><aside id="side" class="thai-gallery-sidebar"><div class="block"><div class="block-header">Категории</div><div class="block-body"><table class="catsTable" cellspacing="1" cellpadding="0" width="100%">

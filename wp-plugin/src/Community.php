@@ -17,8 +17,8 @@ class TOP_Community {
         add_shortcode('thai_contact_form', [__CLASS__, 'contact_form']);
         add_filter('redirect_canonical', static function($url){return get_query_var('top_community') ? false : $url;});
         add_action('wp_enqueue_scripts', static function(){
-            if(get_query_var('top_community') || is_page('contact')) wp_enqueue_style('thai-community',plugins_url('assets/community.css',TOP_PLUGIN_FILE),[], '4.4.41');
-            if(get_query_var('top_community')==='forum') wp_enqueue_script('thai-community-forum',plugins_url('assets/community.js',TOP_PLUGIN_FILE),[], '4.4.41',true);
+            if(get_query_var('top_community') || is_page('contact')) wp_enqueue_style('thai-community',plugins_url('assets/community.css',TOP_PLUGIN_FILE),[], '4.4.42');
+            if(get_query_var('top_community')==='forum') wp_enqueue_script('thai-community-forum',plugins_url('assets/community.js',TOP_PLUGIN_FILE),[], '4.4.42',true);
             if(is_page('contact')) wp_enqueue_style('thai-contact-legacy',home_url('/css/pages/1.css'),[], '52535335');
         },1000);
     }
