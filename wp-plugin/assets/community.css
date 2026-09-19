@@ -73,3 +73,24 @@
 @media(max-width:834px){.thai-forum .ucoz-forum-post img:not(.smile){width:99%!important;max-width:100%!important}.thai-forum .ucoz-forum-post img.smile{width:auto!important}}
 
 .thai-forum .threadpage-posts-table .gTableTop{font-size:16px}
+
+/* Legacy uCoz photo-card internals restored from photopage.min.css. */
+.thai-gallery .entryBlock{width:280px;height:273px;margin:0;max-width:100%;text-align:center;display:inline-block}
+.thai-gallery .uphoto{display:inline-block;vertical-align:middle;width:260px;margin:10px;text-align:left;max-width:none}
+.thai-gallery .photo-title{display:block;margin:0;padding:0 5px 5px;width:100%;height:auto;min-height:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:700 12px/17px Arial;box-sizing:border-box}
+.thai-gallery .photo-block{position:relative;display:inline-block;vertical-align:middle;padding:5px;font:12px/16px Arial;background:#fff!important;box-shadow:0 .5px 3px rgba(0,0,0,.37);border-radius:5px;box-sizing:content-box}
+.thai-gallery .photo-block:after{display:block;content:"";position:absolute;top:100%;left:0;right:0;height:7px;background:url(photopage/ph-shadow.png) no-repeat top}
+.thai-gallery .ph-wrap{display:block;position:relative;overflow:hidden;width:250px;height:200px}
+.thai-gallery .ph-wrap img{display:inline;width:250px;height:200px;max-width:100%;object-fit:cover;vertical-align:middle;border:0}
+.thai-gallery .ph-link{display:block;position:absolute;left:0;top:0;right:0;bottom:0;text-align:center;text-decoration:none!important;background:url(photopage/opacity085.png);opacity:0;transition:opacity .5s ease .05s}
+.thai-gallery .ph-link:hover{opacity:1}
+.thai-gallery .ph-tc{display:table-cell;vertical-align:middle;text-align:center;width:250px;height:200px}
+.thai-gallery .ph-data{display:inline-block}
+.thai-gallery .ph-date{display:block;padding:2px 7px;font-weight:700;color:#000!important}
+.thai-gallery .ph-descr{display:block;padding:5px 8px;font-style:italic;font-size:11px;line-height:14px;color:#464646!important;text-shadow:0 1px 0 #fff}
+.thai-gallery .ph-author{display:inline-block;vertical-align:middle;margin:2px 0 0;padding:0 0 0 18px;background:url(photopage/uico-user.png) no-repeat 0;color:#464646!important;text-shadow:0 1px 0 #fff}
+.thai-gallery .ph-details{display:block;height:16px;margin:5px 0 0;padding:0;text-align:center;font:12px/16px Arial}
+.thai-gallery .phd-comments,.thai-gallery .phd-rating,.thai-gallery .phd-views{display:inline-block;margin:0 10px 0 0;background:no-repeat 0;padding-left:20px}
+.thai-gallery .phd-views{background-image:url(photopage/uico-view.png)}
+.thai-gallery .phd-comments{background-image:url(photopage/uico-comment.png);padding-left:18px}
+.thai-gallery .phd-rating{background-image:url(photopage/uico-rating.png);padding-left:18px;margin-right:0;position:relative}
