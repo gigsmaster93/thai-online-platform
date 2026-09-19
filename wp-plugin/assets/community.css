@@ -71,3 +71,5 @@
 /* Original forum image spacing from the uCoz page-level stylesheet. */
 .thai-forum .ucoz-forum-post img:not(.smile){max-width:51%!important;margin:2% 0!important}
 @media(max-width:834px){.thai-forum .ucoz-forum-post img:not(.smile){width:99%!important;max-width:100%!important}.thai-forum .ucoz-forum-post img.smile{width:auto!important}}
+
+.thai-forum .threadpage-posts-table .gTableTop{font-size:16px}
