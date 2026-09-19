@@ -13,6 +13,7 @@ get_header(); ?>
 if($tpl)echo str_replace(['THAI_REVIEW_BODY','THAI_REVIEW_AUTHOR'],[wp_kses_post(get_the_content()),esc_html(get_the_title())],$tpl);
 else echo '<article class="cBlock1"><b>'.esc_html(get_the_title()).'</b><div class="cMessage">'.wp_kses_post(wpautop(get_the_content())).'</div></article>';
 }wp_reset_postdata(); ?>
+<div class="clr" style="background:0;padding:0;border:0;box-shadow:none"></div>
 </div>
 <div id="newEntryB"></div>
 <?php
@@ -36,7 +37,7 @@ $smiles=['>('=>'angry',':D'=>'biggrin','B)'=>'cool',":'("=>'cry','<_<'=>'dry','^
 <tr><td class="commTd1" width="15%" nowrap>Имя *:</td><td class="commTd2"><input class="commFl" id="gbF7" type="text" name="name" size="30" maxlength="100" required></td></tr>
 <tr><td class="commTd1">Email *:</td><td class="commTd2"><input class="commFl" id="gbF1" type="email" name="email" size="30" maxlength="190" required></td></tr>
 <tr><td class="commTd2" colspan="2"><div style="padding-bottom:2px"></div><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td valign="top"><textarea id="message" class="commFl" rows="10" cols="40" name="message" minlength="5" maxlength="10000" required></textarea></td><td class="thai-gb-smiles-cell" width="5%" valign="top" align="center" style="padding-left:3px"><div class="smiles smiles-grid">
-<?php foreach($smiles as $code=>$file): ?><a href="#" class="sml1" data-code="<?php echo esc_attr($code); ?>"><img alt="" src="<?php echo esc_url($smile_base.$file.'.gif'); ?>" title="<?php echo esc_attr($file); ?>"></a><?php endforeach; ?>
+<?php foreach($smiles as $code=>$file): ?><a href="#" class="sml1" data-code="<?php echo esc_attr($code); ?>"><img alt="" src="<?php echo esc_url($smile_base.$file.'.gif'); ?>" title="<?php echo esc_attr($file); ?>"></a><?php endforeach; ?><div id="allSmiles">Все смайлы</div>
 </div></td></tr></tbody></table></td></tr>
 <tr><td class="commTd1">Проверка:</td><td class="commTd2"><div class="thai-gb-review-note">Отзыв появится после проверки модератором.</div></td></tr>
 <tr><td class="commTd2" colspan="2" align="center"><input class="commSbmFl" type="submit" id="gbsbm" value="Добавить комментарий"></td></tr>

@@ -126,6 +126,7 @@
 .thai-guestbook .smiles-grid{align-items:center;display:grid;gap:.5rem;grid-template-columns:repeat(3,1fr);justify-content:center;width:max-content}
 .thai-guestbook .smiles-grid .sml1{font-size:0;line-height:0;text-align:center}
 .thai-guestbook .smiles-grid img{border:0;margin:0;padding:0}
+.thai-guestbook .smiles-grid #allSmiles{grid-column:1/-1;text-align:center}
 .thai-guestbook .thai-gb-review-note{min-height:77px;display:flex;align-items:center;color:#666}
 .thai-guestbook .thai-gb-submit-status{text-align:center}
 @media(max-width:500px){.thai-guestbook #acform{width:95%;margin:auto!important}.thai-guestbook #message{padding:10px 0;width:100%}.thai-guestbook #acform .commTable,.thai-guestbook #acform .commTable tbody,.thai-guestbook #acform .commTable tr,.thai-guestbook #acform .commTable td{display:block;width:100%;margin:auto}}
