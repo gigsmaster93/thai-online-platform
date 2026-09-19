@@ -94,3 +94,23 @@
 .thai-gallery .phd-views{background-image:url(photopage/uico-view.png)}
 .thai-gallery .phd-comments{background-image:url(photopage/uico-comment.png);padding-left:18px}
 .thai-gallery .phd-rating{background-image:url(photopage/uico-rating.png);padding-left:18px;margin-right:0;position:relative}
+
+/* Legacy single-photo layout. */
+.thai-photo-detail .thai-photo-breadcrumb{font-size:16px}
+.thai-photo-detail #adv{display:block;font-size:14pt;cursor:pointer;box-shadow:0 3px 2px 2px #860d0d;background:#cc1818;color:#fff!important;padding:16px 40px;border:1px solid #db3939;text-align:center;font-weight:bold;text-decoration:none;box-sizing:border-box;width:100%;margin:0 0 10px}
+.thai-photo-detail #adv:hover{padding-top:20px;padding-bottom:12px;box-shadow:0 1px 2px 1px #860d0d}
+.thai-photo-detail .uphoto-entry{margin-bottom:10px}
+.thai-photo-detail .photo-etitle{margin:10px 0;text-align:center;font-size:22px;font-family:Georgia,serif;text-shadow:1px 1px 2px silver;padding-top:15px}
+.thai-photo-detail .photo-edescr{width:74%;margin:20px auto 18px;text-align:justify}
+.thai-photo-detail .uphoto-entry .photo-block{position:relative;display:inline-block;vertical-align:middle;padding:5px;font:12px/16px Arial;background:#fff!important;box-shadow:0 .5px 3px rgba(0,0,0,.37);border-radius:5px;box-sizing:content-box}
+.thai-photo-detail .uphoto-entry .ph-wrap{width:auto;height:auto;display:block;position:relative;overflow:hidden}
+.thai-photo-detail .photo-expand{display:block;position:relative}
+.thai-photo-detail .photo-expand img{display:inline;max-width:100%;width:auto;height:auto;vertical-align:middle;border:0}
+.thai-photo-detail .photo-edetails,.thai-photo-detail .photo-edetails2{display:block;line-height:30px!important}
+.thai-photo-detail .photo-edetails{margin-top:5px;line-height:35px!important;text-align:center}
+.thai-photo-detail .photo-hr{margin:5px 0;border:0;height:2px;overflow:hidden}
+.thai-photo-detail .phd-author{display:inline-block;vertical-align:baseline;margin:0 0 0 5px;padding:0 0 0 18px;background:url(photopage/uico-user.png) no-repeat 0}
+.thai-photo-detail .thai-photo-away-title{font-size:20px}
+.thai-photo-detail .thai-photo-away{text-align:left}
+.thai-photo-detail .thai-photo-comments-summary{font-size:16px}
+.thai-photo-detail .catNumData{display:none}
