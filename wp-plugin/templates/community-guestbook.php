@@ -14,15 +14,32 @@ if($tpl)echo str_replace(['THAI_REVIEW_BODY','THAI_REVIEW_AUTHOR'],[wp_kses_post
 else echo '<article class="cBlock1"><b>'.esc_html(get_the_title()).'</b><div class="cMessage">'.wp_kses_post(wpautop(get_the_content())).'</div></article>';
 }wp_reset_postdata(); ?>
 </div>
-<?php TOP_Community::pagination($q->found_posts,15,$current_page,'/gb/{page}'); ?>
-<div id="sign">
-<?php if(isset($_GET['submitted']))echo '<p role="status">Спасибо! Отзыв отправлен на проверку и появится после одобрения.</p>'; ?>
-<h2>Добавить отзыв</h2>
-<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-<?php wp_nonce_field('thai_review'); ?><input type="hidden" name="action" value="thai_review">
-<p hidden><input name="website" tabindex="-1" autocomplete="off" aria-label="Website"></p>
-<p><label>Ваше имя<br><input name="name" maxlength="100" required></label></p>
-<p><label>Отзыв<br><textarea name="message" rows="6" minlength="5" maxlength="10000" required style="width:95%"></textarea></label></p>
-<button type="submit">Отправить</button></form>
+<div id="newEntryB"></div>
+<?php
+$total=(int)$q->found_posts;$pages=max(1,(int)ceil($total/15));
+echo '<div id="pagesBlock2" align="center">';
+for($p=1;$p<=$pages;$p++){
+    $start=($p-1)*15+1;$end=min($p*15,$total);$label=$start.'-'.$end;
+    if($p===$current_page)echo '<b class="swchItemA1"><span>'.esc_html($label).'</span></b> ';
+    else echo '<a class="swchItem1" href="'.esc_url($p===1?'/gb/':'/gb/'.$p).'"><span>'.esc_html($label).'</span></a> ';
+}
+echo '</div><br>';
+$smile_base=plugins_url('assets/smiles/',TOP_PLUGIN_FILE);
+$smiles=['>('=>'angry',':D'=>'biggrin','B)'=>'cool',":'("=>'cry','<_<'=>'dry','^_^'=>'happy',':('=>'sad',':)'=>'smile',':o'=>'surprised',':p'=>'tongue','%)'=>'wacko',';)'=>'wink'];
+?>
+<a id="sign" name="sign"></a>
+<?php if(isset($_GET['submitted']))echo '<p class="thai-gb-submit-status" role="status">Спасибо! Отзыв отправлен на проверку и появится после одобрения.</p>'; ?>
+<form method="post" id="acform" class="gb-add" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+<?php wp_nonce_field('thai_review'); ?><input type="hidden" name="action" value="thai_review"><p hidden><input name="website" tabindex="-1" autocomplete="off" aria-label="Website"></p>
+<table border="0" width="100%" cellspacing="1" cellpadding="2" class="commTable"><tbody>
+<tr><td class="commTd2" colspan="2"><div class="commError" id="eMessage" align="center"></div></td></tr>
+<tr><td class="commTd1" width="15%" nowrap>Имя *:</td><td class="commTd2"><input class="commFl" id="gbF7" type="text" name="name" size="30" maxlength="100" required></td></tr>
+<tr><td class="commTd1">Email *:</td><td class="commTd2"><input class="commFl" id="gbF1" type="email" name="email" size="30" maxlength="190" required></td></tr>
+<tr><td class="commTd2" colspan="2"><div style="padding-bottom:2px"></div><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td valign="top"><textarea id="message" class="commFl" rows="10" cols="40" name="message" minlength="5" maxlength="10000" required></textarea></td><td class="thai-gb-smiles-cell" width="5%" valign="top" align="center" style="padding-left:3px"><div class="smiles smiles-grid">
+<?php foreach($smiles as $code=>$file): ?><a href="#" class="sml1" data-code="<?php echo esc_attr($code); ?>"><img alt="" src="<?php echo esc_url($smile_base.$file.'.gif'); ?>" title="<?php echo esc_attr($file); ?>"></a><?php endforeach; ?>
+</div></td></tr></tbody></table></td></tr>
+<tr><td class="commTd1">Проверка:</td><td class="commTd2"><div class="thai-gb-review-note">Отзыв появится после проверки модератором.</div></td></tr>
+<tr><td class="commTd2" colspan="2" align="center"><input class="commSbmFl" type="submit" id="gbsbm" value="Добавить комментарий"></td></tr>
+</tbody></table></form>
 </div></div></div></div>
 <?php get_footer(); ?>

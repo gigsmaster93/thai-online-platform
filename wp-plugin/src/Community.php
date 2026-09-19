@@ -17,9 +17,9 @@ class TOP_Community {
         add_shortcode('thai_contact_form', [__CLASS__, 'contact_form']);
         add_filter('redirect_canonical', static function($url){return get_query_var('top_community') ? false : $url;});
         add_action('wp_enqueue_scripts', static function(){
-            if(get_query_var('top_community') || is_page('contact')) wp_enqueue_style('thai-community',plugins_url('assets/community.css',TOP_PLUGIN_FILE),[], '4.4.44');
+            if(get_query_var('top_community') || is_page('contact')) wp_enqueue_style('thai-community',plugins_url('assets/community.css',TOP_PLUGIN_FILE),[], '4.4.45');
             if(get_query_var('top_community')==='photo') wp_enqueue_style('thai-photo-legacy',home_url('/_st/photo.css'),[], '525');
-            if(get_query_var('top_community')==='forum') wp_enqueue_script('thai-community-forum',plugins_url('assets/community.js',TOP_PLUGIN_FILE),[], '4.4.44',true);
+            if(in_array(get_query_var('top_community'),['forum','guestbook'],true)) wp_enqueue_script('thai-community-forum',plugins_url('assets/community.js',TOP_PLUGIN_FILE),[], '4.4.45',true);
             if(is_page('contact')) wp_enqueue_style('thai-contact-legacy',home_url('/css/pages/1.css'),[], '52535335');
         },1000);
     }
@@ -93,7 +93,9 @@ class TOP_Community {
     }
     public static function submit_review() {
         [$name,$body]=self::validate_submission('thai_review');
-        $id=wp_insert_post(wp_slash(['post_type'=>'thai_guestbook','post_status'=>'pending','post_title'=>$name,'post_content'=>$body,'meta_input'=>['_thai_live_review'=>1]]),true);
+        $email=sanitize_email(wp_unslash($_POST['email']??''));
+        if(!is_email($email))wp_die('Укажи корректный E-mail.', '', ['response'=>400]);
+        $id=wp_insert_post(wp_slash(['post_type'=>'thai_guestbook','post_status'=>'pending','post_title'=>$name,'post_content'=>$body,'meta_input'=>['_thai_live_review'=>1,'_thai_email'=>$email]]),true);
         if(is_wp_error($id))wp_die('Не удалось сохранить отзыв.', '', ['response'=>500]);
         wp_safe_redirect(home_url('/gb?submitted=1#sign'));exit;
     }

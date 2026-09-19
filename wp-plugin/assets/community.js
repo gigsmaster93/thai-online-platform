@@ -21,6 +21,20 @@ document.addEventListener('DOMContentLoaded', function () {
       post.appendChild(preview);
     });
   });
+
+  document.querySelectorAll('.thai-guestbook .sml1[data-code]').forEach(function (link) {
+    link.addEventListener('click', function (event) {
+      event.preventDefault();
+      var field = document.getElementById('message');
+      if (!field) return;
+      var code = ' ' + (link.getAttribute('data-code') || '') + ' ';
+      var start = typeof field.selectionStart === 'number' ? field.selectionStart : field.value.length;
+      var end = typeof field.selectionEnd === 'number' ? field.selectionEnd : start;
+      field.value = field.value.slice(0, start) + code + field.value.slice(end);
+      field.focus();
+      field.selectionStart = field.selectionEnd = start + code.length;
+    });
+  });
   document.querySelectorAll('.thai-forum .ucoz-forum-post img').forEach(function (image) {
     if ((image.getAttribute('src') || '').indexOf('/.s/sm/') !== -1) image.classList.add('smile');
   });
