@@ -67,3 +67,7 @@
 
 .thai-forum .clear2{clear:right;float:none;width:100%}
 @media(max-width:600px){.thai-forum .ThrTopButtonsTbl .frmBtns{padding-bottom:26px}}
+
+/* Original forum image spacing from the uCoz page-level stylesheet. */
+.thai-forum .ucoz-forum-post img:not(.smile){max-width:51%!important;margin:2% 0!important}
+@media(max-width:834px){.thai-forum .ucoz-forum-post img:not(.smile){max-width:100%!important}}
