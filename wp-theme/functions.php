@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-define('THAI_ONLINE_THEME_VERSION', '4.4.46');
+define('THAI_ONLINE_THEME_VERSION', '4.4.47');
 require_once get_template_directory() . '/inc/parity.php';
 
 add_action('after_setup_theme', function () {
@@ -127,7 +127,7 @@ add_action('wp_enqueue_scripts', function () {
 
     $v = THAI_ONLINE_THEME_VERSION;
     $module = get_query_var('top_module') ?: get_query_var('top_community');
-    $is_shop_catalog = ($module === 'shop_all');
+    $is_shop_catalog = in_array($module, ['shop_all', 'shop_category'], true);
 
     wp_enqueue_style('ucoz-my', home_url('/_st/my.css'), [], $v);
     $previous = 'ucoz-my';
