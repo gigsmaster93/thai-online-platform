@@ -54,8 +54,26 @@ if ($legacy_id === 2 && str_starts_with($html, '|')) {
 }
 $home = untrailingslashit(home_url('/'));
 $html = str_replace(
-    ['https://thai-online.org', 'http://thai-online.org'],
-    [$home, $home],
+    [
+        'href="https://thai-online.org',
+        "href='https://thai-online.org",
+        'src="https://thai-online.org',
+        "src='https://thai-online.org",
+        'href="http://thai-online.org',
+        "href='http://thai-online.org",
+        'src="http://thai-online.org',
+        "src='http://thai-online.org",
+    ],
+    [
+        'href="' . $home,
+        "href='" . $home,
+        'src="' . $home,
+        "src='" . $home,
+        'href="' . $home,
+        "href='" . $home,
+        'src="' . $home,
+        "src='" . $home,
+    ],
     $html
 );
 ?>
@@ -84,12 +102,13 @@ $html = str_replace(
               $price = function_exists('thai_excursion_price') ? thai_excursion_price($item->ID) : (float) get_post_meta($item->ID, '_thai_price', true);
               $image = function_exists('thai_excursion_card_image') ? thai_excursion_card_image($item->ID, $ucoz_id) : '';
               $url = function_exists('thai_excursion_url') ? thai_excursion_url($item->ID) : get_permalink($item->ID);
+              $sidebar_title = str_replace(['“', '”'], '"', get_the_title($item));
           ?>
           <li>
             <a href="<?php echo esc_url($url); ?>" class="clearfix">
-              <img src="<?php echo esc_url($image); ?>" alt="<?php echo esc_attr(get_the_title($item)); ?>" class="gphoto" id="inf2-gphoto-<?php echo esc_attr($ucoz_id); ?>">
+              <img src="<?php echo esc_url($image); ?>" alt="<?php echo esc_attr($sidebar_title); ?>" class="gphoto" id="inf2-gphoto-<?php echo esc_attr($ucoz_id); ?>">
               <div>
-                <span><?php echo esc_html(get_the_title($item)); ?></span>
+                <span><?php echo esc_html($sidebar_title); ?></span>
                 <div><span class="inf2-good-<?php echo esc_attr($ucoz_id); ?>-price"><?php echo esc_html(number_format((float) $price, 2, '.', '')); ?>฿</span></div>
               </div>
             </a>
