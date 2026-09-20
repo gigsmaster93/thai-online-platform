@@ -9,6 +9,12 @@ add_filter('pre_get_document_title', static function () {
 status_header(200);
 get_header();
 
+echo '<style id="thai-pricelist-parity">.thai-pricelist-page.page.width{width:100%!important;margin-left:0!important;margin-right:0!important}';
+if (!$print_mode) {
+    echo '@media(min-width:835px){body.thai-module-pricelist header.header{height:190px!important}.thai-pricelist-page h1{min-height:50.359375px!important}}';
+}
+echo '</style>';
+
 if ($print_mode) {
     echo '<style id="thai-pricelist-print-mode">header,footer,.printBtn{display:none!important}</style>';
 }
