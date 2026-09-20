@@ -66,7 +66,7 @@ $total = (int) $q->found_posts;
 <div class="content clearfix thai-shop-page">
   <div class="content-view">
     <div class="topbar" style="width:100%">
-      <div class="thai-breadcrumbs"><a href="<?php echo esc_url(home_url('/')); ?>">Главная</a> » <a class="current" href="<?php echo esc_url($catalog_url); ?>"><?php echo $category ? esc_html($category->name) : 'Все товары'; ?></a></div>
+      <div class="thai-breadcrumbs"><a href="<?php echo esc_url(home_url('/')); ?>">Главная</a> » <a class="current" href="<?php echo esc_url(home_url('/shop/all')); ?>"><?php echo $category ? 'Все экскурсии' : 'Все товары'; ?></a></div>
       <div style="text-align:center"><img id="catImgX" <?php if (!empty($category_data['image'])): ?>src="<?php echo esc_url($category_data['image']); ?>"<?php endif; ?> alt="<?php echo $category ? esc_attr($category->name) : ''; ?>"></div>
       <div><h1 class="catalog-header-title" style="text-align:center;margin:0">Паттайя экскурсии <?php echo esc_html(wp_date('Y')); ?></h1></div>
       <div class="clr"></div>
@@ -82,14 +82,14 @@ $total = (int) $q->found_posts;
     <hr>
 
     <div class="shop-sort-selector"><span class="slist">Сортировка:
-      <a class="<?php echo $sort==='name' ? 'active' : ''; ?>" href="<?php echo esc_url(add_query_arg(['sort'=>'name','order'=>$sort==='name' && $order==='ASC' ? 'desc' : 'asc'], $catalog_url)); ?>">Наименование</a> ·
+      <a class="<?php echo $sort==='name' ? 'active' : ''; ?>" href="<?php echo esc_url(add_query_arg(['sort'=>'name','order'=>$sort==='name' && $order==='ASC' ? 'desc' : 'asc'], $catalog_url)); ?>"><?php echo $sort==='name' && $order==='ASC' ? '↑ ' : ''; ?>Наименование</a> ·
       <a class="<?php echo $sort==='price' ? 'active' : ''; ?>" href="<?php echo esc_url(add_query_arg(['sort'=>'price','order'=>$sort==='price' && $order==='ASC' ? 'desc' : 'asc'], $catalog_url)); ?>">Цена</a> ·
       <a class="<?php echo $sort==='date' ? 'active' : ''; ?>" href="<?php echo esc_url(add_query_arg(['sort'=>'date','order'=>$sort==='date' && $order==='DESC' ? 'asc' : 'desc'], $catalog_url)); ?>"><?php echo $sort==='date' && $order==='DESC' ? '↓ ' : ''; ?>Дата добавления</a>
     </span></div>
 
     <div id="slider-range"></div>
     <div class="flist"><form class="flist-item" id="flist-item-price" method="get" action="<?php echo esc_url($catalog_url); ?>">
-      <span class="flist-label" id="flist-label-price">Цена:</span>
+      <span class="flist-label" id="flist-label-price">Цена, ฿:</span>
       <input class="price_filter" name="min_price" id="price_min" type="number" min="0" value="<?php echo $min !== null ? esc_attr($min) : ''; ?>" placeholder="от">
       <input class="price_filter" name="max_price" id="price_max" type="number" min="0" value="<?php echo $max !== null ? esc_attr($max) : ''; ?>" placeholder="до">
       <input type="hidden" name="sort" value="<?php echo esc_attr($sort); ?>">
@@ -106,22 +106,30 @@ $total = (int) $q->found_posts;
       <?php endwhile; wp_reset_postdata(); ?>
     </div></div>
 
-    <?php if ($q->max_num_pages > 1): ?>
-      <div class="plist shop-page-wrap">
+    <?php if ($q->max_num_pages > 1):
+      $page_args = array_filter([
+          'sort'      => $sort,
+          'order'     => strtolower($order),
+          'min_price' => $min,
+          'max_price' => $max,
+      ], fn($v) => $v !== null && $v !== '');
+      $next_page_url = '';
+      if ($paged < (int) $q->max_num_pages) {
+          $next_path = $category
+              ? untrailingslashit($catalog_url) . ';' . ($paged + 1)
+              : untrailingslashit($catalog_url) . '/' . ($paged + 1);
+          $next_page_url = add_query_arg($page_args, $next_path);
+      }
+    ?>
+      <div class="plist shop-page-wrap" data-next-url="<?php echo esc_url($next_page_url); ?>">
         <?php
         $pagination = paginate_links([
             'base'      => untrailingslashit($catalog_url) . '%_%',
             'format'    => $category ? ';%#%' : '/%#%',
             'total'     => $q->max_num_pages,
             'current'   => $paged,
-            'prev_text' => '«',
-            'next_text' => '»',
-            'add_args'  => array_filter([
-                'sort'      => $sort,
-                'order'     => strtolower($order),
-                'min_price' => $min,
-                'max_price' => $max,
-            ], fn($v) => $v !== null && $v !== ''),
+            'prev_next' => false,
+            'add_args'  => $page_args,
         ]);
 
         if ($pagination) {
@@ -129,6 +137,59 @@ $total = (int) $q->found_posts;
         }
         ?>
       </div>
+      <script>
+      (function(){
+        var pager=document.querySelector('.thai-shop-page .shop-page-wrap');
+        var list=document.querySelector('.thai-shop-page #goods_cont .goods-list');
+        if(!pager||!list||!pager.dataset.nextUrl||!('IntersectionObserver' in window))return;
+        var nextUrl=pager.dataset.nextUrl,loading=false,observer;
+        function activateMedia(root){
+          root.querySelectorAll('[data-src]').forEach(function(el){
+            var src=el.getAttribute('data-src');
+            if(!src)return;
+            if(el.tagName==='IMG'){
+              if(!el.getAttribute('src'))el.setAttribute('src',src);
+            }else{
+              el.style.backgroundImage='url("'+src.replace(/"/g,'')+'")';
+            }
+            el.setAttribute('data-thai-lazy-loaded','1');
+          });
+        }
+        async function loadNext(){
+          if(loading||!nextUrl)return;
+          loading=true;
+          pager.setAttribute('aria-busy','true');
+          try{
+            var response=await fetch(nextUrl,{credentials:'same-origin'});
+            if(!response.ok)throw new Error('HTTP '+response.status);
+            var text=await response.text();
+            var doc=new DOMParser().parseFromString(text,'text/html');
+            var incoming=doc.querySelectorAll('#goods_cont .goods-list > .list-item');
+            incoming.forEach(function(item){
+              if(item.id&&document.getElementById(item.id))return;
+              var node=document.importNode(item,true);
+              activateMedia(node);
+              list.appendChild(node);
+            });
+            var remotePager=doc.querySelector('.shop-page-wrap');
+            nextUrl=remotePager ? (remotePager.dataset.nextUrl||'') : '';
+            pager.dataset.nextUrl=nextUrl;
+            window.dispatchEvent(new Event('resize'));
+            if(!nextUrl&&observer)observer.disconnect();
+          }catch(err){
+            console.warn('Thai Online catalog autoload failed:',err);
+            if(observer)observer.disconnect();
+          }finally{
+            loading=false;
+            pager.removeAttribute('aria-busy');
+          }
+        }
+        observer=new IntersectionObserver(function(entries){
+          entries.forEach(function(entry){if(entry.isIntersecting)loadNext();});
+        },{root:null,rootMargin:'700px 0px',threshold:0.01});
+        observer.observe(pager);
+      })();
+      </script>
     <?php endif; ?>
   </div>
 </div>
