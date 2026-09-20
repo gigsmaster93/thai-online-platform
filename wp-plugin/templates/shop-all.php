@@ -67,6 +67,17 @@ if ($paged > 1 && $paged > max(1, (int) $q->max_num_pages)) {
 status_header(200);
 get_header();
 $total = (int) $q->found_posts;
+if ($is_wishlist) {
+    echo '<style id="thai-wishlist-parity">
+    body.thai-module-shop_wishlist .thai-shop-page .topbar{margin-bottom:0!important}
+    body.thai-module-shop_wishlist .thai-shop-page #slider-range{position:relative;text-align:left;height:.8em;border:1px solid #eee;background:#fff;color:#333;font-family:Arial,sans-serif;font-size:1.1em;border-radius:6px;box-sizing:content-box;margin:0 auto 30px!important}
+    body.thai-module-shop_wishlist .thai-shop-page .flist{display:inline!important;margin-bottom:0!important}
+    body.thai-module-shop_wishlist .thai-shop-page .flist-item{display:block!important;gap:0!important;align-items:normal!important;flex-wrap:nowrap!important;justify-content:normal!important}
+    body.thai-module-shop_wishlist .thai-shop-page .price_filter{padding:14px 20px!important}
+    body.thai-module-shop_wishlist .thai-shop-page .thai-filter-reset{display:none!important}
+    @media(min-width:601px){body.thai-module-shop_wishlist .thai-shop-page .price_filter{width:auto!important}}
+    </style>';
+}
 ?>
 <div class="content clearfix thai-shop-page">
   <div class="content-view">
@@ -96,7 +107,7 @@ $total = (int) $q->found_posts;
       <a class="<?php echo $sort==='date' ? 'active' : ''; ?>" href="<?php echo esc_url(add_query_arg(['sort'=>'date','order'=>$sort==='date' && $order==='DESC' ? 'asc' : 'desc'], $catalog_url)); ?>"><?php echo $sort==='date' && $order==='DESC' ? '↓ ' : ''; ?>Дата добавления</a>
     </span></div>
 
-    <div id="slider-range"></div>
+    <div id="slider-range"<?php if ($is_wishlist): ?> class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"<?php endif; ?>></div>
     <div class="flist"><form class="flist-item" id="flist-item-price" method="get" action="<?php echo esc_url($catalog_url); ?>">
       <span class="flist-label" id="flist-label-price">Цена, ฿:</span>
       <input class="price_filter" name="min_price" id="price_min" type="number" min="0" value="<?php echo $min !== null ? esc_attr($min) : ''; ?>" placeholder="от">
@@ -104,16 +115,23 @@ $total = (int) $q->found_posts;
       <input type="hidden" name="sort" value="<?php echo esc_attr($sort); ?>">
       <input type="hidden" name="order" value="<?php echo esc_attr(strtolower($order)); ?>">
       <button type="submit">Фильтровать</button>
-      <a class="thai-filter-reset" href="<?php echo esc_url($catalog_url); ?>">Сбросить</a>
+      <?php if (!$is_wishlist): ?><a class="thai-filter-reset" href="<?php echo esc_url($catalog_url); ?>">Сбросить</a><?php endif; ?>
     </form></div>
     <hr>
 
-    <div id="goods_cont"><div class="goods-list with-clear">
-      <?php if (!$q->have_posts()): ?><p class="thai-catalog-empty"><?php echo $is_wishlist ? 'Не найдено ни одного товара' : 'По выбранным условиям экскурсии не найдены.'; ?></p><?php endif; ?>
-      <?php while ($q->have_posts()): $q->the_post(); ?>
-        <?php if (function_exists('thai_render_excursion_card')) thai_render_excursion_card(get_the_ID(), 'all'); ?>
-      <?php endwhile; wp_reset_postdata(); ?>
-    </div></div>
+    <div id="goods_cont">
+      <?php if ($is_wishlist): ?>
+        <div class="empty">Не найдено ни одного товара</div>
+        <?php wp_reset_postdata(); ?>
+      <?php else: ?>
+        <div class="goods-list with-clear">
+          <?php if (!$q->have_posts()): ?><p class="thai-catalog-empty">По выбранным условиям экскурсии не найдены.</p><?php endif; ?>
+          <?php while ($q->have_posts()): $q->the_post(); ?>
+            <?php if (function_exists('thai_render_excursion_card')) thai_render_excursion_card(get_the_ID(), 'all'); ?>
+          <?php endwhile; wp_reset_postdata(); ?>
+        </div>
+      <?php endif; ?>
+    </div>
 
     <?php if ($q->max_num_pages > 1):
       $page_args = array_filter([
