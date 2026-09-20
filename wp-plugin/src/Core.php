@@ -133,6 +133,7 @@ class TOP_Core {
 
     public static function register_routes() {
         add_rewrite_rule('^other_countries_ru/?$', 'index.php?top_module=legacy_page&top_id=19', 'top');
+        add_rewrite_rule('^thailand_2023_pricelist/?$', 'index.php?top_module=pricelist', 'top');
         add_rewrite_rule('^gb/?$', 'index.php?top_module=guestbook', 'top');
         add_rewrite_rule('^faq/?$', 'index.php?top_module=faq', 'top');
         add_rewrite_rule('^faq/([0-9]+)-([0-9]+)/?$', 'index.php?top_module=faq_single&top_id=$matches[2]', 'top');
@@ -163,6 +164,7 @@ class TOP_Core {
             'publ' => 'templates/publ.php',
             'publ_single' => 'templates/publ-single.php',
             'legacy_page' => 'templates/legacy-page.php',
+            'pricelist' => 'templates/pricelist.php',
         ];
         if ($module === 'shop_category' && !TOP_Shop_Categories::term()) {
             global $wp_query;
