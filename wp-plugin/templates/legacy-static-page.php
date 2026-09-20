@@ -102,7 +102,11 @@ $html = str_replace(
               $price = function_exists('thai_excursion_price') ? thai_excursion_price($item->ID) : (float) get_post_meta($item->ID, '_thai_price', true);
               $image = function_exists('thai_excursion_card_image') ? thai_excursion_card_image($item->ID, $ucoz_id) : '';
               $url = function_exists('thai_excursion_url') ? thai_excursion_url($item->ID) : get_permalink($item->ID);
-              $sidebar_title = str_replace(['“', '”'], '"', get_the_title($item));
+              $sidebar_title = str_replace(
+                  ['“', '”'],
+                  '"',
+                  html_entity_decode(get_the_title($item), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+              );
           ?>
           <li>
             <a href="<?php echo esc_url($url); ?>" class="clearfix">

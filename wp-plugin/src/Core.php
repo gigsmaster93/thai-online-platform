@@ -134,6 +134,7 @@ class TOP_Core {
     public static function register_routes() {
         add_rewrite_rule('^about/?$', 'index.php?top_module=legacy_static_page&top_id=2', 'top');
         add_rewrite_rule('^other_countries_ru/?$', 'index.php?top_module=legacy_static_page&top_id=19', 'top');
+        add_rewrite_rule('^([a-z0-9-]+)-301/?$', 'index.php?pagename=301-$matches[1]', 'top');
         add_rewrite_rule('^thailand_2023_pricelist/?$', 'index.php?top_module=pricelist', 'top');
         add_rewrite_rule('^gb/?$', 'index.php?top_module=guestbook', 'top');
         add_rewrite_rule('^faq/?$', 'index.php?top_module=faq', 'top');
