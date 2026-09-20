@@ -29,6 +29,7 @@ $page = $posts[0];
 $title_map = [
     2  => 'О Нас - Сервис поиска экскурсий в Таиланде',
     19 => 'Экскурсии по странам мира - Сервис поиска экскурсий в Таиланде',
+    92 => 'Услуги по переезду в Таиланд. Паттайя, Хуахин и Пхукет - Сервис поиска экскурсий в Таиланде',
 ];
 if (isset($title_map[$legacy_id])) {
     $legacy_title = $title_map[$legacy_id];
@@ -77,13 +78,13 @@ $html = str_replace(
     $html
 );
 ?>
-<div class="page width clearfix thai-legacy-static-page <?php echo $legacy_id === 2 ? 'thai-legacy-about' : 'thai-legacy-other-countries'; ?>">
+<div class="page width clearfix thai-legacy-static-page <?php echo $legacy_id === 2 ? 'thai-legacy-about' : ($legacy_id === 92 ? 'thai-legacy-immigration' : 'thai-legacy-other-countries'); ?>">
   <div class="content clearfix">
     <div class="content-view">
       <?php echo $html; ?>
     </div>
   </div>
-  <?php if ($legacy_id === 19): ?>
+  <?php if (in_array($legacy_id, [19, 92], true)): ?>
   <aside id="side">
     <div class="block">
       <div class="block-header">Популярное</div>

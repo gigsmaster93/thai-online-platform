@@ -1,5 +1,6 @@
 <?php
 if (!defined('ABSPATH')) exit;
+require_once __DIR__ . '/LegacyRoutes.php';
 require_once __DIR__ . '/ShopCategories.php';
 
 class TOP_Core {
