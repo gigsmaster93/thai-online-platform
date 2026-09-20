@@ -1,8 +1,10 @@
 <?php
 if (!defined('ABSPATH')) exit;
-$category = get_query_var('top_module') === 'shop_category' ? TOP_Shop_Categories::term() : null;
+$module = (string) get_query_var('top_module');
+$is_wishlist = $module === 'shop_wishlist';
+$category = $module === 'shop_category' ? TOP_Shop_Categories::term() : null;
 $category_data = $category ? TOP_Shop_Categories::data($category) : [];
-$catalog_url = home_url($category ? TOP_Shop_Categories::path($category) : '/shop/all');
+$catalog_url = home_url($is_wishlist ? '/shop/wishlist' : ($category ? TOP_Shop_Categories::path($category) : '/shop/all'));
 
 $sort = isset($_GET['sort']) ? sanitize_key($_GET['sort']) : ($category ? 'name' : 'date');
 $order = isset($_GET['order']) ? (strtolower($_GET['order']) === 'asc' ? 'ASC' : 'DESC') : ($category ? 'ASC' : 'DESC');
@@ -40,6 +42,9 @@ $args = [
     'order' => $order,
 ];
 if ($meta_key) $args['meta_key'] = $meta_key;
+if ($is_wishlist) {
+    $args['post__in'] = [0];
+}
 if ($min !== null || $max !== null) {
     $range = [];
     if ($min !== null) $range[] = ['key'=>'_thai_price','value'=>$min,'compare'=>'>=','type'=>'NUMERIC'];
@@ -66,15 +71,19 @@ $total = (int) $q->found_posts;
 <div class="content clearfix thai-shop-page">
   <div class="content-view">
     <div class="topbar" style="width:100%">
-      <div class="thai-breadcrumbs"><a href="<?php echo esc_url(home_url('/')); ?>">Главная</a> » <a class="current" href="<?php echo esc_url(home_url('/shop/all')); ?>"><?php echo $category ? 'Все экскурсии' : 'Все товары'; ?></a></div>
+      <div class="thai-breadcrumbs"><a href="<?php echo esc_url(home_url('/')); ?>">Главная</a> » <a class="current" href="<?php echo esc_url(home_url('/shop/all')); ?>"><?php echo ($category || $is_wishlist) ? 'Все экскурсии' : 'Все товары'; ?></a></div>
       <div style="text-align:center"><img id="catImgX" <?php if (!empty($category_data['image'])): ?>src="<?php echo esc_url($category_data['image']); ?>"<?php endif; ?> alt="<?php echo $category ? esc_attr($category->name) : ''; ?>"></div>
-      <div><h1 class="catalog-header-title" style="text-align:center;margin:0">Паттайя экскурсии <?php echo esc_html(wp_date('Y')); ?></h1></div>
+      <div><h1 class="catalog-header-title" style="text-align:center;margin:0">Паттайя экскурсии <?php echo esc_html(wp_date('Y')); ?><?php if ($is_wishlist): ?> <span style="display:none;">- </span><?php endif; ?></h1></div>
       <div class="clr"></div>
       <?php if (!empty($category_data['description'])): ?><div class="shop-cat-descr with-clear"><?php echo wp_kses_post($category_data['description']); ?></div><div class="clr"></div><?php endif; ?>
       <div class="shop-product-num"><b><span class="ne_cont"><?php echo esc_html($total); ?></span></b> позиций(-ии) в каталоге</div>
     </div>
 
-    <?php if ($category): TOP_Shop_Categories::render_children($category); else: ?>
+    <?php if ($is_wishlist): ?>
+    <hr class="hidempty" style="display:none">
+    <h2 class="catshdr hidempty" style="display:none">Категории</h2>
+    <br>
+    <?php elseif ($category): TOP_Shop_Categories::render_children($category); else: ?>
     <hr class="hidempty">
     <h2 class="catshdr hidempty">Категории</h2>
     <?php if (function_exists('thai_render_category_grid')) thai_render_category_grid(false); ?>
@@ -100,7 +109,7 @@ $total = (int) $q->found_posts;
     <hr>
 
     <div id="goods_cont"><div class="goods-list with-clear">
-      <?php if (!$q->have_posts()): ?><p class="thai-catalog-empty">По выбранным условиям экскурсии не найдены.</p><?php endif; ?>
+      <?php if (!$q->have_posts()): ?><p class="thai-catalog-empty"><?php echo $is_wishlist ? 'Не найдено ни одного товара' : 'По выбранным условиям экскурсии не найдены.'; ?></p><?php endif; ?>
       <?php while ($q->have_posts()): $q->the_post(); ?>
         <?php if (function_exists('thai_render_excursion_card')) thai_render_excursion_card(get_the_ID(), 'all'); ?>
       <?php endwhile; wp_reset_postdata(); ?>

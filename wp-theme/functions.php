@@ -69,6 +69,10 @@ add_filter('pre_get_document_title', function ($title) {
         return 'Все товары - Экскурсии Паттайя ' . wp_date('Y') . ' - Сервис поиска экскурсий в Таиланде';
     }
 
+    if ($module === 'shop_wishlist') {
+        return 'Список желаний - Экскурсии Паттайя ' . wp_date('Y') . ' - Сервис поиска экскурсий в Таиланде';
+    }
+
     if ($module === 'shop_single') {
         $ucoz_id = (int) get_query_var('top_id');
         $posts = get_posts([
@@ -127,7 +131,7 @@ add_action('wp_enqueue_scripts', function () {
 
     $v = THAI_ONLINE_THEME_VERSION;
     $module = get_query_var('top_module') ?: get_query_var('top_community');
-    $is_shop_catalog = in_array($module, ['shop_all', 'shop_category'], true);
+    $is_shop_catalog = in_array($module, ['shop_all', 'shop_category', 'shop_wishlist'], true);
 
     wp_enqueue_style('ucoz-my', home_url('/_st/my.css'), [], $v);
     $previous = 'ucoz-my';
