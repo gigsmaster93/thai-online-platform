@@ -16,6 +16,7 @@ class TOP_Forum_Services {
     public static function routes() {
         add_rewrite_tag('%top_forum_service%', '([a-z]+)');
         foreach(['34'=>'recent','35'=>'members'] as $code=>$key) add_rewrite_rule('^forum/0-0-([0-9]+)-'.$code.'/?$', 'index.php?top_community=forum&top_forum_service='.$key.'&top_page=$matches[1]', 'top');
+        add_rewrite_rule('^forum/([1-9][0-9]*)-0-0-37/?$', 'index.php?top_community=forum&top_forum_service=rss&top_section=$matches[1]', 'top');
         foreach(['36'=>'rules','6'=>'search','37'=>'rss'] as $code=>$key) add_rewrite_rule('^forum/0-0-0-'.$code.'/?$', 'index.php?top_community=forum&top_forum_service='.$key, 'top');
     }
     public static function template($template) {
@@ -41,12 +42,36 @@ class TOP_Forum_Services {
     public static function comment_args() {
         return ['status'=>'approve','post_type'=>'thai_forum_topic','post_status'=>'publish','orderby'=>['comment_date'=>'DESC','comment_ID'=>'DESC']];
     }
+    public static function section_ids($section) {
+        $sections=get_option('thai_forum_sections',[]);
+        if(!isset($sections[$section]))return null;
+        $ids=[$section];
+        foreach($sections as $id=>$row)if((int)($row['parent']??0)===$section)$ids[]=(int)$id;
+        return array_unique($ids);
+    }
+    public static function section_feed_comments($section) {
+        $ids=self::section_ids($section);
+        if($ids===null)return null;
+        $topics=get_posts(['post_type'=>'thai_forum_topic','post_status'=>'publish','numberposts'=>50,'orderby'=>'meta_value_num','meta_key'=>'_thai_forum_updated','order'=>'DESC','meta_query'=>[['key'=>'_thai_forum_section','value'=>array_unique($ids),'compare'=>'IN','type'=>'NUMERIC']]]);
+        $comments=[];
+        foreach($topics as $topic){
+            $last=get_comments(array_merge(self::comment_args(),['post_id'=>$topic->ID,'number'=>1]));
+            if($last)$comments[]=$last[0];
+        }
+        return $comments;
+    }
     public static function feed() {
         if(get_query_var('top_forum_service')!=='rss')return;
+        $section=(int)get_query_var('top_section');
+        $comments=$section?self::section_feed_comments($section):get_comments(array_merge(self::comment_args(),['number'=>30]));
+        if($comments===null){status_header(404);nocache_headers();header('Content-Type: text/plain; charset=UTF-8');echo 'Раздел форума не найден';exit;}
+        $sections=get_option('thai_forum_sections',[]);
+        $feed_title=$section?($sections[$section]['name'].' — Форум Thai Online'):'Форум Thai Online';
+        $feed_url=home_url('/forum'.($section?'/'.$section:''));
         status_header(200);header('Content-Type: application/rss+xml; charset=UTF-8');
         echo '<?xml version="1.0" encoding="UTF-8"?>';
-        echo '<rss version="2.0"><channel><title>Форум Thai Online</title><link>'.esc_xml(home_url('/forum')).'</link><description>Новые сообщения форума Thai Online</description><language>ru</language>';
-        foreach(get_comments(array_merge(self::comment_args(),['number'=>30])) as $c){
+        echo '<rss version="2.0"><channel><title>'.esc_xml($feed_title).'</title><link>'.esc_xml($feed_url).'</link><description>Новые сообщения форума Thai Online</description><language>ru</language>';
+        foreach($comments as $c){
             if(get_post_status($c->comment_post_ID)!=='publish')continue;
             $url=self::comment_url($c);
             echo '<item><title>'.esc_xml(get_the_title($c->comment_post_ID)).'</title><link>'.esc_xml($url).'</link><guid isPermaLink="true">'.esc_xml($url).'</guid><pubDate>'.esc_xml(gmdate(DATE_RSS,strtotime($c->comment_date_gmt.' UTC'))).'</pubDate><description>'.esc_xml(wp_trim_words(wp_strip_all_tags($c->comment_content),100)).'</description></item>';

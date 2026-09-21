@@ -10,9 +10,11 @@ class TOP_Legacy_Routes {
     }
 
     public static function routes() {
+        add_rewrite_rule('^photo/(?:.+/)?([0-9]+)-([1-9][0-9]*)/?$', 'index.php?top_community=photo&top_section=$matches[1]&top_page=$matches[2]', 'top');
         add_rewrite_tag('%top_forum_jump%', '([01])');
         add_rewrite_rule('^forum/([0-9]+)-([0-9]+)-0-17(?:-1)?/?$', 'index.php?top_forum_jump=1&top_section=$matches[1]&top_id=$matches[2]', 'top');
         add_rewrite_rule('^immigration-to-thailand-2022/?$', 'index.php?top_module=legacy_static_page&top_id=92', 'top');
+        add_rewrite_rule('^art_in_paradise/?$', 'index.php?top_community=photo&top_section=30', 'top');
         add_rewrite_rule('^free-transfers-shopping-pattaya/?$', 'index.php?top_community=photo&top_section=329', 'top');
     }
 
