@@ -6,12 +6,15 @@ class TOP_Legacy_Routes {
     public static function boot() {
         add_action('init', [__CLASS__, 'routes'], 40);
         add_action('template_redirect', [__CLASS__, 'forum_jump'], 0);
+        add_action('template_redirect', [__CLASS__, 'shop_people_jump'], 0);
         add_filter('template_include', [__CLASS__, 'missing_jump'], 200);
     }
 
     public static function routes() {
         add_rewrite_rule('^photo/(?:.+/)?([0-9]+)-([1-9][0-9]*)/?$', 'index.php?top_community=photo&top_section=$matches[1]&top_page=$matches[2]', 'top');
         add_rewrite_tag('%top_forum_jump%', '([01])');
+        add_rewrite_tag('%top_shop_people_jump%', '([01])');
+        add_rewrite_rule('^shop/([0-9]+)/desc/people/[0-9]+/?$', 'index.php?top_shop_people_jump=1&top_id=$matches[1]', 'top');
         add_rewrite_rule('^forum/([0-9]+)-([0-9]+)-0-17(?:-1)?/?$', 'index.php?top_forum_jump=1&top_section=$matches[1]&top_id=$matches[2]', 'top');
         add_rewrite_rule('^immigration-to-thailand-2022/?$', 'index.php?top_module=legacy_static_page&top_id=92', 'top');
         add_rewrite_rule('^art_in_paradise/?$', 'index.php?top_community=photo&top_section=30', 'top');
@@ -52,8 +55,25 @@ class TOP_Legacy_Routes {
         exit;
     }
 
+    public static function shop_people_jump() {
+        if (!get_query_var('top_shop_people_jump')) return;
+        $legacy_id = (int) get_query_var('top_id');
+        if ($legacy_id < 1) return;
+        $posts = get_posts([
+            'post_type'      => 'thai_excursion',
+            'post_status'    => 'publish',
+            'numberposts'    => 1,
+            'meta_key'       => '_ucoz_shop_id',
+            'meta_value'     => $legacy_id,
+        ]);
+        if (!$posts) return;
+        $target = home_url('/shop/' . $legacy_id . '/desc/' . $posts[0]->post_name);
+        wp_safe_redirect($target, 301, 'Thai Online');
+        exit;
+    }
+
     public static function missing_jump($template) {
-        if (!get_query_var('top_forum_jump')) return $template;
+        if (!get_query_var('top_forum_jump') && !get_query_var('top_shop_people_jump')) return $template;
         global $wp_query;
         $wp_query->set_404();
         status_header(404);
