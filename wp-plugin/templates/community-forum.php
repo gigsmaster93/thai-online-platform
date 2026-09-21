@@ -16,7 +16,15 @@ elseif($section){
         }else $args['s']=$forum_q;
     }
 }
-$q=($topic_id||$section)?new WP_Query($args):null;if($topic_id&&!$q->have_posts())status_header(404);
+// Legacy pinned topics occupy the first slots and count toward the page size.
+$pin_order=static function($orderby) {
+    global $wpdb;
+    return "COALESCE((SELECT MAX(CAST(pin.meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} pin WHERE pin.post_id={$wpdb->posts}.ID AND pin.meta_key='_thai_forum_pinned'),0) DESC, ".$orderby;
+};
+if($section&&!$topic_id)add_filter('posts_orderby',$pin_order);
+$q=($topic_id||$section)?new WP_Query($args):null;
+if($section&&!$topic_id)remove_filter('posts_orderby',$pin_order);
+if($topic_id&&!$q->have_posts())status_header(404);
 $topic_post=($topic_id&&$q&&$q->posts)?$q->posts[0]:null;
 $topic_comment_total=$topic_post?($topic_q!==''?(int)get_comments(['post_id'=>$topic_post->ID,'status'=>'approve','search'=>$topic_q,'search_columns'=>['comment_content'],'count'=>true]):(int)get_comments_number($topic_post->ID)):0;
 $forum_total_pages=$topic_post?max(1,(int)ceil($topic_comment_total/20)):($q?max(1,(int)ceil($q->found_posts/50)):1);
@@ -72,7 +80,7 @@ foreach($groups as $group){
 <?php if($q){ ?>
 <div class="gDivLeft"><div class="gDivRight"><table class="gTable forum-topics-table" width="100%" cellspacing="1" cellpadding="0"><tr><td class="gTableTop" colspan="6"><?php echo esc_html($sections[$section]['name']??'Темы'); ?></td></tr><tr><td class="gTableSubTop thai-topic-extra" width="8%"></td><td class="gTableSubTop">Тема</td><td class="gTableSubTop thai-topic-extra" width="7%">Ответы</td><td class="gTableSubTop thai-topic-extra" width="6%">Просмотры</td><td class="gTableSubTop thai-topic-extra" width="14%">Автор темы</td><td class="gTableSubTop thai-topic-extra" width="21%">Обновления</td></tr>
 <?php while($q->have_posts()){$q->the_post();$pid=get_the_ID();$tid=(int)get_post_meta($pid,'_ucoz_forum_id',true);$topic_section=(int)get_post_meta($pid,'_thai_forum_section',true);$url='/forum/'.$topic_section.'-'.$tid.'-1';$total=(int)get_comments_number($pid);$replies=get_the_content()?$total:max(0,$total-1);$last=get_comments(['post_id'=>$pid,'status'=>'approve','number'=>1,'orderby'=>'comment_date','order'=>'DESC']);$last=$last[0]??null;$views=get_post_meta($pid,'_thai_forum_views',true); ?>
-<tr><td class="threadIcoTd thai-topic-extra" align="center"><img src="/.s/img/fr/ic/1/f_norm_nonew.gif" alt=""></td><td class="threadNametd"><a class="threadLink" href="<?php echo esc_url($url); ?>"><?php the_title(); ?></a><div class="threadDescr"><?php echo esc_html(get_post_meta($pid,'_thai_forum_description',true)); ?></div></td><td class="threadPostTd thai-topic-extra" align="center"><?php echo $replies; ?></td><td class="threadViewTd thai-topic-extra" align="center"><?php echo $views!==''?(int)$views:'—'; ?></td><td class="threadAuthTd thai-topic-extra" align="center"><?php echo esc_html(get_post_meta($pid,'_thai_forum_author',true)); ?></td><td class="threadLastPostTd thai-topic-extra"><a href="<?php echo esc_url('/forum/'.$topic_section.'-'.$tid.'-'.max(1,(int)ceil($total/20))); ?>"><?php echo esc_html($last?get_comment_date('d.m.Y H:i',$last):get_the_date('d.m.Y H:i')); ?></a><?php if($last)echo '<br>Сообщение от: '.esc_html($last->comment_author); ?></td></tr>
+<tr><td class="threadIcoTd thai-topic-extra" align="center"><img src="/.s/img/fr/ic/1/f_norm_nonew.gif" alt=""></td><td class="threadNametd"><a class="<?php echo get_post_meta($pid,'_thai_forum_pinned',true)?'threadPinnedLink':'threadLink'; ?>" href="<?php echo esc_url($url); ?>"><?php the_title(); ?></a><div class="threadDescr"><?php echo esc_html(get_post_meta($pid,'_thai_forum_description',true)); ?></div></td><td class="threadPostTd thai-topic-extra" align="center"><?php echo $replies; ?></td><td class="threadViewTd thai-topic-extra" align="center"><?php echo $views!==''?(int)$views:'—'; ?></td><td class="threadAuthTd thai-topic-extra" align="center"><?php echo esc_html(get_post_meta($pid,'_thai_forum_author',true)); ?></td><td class="threadLastPostTd thai-topic-extra"><a href="<?php echo esc_url('/forum/'.$topic_section.'-'.$tid.'-'.max(1,(int)ceil($total/20))); ?>"><?php echo esc_html($last?get_comment_date('d.m.Y H:i',$last):get_the_date('d.m.Y H:i')); ?></a><?php if($last)echo '<br>Сообщение от: '.esc_html($last->comment_author); ?></td></tr>
 <?php } ?></table></div></div>
 <?php TOP_Community::pagination($q->found_posts,50,$current_page,'/forum/'.$section.'-0-{page}');wp_reset_postdata();} ?>
 <?php else: while($q->have_posts()){$q->the_post();$post_id=get_the_ID(); ?>
