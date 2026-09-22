@@ -3,7 +3,7 @@ Theme Name: Thai Online Theme
 Theme URI: https://thai-online.org
 Author: Thai Online
 Description: Original Thai Online visual layer with WordPress-managed content.
-Version: 4.4.47
+Version: 4.4.48
 Text Domain: thai-online-theme
 */
 
@@ -279,3 +279,17 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 @media(min-width:768px){.thai-table-open{display:none!important}}
 
 .thai-product-page .transport .form-group{width:170px;margin:auto}
+
+/* Restored single-product interactions. */
+.body-overflow{overflow:hidden!important}
+.thai-product-page .slideout-sidebar{visibility:visible}
+.thai-gallery-open{border:1px solid #0094fe;background:#fff;color:#0094fe;cursor:pointer;border-radius:10px;padding:0 21px;line-height:43px;font-size:16px}
+.thai-gallery-open:hover{background:#0094fe;color:#fff}
+.thai-found-cheaper-dialog{border:0;border-radius:10px;padding:28px 26px 24px;width:min(450px,calc(100vw - 32px));box-sizing:border-box;box-shadow:0 8px 40px rgba(0,0,0,.35)}
+.thai-found-cheaper-dialog::backdrop{background:rgba(0,0,0,.62)}
+.thai-found-cheaper-dialog h2{margin:0 35px 18px 0;color:#424242;text-align:center}
+.thai-found-cheaper-dialog form{display:flex;flex-direction:column;gap:10px}
+.thai-found-cheaper-dialog input{width:100%;box-sizing:border-box;padding:10px}
+.thai-found-cheaper-dialog form button{display:block;margin:8px auto 0;padding:10px 24px}
+.thai-dialog-close{position:absolute;right:12px;top:8px;border:0;background:transparent;font-size:30px;line-height:1;cursor:pointer;color:#555}
+.thai-cheaper-success{margin-top:8px;color:#147d34;font-size:14px}

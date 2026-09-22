@@ -208,7 +208,8 @@ $render_order_block = static function ($p, $ucoz_id, $price, $price_text, $varia
           <div id="total">
             Всего: <span><?php echo $is_person_pricing ? '' : esc_html($price_text); ?></span><br>
             <div><i class="fa fa-info-circle" aria-hidden="true"></i> Предложена самая низкая цена!</div>
-            <a href="#contacts" id="foundCheaper">Нашли дешевле?</a>
+            <a href="#foundCheaperDialog" id="foundCheaper">Нашли дешевле?</a>
+            <?php if(isset($_GET['cheaper_sent'])): ?><div class="thai-cheaper-success" role="status">Спасибо! Предложение отправлено.</div><?php endif; ?>
           </div>
 
           <div class="clr"></div>
@@ -250,6 +251,7 @@ $render_order_block = static function ($p, $ucoz_id, $price, $price_text, $varia
         </div>
       </div>
     </div>
+    <?php if(!$is_booking_form && method_exists('TOP_Community','found_cheaper_form')) TOP_Community::found_cheaper_form($p); ?>
     <?php
 };
 

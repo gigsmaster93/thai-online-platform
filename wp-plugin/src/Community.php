@@ -5,6 +5,8 @@ class TOP_Community {
         add_action('init', [__CLASS__, 'routes'], 30);
         add_action('admin_post_nopriv_thai_booking', [__CLASS__, 'submit_booking']);
         add_action('admin_post_thai_booking', [__CLASS__, 'submit_booking']);
+        add_action('admin_post_nopriv_thai_found_cheaper', [__CLASS__, 'submit_found_cheaper']);
+        add_action('admin_post_thai_found_cheaper', [__CLASS__, 'submit_found_cheaper']);
         add_action('admin_post_nopriv_thai_forum', [__CLASS__, 'submit_forum']);
         add_action('admin_post_thai_forum', [__CLASS__, 'submit_forum']);
         add_filter('template_include', [__CLASS__, 'template'], 100);
@@ -126,6 +128,75 @@ class TOP_Community {
         if(!$topic)echo '<p><label>Название темы<br><input name="title" maxlength="200" required></label></p>';
         echo '<p><label>Сообщение<br><textarea name="message" rows="6" minlength="5" maxlength="10000" required></textarea></label></p><p>Сообщения публикуются после проверки модератором.</p><button type="submit">Отправить</button></form>';
     }
+    public static function submit_found_cheaper() {
+        $product=get_post(absint($_POST['product']??0));
+        if(!$product||$product->post_type!=='thai_excursion'||$product->post_status!=='publish')wp_die('Экскурсия не найдена.', '', ['response'=>404]);
+
+        $offer_url=esc_url_raw(wp_unslash($_POST['offer_url']??''),['http','https']);
+        $offer_price=sanitize_text_field(wp_unslash($_POST['offer_price']??''));
+        $email=sanitize_email(wp_unslash($_POST['email']??''));
+        $phone=sanitize_text_field(wp_unslash($_POST['phone']??''));
+
+        if(!$offer_url||!wp_http_validate_url($offer_url))wp_die('Укажи корректную ссылку на предложение.', '', ['response'=>400]);
+        if(!$offer_price||mb_strlen($offer_price)>100)wp_die('Укажи цену предложения.', '', ['response'=>400]);
+        if(!is_email($email))wp_die('Укажи корректный E-mail.', '', ['response'=>400]);
+        if(!$phone||mb_strlen($phone)>100)wp_die('Укажи телефон.', '', ['response'=>400]);
+
+        $lines=[
+            'Экскурсия: '.$product->post_title,
+            'Ссылка на предложение: '.$offer_url,
+            'Цена предложения: '.$offer_price,
+            'E-mail: '.$email,
+            'Телефон: '.$phone,
+            'Страница: '.home_url('/shop/'.(int)get_post_meta($product->ID,'_ucoz_shop_id',true).'/desc/'.$product->post_name),
+        ];
+
+        $_POST['name']=wp_slash('Нашли дешевле: '.mb_substr($product->post_title,0,80));
+        $_POST['message']=wp_slash(implode("\n",$lines));
+        [$name,$body]=self::validate_submission('thai_found_cheaper');
+
+        $saved=wp_insert_post(wp_slash([
+            'post_type'=>'thai_message',
+            'post_status'=>'private',
+            'post_title'=>$name,
+            'post_content'=>$body,
+            'meta_input'=>[
+                '_thai_product'=>$product->ID,
+                '_thai_email'=>$email,
+                '_thai_type'=>'found_cheaper',
+                '_thai_offer_url'=>$offer_url,
+                '_thai_offer_price'=>$offer_price,
+                '_thai_phone'=>$phone,
+            ],
+        ]),true);
+        if(!$saved||is_wp_error($saved))wp_die('Не удалось сохранить сообщение. Попробуй позже.', '', ['response'=>500]);
+
+        wp_mail('info@thai-online.org',$name,$body,['Reply-To: '.$email]);
+        $legacy=(int)get_post_meta($product->ID,'_ucoz_shop_id',true);
+        wp_safe_redirect(home_url('/shop/'.$legacy.'/desc/'.$product->post_name.'?cheaper_sent=1#calculatey'));
+        exit;
+    }
+
+    public static function found_cheaper_form($product) {
+        ?>
+        <dialog id="foundCheaperDialog" class="thai-found-cheaper-dialog" aria-labelledby="foundCheaperTitle">
+          <button type="button" class="thai-dialog-close" data-thai-dialog-close aria-label="Закрыть">×</button>
+          <h2 id="foundCheaperTitle">Нашли дешевле?</h2>
+          <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+            <?php wp_nonce_field('thai_found_cheaper'); ?>
+            <input type="hidden" name="action" value="thai_found_cheaper">
+            <input type="hidden" name="product" value="<?php echo (int)$product->ID; ?>">
+            <p hidden><input name="website" tabindex="-1" autocomplete="off" aria-label="Website"></p>
+            <input type="url" name="offer_url" maxlength="1000" required placeholder="Ссылка на предложение с ценой*" aria-label="Ссылка на предложение с ценой">
+            <input type="text" name="offer_price" maxlength="100" required placeholder="Какая цена указана*" aria-label="Какая цена указана">
+            <input type="email" name="email" maxlength="200" required placeholder="Ваш E-mail*" aria-label="Ваш E-mail">
+            <input type="tel" name="phone" maxlength="100" required placeholder="Ваш телефон*" aria-label="Ваш телефон">
+            <button type="submit">Отправить</button>
+          </form>
+        </dialog>
+        <?php
+    }
+
     public static function submit_booking() {
         $product=get_post(absint($_POST['product']??0));
         if(!$product||$product->post_type!=='thai_excursion'||$product->post_status!=='publish')wp_die('Экскурсия не найдена.', '', ['response'=>404]);

@@ -111,7 +111,8 @@ function updateLegacyTotal(showTotal){
   if(showTotal){
     var formatted=(Math.round(total)===total)?String(total):total.toFixed(2);
     $('#total > span').text(formatted+' ฿');
-    $('#total').show();
+    $('#total').stop(true,true).slideDown('slow');
+    $('.thai-legacy-order-block .basket.now').stop(true,true).slideDown('slow');
   }
 }
 
@@ -180,8 +181,106 @@ function bindLegacyTables(){
   });
 }
 
+function bindProductGallery(){
+  var $sidebar=$('.thai-product-page .slideout-sidebar').first();
+  if(!$sidebar.length||$sidebar.attr('data-thai-gallery-bound')==='1')return;
+  $sidebar.attr('data-thai-gallery-bound','1');
+
+  var $slideout=$('.thai-product-page .slideout').first();
+  var $toggle=$('#menu-toggle');
+  if(!$toggle.length){
+    $toggle=$('<input>',{type:'checkbox',id:'menu-toggle','aria-label':'Открыть фотогалерею'});
+    $sidebar.before($toggle);
+    $toggle.after($('<label>',{'for':'menu-toggle','class':'menu-icon',title:'Галерея','aria-hidden':'true'}));
+    $sidebar.before($('<div>',{'class':'slideout-sidebar-shade','aria-hidden':'true'}));
+  }
+
+  if(!$sidebar.find('.go-gall').length){
+    var albumUrl=(typeof window.a_href==='string'&&window.a_href)?window.a_href:'';
+    if(!albumUrl){
+      $sidebar.find('script').each(function(){
+        var m=(this.textContent||'').match(/a_href\s*=\s*['"]([^'"]+)['"]/);
+        if(m&&!albumUrl)albumUrl=m[1];
+      });
+    }
+    if(albumUrl){
+      var $all=$('<div>',{'class':'go-gall'}).css('height','60px');
+      $all.append($('<a>',{'class':'gall-icon',title:'Смотреть все фотографии экскурсии',href:albumUrl,target:'_blank',rel:'noopener'}));
+      $sidebar.append($all);
+    }
+  }
+
+  $slideout.remove();
+
+  function setOpen(open){
+    $toggle.prop('checked',!!open);
+    $('html,body').toggleClass('body-overflow',!!open);
+  }
+
+  $toggle.off('change.thaiGallery').on('change.thaiGallery',function(){setOpen(this.checked);});
+  $('.slideout-sidebar-shade').off('click.thaiGallery').on('click.thaiGallery',function(){setOpen(false);});
+  $(document).off('keydown.thaiGallery').on('keydown.thaiGallery',function(e){if(e.key==='Escape'&&$toggle.prop('checked'))setOpen(false);});
+
+  var $triggers=$('label[for="menu-toggle"]').not('.menu-icon');
+  if(!$triggers.length){
+    var $host=$('.shop-itempage-images').first();
+    if($host.length){
+      var $fallback=$('<button>',{type:'button','class':'feedback thai-gallery-open'}).text('Смотреть фото');
+      $fallback.on('click',function(){setOpen(true);});
+      $host.prepend($fallback);
+    }
+  }
+}
+
+function bindFloatingOrderBlock(){
+  var $box=$('.thai-product-page .rightbl .right').first();
+  var $main=$('#main-product-page');
+  if(!$box.length||!$main.length)return;
+
+  $(window).off('scroll.thaiFloatOrder').on('scroll.thaiFloatOrder',function(){
+    var viewport=window.innerWidth||document.documentElement.clientWidth||document.body.clientWidth;
+    var scrollTop=$(window).scrollTop();
+    var headerH=$('.header').outerHeight()||0;
+    var $page=$('#maincont');
+    var pageW=$page.outerWidth()||0;
+    var boxW=$box.parent().width()||$box.outerWidth();
+
+    if(viewport>1028&&scrollTop>headerH+450){
+      var rightPos=(viewport-pageW)/2-8;
+      var stopAt=(headerH+450+$main.outerHeight())-$box.outerHeight()-100;
+      if(scrollTop>stopAt){
+        $box.css({
+          position:'absolute',
+          top:(headerH+500+$main.outerHeight())-$box.outerHeight()-95,
+          right:rightPos,
+          width:boxW
+        });
+      }else{
+        $box.css({position:'fixed',top:'75px',right:rightPos,width:boxW});
+      }
+    }else{
+      $box.css({position:'initial',top:'',right:'',width:'100%'});
+    }
+  }).triggerHandler('scroll.thaiFloatOrder');
+}
+
+function bindFoundCheaper(){
+  var dialog=document.getElementById('foundCheaperDialog');
+  if(!dialog)return;
+  $('#foundCheaper').off('click.thaiCheaper').on('click.thaiCheaper',function(e){
+    e.preventDefault();
+    if(typeof dialog.showModal==='function')dialog.showModal();
+    else dialog.setAttribute('open','open');
+  });
+  $(dialog).find('[data-thai-dialog-close]').off('click.thaiCheaper').on('click.thaiCheaper',function(){if(typeof dialog.close==='function')dialog.close();else dialog.removeAttribute('open');});
+  $(dialog).off('click.thaiCheaper').on('click.thaiCheaper',function(e){if(e.target===dialog){if(typeof dialog.close==='function')dialog.close();else dialog.removeAttribute('open');}});
+}
+
 function bindLegacyProduct(){
   bindLegacyTables();
+  bindProductGallery();
+  bindFloatingOrderBlock();
+  bindFoundCheaper();
   $('.contact-messenger').off('click.thai').on('click.thai',function(e){
     e.preventDefault();
     var $item=$(this);
@@ -284,7 +383,7 @@ window.addEventListener('load',function(){
 var resizeTimer;
 window.addEventListener('resize',function(){
   window.clearTimeout(resizeTimer);
-  resizeTimer=window.setTimeout(function(){legacyGridWidth();bindLegacyTables();},120);
+  resizeTimer=window.setTimeout(function(){legacyGridWidth();bindLegacyTables();bindFloatingOrderBlock();},120);
 });
 
 })(jQuery);
