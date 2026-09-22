@@ -222,7 +222,11 @@ function bindProductGallery(){
   $(document).off('keydown.thaiGallery').on('keydown.thaiGallery',function(e){if(e.key==='Escape'&&$toggle.prop('checked'))setOpen(false);});
 
   var $triggers=$('label[for="menu-toggle"]').not('.menu-icon');
-  if(!$triggers.length){
+  var hasVisibleTrigger=$triggers.filter(function(){
+    var r=this.getBoundingClientRect(),c=window.getComputedStyle(this);
+    return r.width>0&&r.height>0&&c.display!=='none'&&c.visibility!=='hidden';
+  }).length>0;
+  if(!hasVisibleTrigger){
     var $host=$('.shop-itempage-images').first();
     if($host.length){
       var $fallback=$('<button>',{type:'button','class':'feedback thai-gallery-open'}).text('Смотреть фото');
