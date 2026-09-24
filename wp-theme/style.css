@@ -293,3 +293,19 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 .thai-found-cheaper-dialog form button{display:block;margin:8px auto 0;padding:10px 24px}
 .thai-dialog-close{position:absolute;right:12px;top:8px;border:0;background:transparent;font-size:30px;line-height:1;cursor:pointer;color:#555}
 .thai-cheaper-success{margin-top:8px;color:#147d34;font-size:14px}
+
+
+/* Preserve legacy product-card overlay geometry.
+ * The imported catalog CSS expects the product link to stay out of positioning flow
+ * and both price badges to remain absolute overlays. */
+.goods-list .list-item .product-url,
+.mnp-slider .list-item .product-url,
+.shop-main-list .list-item .product-url {
+  position: static !important;
+  overflow: visible !important;
+}
+.goods-list .list-item .product-url .sml-price,
+.mnp-slider .list-item .product-url .sml-price,
+.shop-main-list .list-item .product-url .sml-price {
+  position: absolute !important;
+}

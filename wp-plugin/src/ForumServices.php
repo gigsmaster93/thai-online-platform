@@ -27,9 +27,16 @@ class TOP_Forum_Services {
         return $label ? $label.' — Форум Thai Online' : $title;
     }
     public static function navigation() {
-        echo '<nav class="thai-forum-service-nav" aria-label="Форум" style="text-align:right;padding:8px 0;line-height:1.8">[ <a href="'.esc_url(home_url('/forum')).'">Разделы форума</a>';
-        foreach(self::labels() as $key=>$label)echo ' · <a href="'.esc_url(self::url($key)).'">'.esc_html($label).'</a>';
-        echo ' ]</nav>';
+        $section=(int)get_query_var('top_section');
+        echo '<table class="thai-forum-service-nav" border="0" cellpadding="0" height="30" cellspacing="0" width="100%" aria-label="Форум"><tr><td align="right">[ ';
+        $first=true;
+        foreach(self::labels() as $key=>$label){
+            $url=($key==='rss'&&$section)?home_url('/forum/'.$section.'-0-0-37'):self::url($key);
+            if(!$first)echo ' &middot; ';
+            echo '<a class="fNavLink" href="'.esc_url($url).'" rel="nofollow">'.esc_html($label).'</a>';
+            $first=false;
+        }
+        echo ' ]</td></tr></table>';
     }
     public static function comment_url($comment) {
         global $wpdb;

@@ -21,7 +21,7 @@ class TOP_Community {
         add_action('wp_enqueue_scripts', static function(){
             if(get_query_var('top_community') || is_page('contact')) wp_enqueue_style('thai-community',plugins_url('assets/community.css',TOP_PLUGIN_FILE),[], '4.4.46');
             if(get_query_var('top_community')==='photo') wp_enqueue_style('thai-photo-legacy',home_url('/_st/photo.css'),[], '525');
-            if(in_array(get_query_var('top_community'),['forum','guestbook'],true)) wp_enqueue_script('thai-community-forum',plugins_url('assets/community.js',TOP_PLUGIN_FILE),[], '4.4.46',true);
+            if(in_array(get_query_var('top_community'),['forum','guestbook'],true)) wp_enqueue_script('thai-community-forum',plugins_url('assets/community.js',TOP_PLUGIN_FILE),[], '4.4.50',true);
             if(is_page('contact')) wp_enqueue_style('thai-contact-legacy',home_url('/css/pages/1.css'),[], '52535335');
         },1000);
     }

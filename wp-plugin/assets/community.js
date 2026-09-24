@@ -36,6 +36,14 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
   document.querySelectorAll('.thai-forum .ucoz-forum-post img').forEach(function (image) {
-    if ((image.getAttribute('src') || '').indexOf('/.s/sm/') !== -1) image.classList.add('smile');
+    if ((image.getAttribute('src') || '').indexOf('/.s/sm/') !== -1) {
+      image.classList.add('smile');
+      return;
+    }
+    var link = image.closest('a[href]');
+    if (link) {
+      link.classList.add('ulightbox');
+      if (!link.getAttribute('target')) link.setAttribute('target', '_blank');
+    }
   });
 });
