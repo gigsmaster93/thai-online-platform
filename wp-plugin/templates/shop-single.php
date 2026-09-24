@@ -47,8 +47,8 @@ if ($hero_image === '') {
 $content = (string) $p->post_content;
 $has_legacy_product = strpos($content, 'id="main-product-page"') !== false;
 $has_gallery = strpos($content, 'slideout-sidebar') !== false;
-$gallery_url = '';
-if ($has_gallery) {
+$gallery_url = (string) get_post_meta($p->ID, '_thai_gallery_url', true);
+if ($has_gallery && $gallery_url === '') {
     $gallery_source = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     if (preg_match('~a_href\s*=\s*[\'"]([^\'"]+)~i', $gallery_source, $gallery_match)) {
         $gallery_url = trim($gallery_match[1]);
