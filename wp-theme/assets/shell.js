@@ -237,7 +237,9 @@ function bindProductGallery(){
 
   var $triggers=$('label[for="menu-toggle"]').not('.menu-icon');
   var hasVisibleTrigger=$triggers.filter(function(){
-    var r=this.getBoundingClientRect(),c=window.getComputedStyle(this);
+    var visibleChild=this.querySelector('.feedback');
+    var target=visibleChild||this;
+    var r=target.getBoundingClientRect(),c=window.getComputedStyle(target);
     return r.width>0&&r.height>0&&c.display!=='none'&&c.visibility!=='hidden';
   }).length>0;
   if(!hasVisibleTrigger){
