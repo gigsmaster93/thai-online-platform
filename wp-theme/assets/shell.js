@@ -195,24 +195,38 @@ function bindProductGallery(){
     $sidebar.before($('<div>',{'class':'slideout-sidebar-shade','aria-hidden':'true'}));
   }
 
-  if(!$sidebar.find('.go-gall').length){
-    var albumUrl=(typeof window.a_href==='string'&&window.a_href)?window.a_href:'';
-    if(!albumUrl){
-      $sidebar.find('script').each(function(){
-        var m=(this.textContent||'').match(/a_href\s*=\s*['"]([^'"]+)['"]/);
-        if(m&&!albumUrl)albumUrl=m[1];
-      });
-    }
-    if(albumUrl){
-      var $all=$('<div>',{'class':'go-gall'}).css('height','60px');
-      $all.append($('<a>',{'class':'gall-icon',title:'Смотреть все фотографии экскурсии',href:albumUrl,target:'_blank',rel:'noopener'}));
-      $sidebar.append($all);
-    }
+  var albumUrl=$('.thai-product-page').first().attr('data-gallery-url')||'';
+  if(!albumUrl&&typeof window.a_href==='string'&&window.a_href)albumUrl=window.a_href;
+  if(!albumUrl){
+    $sidebar.find('script').each(function(){
+      var m=(this.textContent||'').match(/a_href\s*=\s*['"]([^'"]+)['"]/);
+      if(m&&!albumUrl)albumUrl=m[1];
+    });
   }
+  if(!albumUrl){
+    var firstSrc=$sidebar.find('img').first().attr('src')||'';
+    var albumMatch=firstSrc.match(/\/_ph\/([0-9]+)\//);
+    if(albumMatch)albumUrl='/photo/'+albumMatch[1];
+  }
+  if(!$sidebar.find('.go-gall').length&&albumUrl){
+    var $all=$('<div>',{'class':'go-gall'}).css('height','60px');
+    $all.append($('<a>',{'class':'gall-icon',title:'Смотреть все фотографии экскурсии',href:albumUrl,target:'_blank',rel:'noopener'}));
+    $sidebar.append($all);
+  }
+
+  function warmImages(limit){
+    $sidebar.find('img').slice(0,limit).each(function(){
+      this.loading='eager';
+      var src=this.currentSrc||this.getAttribute('src')||this.getAttribute('data-src')||'';
+      if(src){var preload=new Image();preload.src=src;}
+    });
+  }
+  warmImages(2);
 
   $slideout.remove();
 
   function setOpen(open){
+    if(open)warmImages(6);
     $toggle.prop('checked',!!open);
     $('html,body').toggleClass('body-overflow',!!open);
   }

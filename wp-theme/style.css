@@ -309,3 +309,77 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 .shop-main-list .list-item .product-url .sml-price {
   position: absolute !important;
 }
+
+
+/* Product gallery/action controls: keep the legacy controls aligned and responsive. */
+.thai-product-page .slideout-sidebar,
+.thai-product-page .menu-icon {
+  transition-delay: 0s !important;
+}
+.thai-product-page .thai-product-main-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+.thai-product-page .thai-product-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  flex-wrap: wrap;
+  clear: both;
+  margin-top: 12px;
+}
+.thai-product-page .thai-product-actions .photobuttonhidden,
+.thai-product-page .thai-product-actions .thai-product-review-action,
+.thai-product-page .thai-product-actions .contact-wrap {
+  float: none;
+  margin: 0;
+}
+.thai-product-page .thai-product-actions .feedback {
+  float: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 !important;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+.thai-product-page .thai-product-actions .contact-wrap {
+  display: flex;
+  justify-content: flex-start;
+}
+.thai-product-page .thai-product-actions .btn {
+  margin-top: 0;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+.thai-product-page .thai-product-gallery-link-wrap {
+  display: flex;
+  justify-content: center;
+  clear: both;
+  min-height: 60px;
+  padding-top: 8px;
+}
+.thai-product-page .thai-product-gallery-link-wrap .gall-icon {
+  float: none;
+  margin: 0;
+  display: block;
+}
+@media (max-width: 600px) {
+  .thai-product-page .thai-product-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .thai-product-page .thai-product-actions .feedback,
+  .thai-product-page .thai-product-actions .contact-wrap,
+  .thai-product-page .thai-product-actions .contact {
+    width: 100%;
+  }
+  .thai-product-page .thai-product-actions .contact-wrap {
+    flex-wrap: nowrap;
+  }
+  .thai-product-page .thai-product-actions .contact {
+    flex: 1 1 auto;
+  }
+}

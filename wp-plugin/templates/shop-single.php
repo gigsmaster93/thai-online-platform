@@ -46,6 +46,19 @@ if ($hero_image === '') {
 
 $content = (string) $p->post_content;
 $has_legacy_product = strpos($content, 'id="main-product-page"') !== false;
+$has_gallery = strpos($content, 'slideout-sidebar') !== false;
+$gallery_url = '';
+if ($has_gallery) {
+    $gallery_source = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    if (preg_match('~a_href\s*=\s*[\'"]([^\'"]+)~i', $gallery_source, $gallery_match)) {
+        $gallery_url = trim($gallery_match[1]);
+    } elseif (preg_match('~/_ph/([0-9]+)/~', $gallery_source, $gallery_match)) {
+        $gallery_url = '/photo/' . (int) $gallery_match[1];
+    }
+}
+$gallery_href = $gallery_url !== ''
+    ? (preg_match('#^https?://#i', $gallery_url) ? $gallery_url : home_url($gallery_url))
+    : '';
 
 $variants_raw = (string) get_post_meta($p->ID, '_thai_price_variants', true);
 $variant_groups = [];
@@ -444,7 +457,7 @@ $render_recommendations = static function ($ucoz_ids) {
   </div>
 </div>
 
-<div class="page width clearfix thai-product-page" id="maincont">
+<div class="page width clearfix thai-product-page" id="maincont" data-gallery-url="<?php echo esc_attr($gallery_href); ?>">
 <div class="content clearfix" style="width:100%">
 <div class="content-view">
 
@@ -462,11 +475,50 @@ $render_recommendations = static function ($ucoz_ids) {
 
         <div class="clearfix" id="main-product-page">
           <div class="left">
-            <?php if ($image): ?>
-              <div class="shop-itempage-images">
-                <img src="<?php echo esc_url($image); ?>" alt="<?php echo esc_attr($p->post_title); ?>">
+            <div class="shop-itempage-images">
+              <div id="goToCalc" role="button" tabindex="0">Оформить / Рассчитать заказ ↓</div>
+              <?php if ($image): ?>
+                <img class="thai-product-main-image" src="<?php echo esc_url($image); ?>" alt="<?php echo esc_attr($p->post_title); ?>">
+              <?php endif; ?>
+
+              <div class="thai-product-actions">
+                <?php if ($has_gallery): ?>
+                  <div class="photobuttonhidden">
+                    <label for="menu-toggle" title="Смотреть фото">
+                      <span class="feedback"><i class="fa fa-camera" aria-hidden="true"></i><span>Смотреть фото</span></span>
+                    </label>
+                  </div>
+                <?php endif; ?>
+
+                <a class="thai-product-review-action" href="#feedback">
+                  <span class="feedback"><i class="fa fa-comments-o" aria-hidden="true"></i><span>Перейти к отзывам</span></span>
+                </a>
+
+                <div class="contact-wrap">
+                  <a href="https://wa.me/66838383539" target="_blank" rel="noopener" class="btn contact">
+                    <span>Связаться с нами</span>
+                  </a>
+                  <div class="dropdown">
+                    <button type="button" class="btn contact-dropdown" aria-label="Выбрать канал связи">
+                      <img class="contact-messenger-chosen" src="/img/icons/whatsapp.png" width="24" height="24" alt="">
+                    </button>
+                    <div class="dropdown-content">
+                      <a href="#" class="contact-messenger" data-href="https://wa.me/66838383539" data-icon="/img/icons/whatsapp.png">WhatsApp</a>
+                      <a href="#" class="contact-messenger" data-href="tg://resolve?domain=thaionlinetours" data-icon="/img/icons/telegram.png">Telegram</a>
+                      <a href="#" class="contact-messenger" data-href="viber://chat?number=66838383539" data-icon="/img/icons/viber.png">Viber</a>
+                      <a href="#" class="contact-messenger" data-href="https://line.me/ti/p/~explosivepage" data-icon="/img/icons/line.png">Line</a>
+                      <a href="#" class="contact-messenger" data-href="tel:+66838383539" data-icon="/img/icons/phone.png">Телефон</a>
+                    </div>
+                  </div>
+                </div>
               </div>
-            <?php endif; ?>
+
+              <?php if ($gallery_href !== ''): ?>
+                <div class="thai-product-gallery-link-wrap">
+                  <a class="gall-icon thai-product-gallery-link" href="<?php echo esc_url($gallery_href); ?>" target="_blank" rel="noopener" title="Смотреть все фотографии экскурсии" aria-label="Перейти в галерею"></a>
+                </div>
+              <?php endif; ?>
+            </div>
           </div>
 
           <div class="right">
