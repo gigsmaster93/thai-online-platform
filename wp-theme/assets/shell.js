@@ -183,17 +183,7 @@ function bindLegacyTables(){
 
 function bindProductGallery(){
   var $sidebar=$('.thai-product-page .slideout-sidebar').first();
-  if(!$sidebar.length||$sidebar.attr('data-thai-gallery-bound')==='1')return;
-  $sidebar.attr('data-thai-gallery-bound','1');
-
-  var $slideout=$('.thai-product-page .slideout').first();
-  var $toggle=$('#menu-toggle');
-  if(!$toggle.length){
-    $toggle=$('<input>',{type:'checkbox',id:'menu-toggle','aria-label':'Открыть фотогалерею'});
-    $sidebar.before($toggle);
-    $toggle.after($('<label>',{'for':'menu-toggle','class':'menu-icon',title:'Галерея','aria-hidden':'true'}));
-    $sidebar.before($('<div>',{'class':'slideout-sidebar-shade','aria-hidden':'true'}));
-  }
+  if(!$sidebar.length)return;
 
   var albumUrl=$('.thai-product-page').first().attr('data-gallery-url')||'';
   if(!albumUrl&&typeof window.a_href==='string'&&window.a_href)albumUrl=window.a_href;
@@ -207,6 +197,38 @@ function bindProductGallery(){
     var firstSrc=$sidebar.find('img').first().attr('src')||'';
     var albumMatch=firstSrc.match(/\/_ph\/([0-9]+)\//);
     if(albumMatch)albumUrl='/photo/'+albumMatch[1];
+  }
+
+  var $images=$('.thai-product-page .shop-itempage-images').first();
+  if($images.length&&!$images.find('.thai-product-actions').length){
+    var $photo=$images.children('.photobuttonhidden').first();
+    var $review=$images.children('a[href="#feedback"]').filter(function(){return $(this).find('.feedback').length;}).first();
+    var $contact=$images.children('.contact-wrap').first();
+    if($photo.length||$review.length||$contact.length){
+      var $actions=$('<div>',{'class':'thai-product-actions'});
+      $actions.insertBefore($photo.length?$photo:($review.length?$review:$contact));
+      if($photo.length)$actions.append($photo);
+      if($review.length)$actions.append($review.addClass('thai-product-review-action'));
+      if($contact.length)$actions.append($contact);
+    }
+  }
+
+  var $actionHost=$images.find('.thai-product-actions').first();
+  if(albumUrl&&$actionHost.length&&!$images.find('.thai-product-gallery-link-wrap').length){
+    var $galleryLink=$('<a>',{'class':'gall-icon thai-product-gallery-link',title:'Смотреть все фотографии экскурсии',href:albumUrl,target:'_blank',rel:'noopener','aria-label':'Перейти в галерею'});
+    $actionHost.after($('<div>',{'class':'thai-product-gallery-link-wrap'}).append($galleryLink));
+  }
+
+  if($sidebar.attr('data-thai-gallery-bound')==='1')return;
+  $sidebar.attr('data-thai-gallery-bound','1');
+
+  var $slideout=$('.thai-product-page .slideout').first();
+  var $toggle=$('#menu-toggle');
+  if(!$toggle.length){
+    $toggle=$('<input>',{type:'checkbox',id:'menu-toggle','aria-label':'Открыть фотогалерею'});
+    $sidebar.before($toggle);
+    $toggle.after($('<label>',{'for':'menu-toggle','class':'menu-icon',title:'Галерея','aria-hidden':'true'}));
+    $sidebar.before($('<div>',{'class':'slideout-sidebar-shade','aria-hidden':'true'}));
   }
   if(!$sidebar.find('.go-gall').length&&albumUrl){
     var $all=$('<div>',{'class':'go-gall'}).css('height','60px');
