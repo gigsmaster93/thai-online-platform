@@ -254,14 +254,7 @@ $render_order_block = static function ($p, $ucoz_id, $price, $price_text, $varia
           <?php endif; ?>
         </div>
 
-        <br>
-        <div class="addblockright" style="max-width:350px;justify-content:center;display:contents;">
-          <p style="text-align:center;">
-            <a href="https://affiliate.klook.com/redirect?aid=28346&aff_adid=1164008&k_site=https%3A%2F%2Fwww.klook.com%2F" rel="nofollow" target="_blank">
-              <img src="/images/klook-on-good-page.png" width="100%" alt="Pattaya excursions" title="Plan you holidays right now">
-            </a>
-          </p>
-        </div>
+
       </div>
     </div>
     <?php if(!$is_booking_form && method_exists('TOP_Community','found_cheaper_form')) TOP_Community::found_cheaper_form($p); ?>

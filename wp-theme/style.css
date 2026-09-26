@@ -45,7 +45,23 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 .goods-tab>ul{list-style:none}.goods-tab>.tab-body{width:100%}.category-main{clear:both}.whywe{clear:both}.thai-home-reviews{clear:both;padding-top:30px}.thai-home-reviews #allEntries>div{width:75%;float:none;background:#fafafa;color:#424242;padding:20px;border-radius:15px;box-shadow:0 1px 4px -1px #9a9fad;margin:0 auto 20px}
 
 @media(max-width:782px){.admin-bar .header{margin-top:46px}}
-@media(max-width:760px){#navigation .uMenuRoot{display:none}#navigation.top-menu-open .uMenuRoot{display:block}#navigation .sub-menu,#navigation .subM{position:static!important;width:auto!important}.thai-shop-page .flist-item{display:flex}.thai-home-reviews #allEntries>div{width:90%}}
+@media(max-width:760px){
+    #navigation .uMenuRoot{display:none}
+    #navigation.top-menu-open #uNMenuDiv1,
+    #navigation.active-mobile #uNMenuDiv1{display:block!important}
+    #navigation.top-menu-open .uMenuRoot,
+    #navigation.active-mobile .uMenuRoot{display:block}
+    #navigation .sub-menu,
+    #navigation .subM{position:static!important;width:auto!important}
+    #mobile-navigation-button:focus-visible,
+    #navigation .uMenuRoot a:focus-visible{outline:2px solid #fff;outline-offset:2px}
+    .thai-shop-page .flist-item{display:flex}
+    .thai-home-reviews #allEntries>div{width:90%}
+}
+@media(min-width:761px){
+    #navigation>.width>#uNMenuDiv1{display:block!important}
+    #navigation>.width>#mobile-navigation-button{display:none!important}
+}
 
 
 /* Legacy single-product parity */
@@ -95,7 +111,6 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 
 
 /* Product page additions that replace dead uCoz backend widgets without changing the legacy layout. */
-.thai-product-page .addblockright img{height:auto}
 .thai-legacy-reviews #acform{
     background:#fafafa;
     border:1px solid #cecece;
@@ -210,14 +225,6 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 .thai-legacy-reviews .cDate{float:right;color:#888;font-size:12px}
 .thai-legacy-reviews .cMessage{margin-top:8px}
 .thai-product-hero .infoBl .colIco{box-sizing:border-box}
-@media(max-width:1024px){
-    .thai-product-page .addblockright img{max-width:40%;display:block;margin:0 30%}
-}
-@media(max-width:640px){
-    .thai-product-page .addblockright img{max-width:80%;margin:0 10%}
-}
-
-
 /* Exact inline rules present on the original uCoz product page. */
 #dscr h2{
     font-size:20px;
