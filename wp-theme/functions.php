@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-define('THAI_ONLINE_THEME_VERSION', '4.4.56');
+define('THAI_ONLINE_THEME_VERSION', '4.4.57');
 require_once get_template_directory() . '/inc/parity.php';
 
 add_action('after_setup_theme', function () {
