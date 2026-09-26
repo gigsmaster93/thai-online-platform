@@ -214,12 +214,6 @@ function bindProductGallery(){
     }
   }
 
-  var $actionHost=$images.find('.thai-product-actions').first();
-  if(albumUrl&&$actionHost.length&&!$images.find('.thai-product-gallery-link-wrap').length){
-    var $galleryLink=$('<a>',{'class':'gall-icon thai-product-gallery-link',title:'Смотреть все фотографии экскурсии',href:albumUrl,target:'_blank',rel:'noopener','aria-label':'Перейти в галерею'});
-    $actionHost.after($('<div>',{'class':'thai-product-gallery-link-wrap'}).append($galleryLink));
-  }
-
   if($sidebar.attr('data-thai-gallery-bound')==='1')return;
   $sidebar.attr('data-thai-gallery-bound','1');
 
@@ -287,14 +281,21 @@ function bindFloatingOrderBlock(){
     var $page=$('#maincont');
     var pageW=$page.outerWidth()||0;
     var boxW=$box.parent().width()||$box.outerWidth();
+    // The original page had a 1:1 partner-ad image under innerBlockY. The ad is
+    // intentionally removed on the migrated site, but its footprint determined
+    // where the floating price block stopped. Preserve that stop boundary without
+    // rendering the advertisement itself.
+    var innerW=$box.find('.innerBlockY').outerWidth()||375;
+    var legacyRemovedTail=innerW+54;
+    var effectiveBoxHeight=$box.outerHeight()+legacyRemovedTail;
 
     if(viewport>1028&&scrollTop>headerH+450){
       var rightPos=(viewport-pageW)/2-8;
-      var stopAt=(headerH+450+$main.outerHeight())-$box.outerHeight()-100;
+      var stopAt=(headerH+450+$main.outerHeight())-effectiveBoxHeight-100;
       if(scrollTop>stopAt){
         $box.css({
           position:'absolute',
-          top:(headerH+500+$main.outerHeight())-$box.outerHeight()-95,
+          top:(headerH+500+$main.outerHeight())-effectiveBoxHeight-95,
           right:rightPos,
           width:boxW
         });
@@ -467,7 +468,14 @@ $(function(){
     .on('keydown.thaiHeaderDismiss',function(e){if(e.key==='Escape'){closeHeaderMenus();closeMobileMenu();}});
 
   $('#navigation li').on('mouseenter',function(){if((window.innerWidth||document.documentElement.clientWidth)>760)$(this).children('.subM,.sub-menu').stop(true,true).show();}).on('mouseleave',function(){if((window.innerWidth||document.documentElement.clientWidth)>760)$(this).children('.subM,.sub-menu').stop(true,true).hide();});
-  $('#up-me').on('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+  var $upButton=$('#up-me');
+  var syncUpButton=function(){
+    if(!$upButton.length)return;
+    $upButton.css('position',$(window).scrollTop()>0?'fixed':'absolute');
+  };
+  $upButton.on('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+  $(window).off('scroll.thaiUpButton').on('scroll.thaiUpButton',syncUpButton);
+  syncUpButton();
   $('.goods-tab > ul a').on('click',function(e){e.preventDefault();var id=$(this).attr('href');$('.goods-tab > ul li').removeClass('active');$(this).parent().addClass('active');$('.goods-tab > .tab-body').hide();$(id).show();loadLegacyMedia();});
   window.setTimeout(hidePreloader,800);
 });

@@ -3,7 +3,7 @@ Theme Name: Thai Online Theme
 Theme URI: https://thai-online.org
 Author: Thai Online
 Description: Original Thai Online visual layer with WordPress-managed content.
-Version: 4.4.55
+Version: 4.4.56
 Text Domain: thai-online-theme
 */
 
@@ -393,3 +393,51 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 /* Managed product galleries keep the migrated sidebar as an exact fallback,
    but suppress it while an explicit WordPress-managed gallery is active. */
 .thai-product-page .slideout-sidebar.thai-legacy-gallery-suppressed{display:none!important}
+
+/* Final desktop navigation parity with the legacy uCoz menu. */
+@media (min-width:761px){
+  #navigation .uMenuRoot>li>ul.subM{
+    box-sizing:border-box!important;
+    width:320px!important;
+    left:28px!important;
+    right:auto!important;
+    top:50px!important;
+    padding:10px 10px 10px 20px!important;
+    margin-top:-1px!important;
+    background:#ff832a!important;
+    border:1px solid #fff!important;
+    border-radius:0 0 10px 10px!important;
+  }
+  #navigation .uMenuRoot>li>ul.subM>li{
+    display:list-item!important;
+    width:100%!important;
+    margin:0!important;
+    padding:0!important;
+    background:transparent!important;
+    font-size:10.6667px!important;
+    line-height:14.9333px!important;
+    text-align:left!important;
+  }
+  #navigation .uMenuRoot>li>ul.subM>li>a,
+  #navigation .uMenuRoot>li>ul.subM>li>a:hover,
+  #navigation .uMenuRoot>li>ul.subM>li>a.uMenuItemA{
+    display:inline-block!important;
+    box-sizing:border-box!important;
+    width:100%!important;
+    height:32px!important;
+    padding:0!important;
+    margin:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    color:#fff!important;
+    font-size:10.6667px!important;
+    line-height:32px!important;
+    text-align:left!important;
+  }
+  #navigation .uMenuRoot>li>ul.subM>li>a:hover{color:#000!important}
+}
+
+/* The standalone round album shortcut was not present on the legacy product page.
+   Album access remains available through “Смотреть фото” and from inside the drawer. */
+.thai-product-page .thai-product-gallery-link-wrap{display:none!important}

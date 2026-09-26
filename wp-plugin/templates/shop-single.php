@@ -554,11 +554,6 @@ $render_recommendations = static function ($ucoz_ids) {
                 </div>
               </div>
 
-              <?php if ($gallery_href !== ''): ?>
-                <div class="thai-product-gallery-link-wrap">
-                  <a class="gall-icon thai-product-gallery-link" href="<?php echo esc_url($gallery_href); ?>" target="_blank" rel="noopener" title="Смотреть все фотографии экскурсии" aria-label="Перейти в галерею"></a>
-                </div>
-              <?php endif; ?>
             </div>
           </div>
 
