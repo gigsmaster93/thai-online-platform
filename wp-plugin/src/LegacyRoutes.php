@@ -29,6 +29,7 @@ class TOP_Legacy_Routes {
         add_rewrite_rule('^faq/1-1/?$', 'index.php?tocms_module=faq', 'top');
         add_rewrite_rule('^\\.s/sm/1/(smile|tongue)\\.gif$', 'index.php?top_legacy_asset=$matches[1]', 'top');
         add_rewrite_rule('^\\.s/img/icon/(thumbu_|thumbd_)\\.png$', 'index.php?top_legacy_asset=$matches[1]', 'top');
+        add_rewrite_rule('^js/masterslider\\.main\\.css$', 'index.php?top_legacy_asset=masterslider_css', 'top');
         add_rewrite_rule('^shop/([0-9]+)/desc/people/[0-9]+/?$', 'index.php?top_shop_people_jump=1&top_id=$matches[1]', 'top');
         add_rewrite_rule('^forum/([0-9]+)-([0-9]+)-0-17(?:-1)?/?$', 'index.php?top_forum_jump=1&top_section=$matches[1]&top_id=$matches[2]', 'top');
         add_rewrite_rule('^immigration-to-thailand-2022/?$', 'index.php?top_module=legacy_static_page&top_id=92', 'top');
@@ -51,6 +52,7 @@ class TOP_Legacy_Routes {
             'tongue' => ['tongue.gif', 'image/gif'],
             'thumbu_' => ['thumbu_.png', 'image/png'],
             'thumbd_' => ['thumbd_.png', 'image/png'],
+            'masterslider_css' => ['masterslider.main.css', 'text/css; charset=UTF-8'],
         ];
         if (!isset($map[$key])) return;
         $file = TOP_PLUGIN_DIR . 'assets/legacy-ui/' . $map[$key][0];
