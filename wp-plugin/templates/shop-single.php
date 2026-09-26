@@ -46,9 +46,55 @@ if ($hero_image === '') {
 
 $content = (string) $p->post_content;
 $has_legacy_product = strpos($content, 'id="main-product-page"') !== false;
-$has_gallery = strpos($content, 'slideout-sidebar') !== false;
+
+$gallery_managed = (string) get_post_meta($p->ID, '_thai_gallery_mode', true) === 'managed';
+$managed_gallery_items = [];
+if ($gallery_managed) {
+    $managed_gallery_items = get_post_meta($p->ID, '_thai_gallery_items', true);
+    if (!is_array($managed_gallery_items)) $managed_gallery_items = [];
+    if (class_exists('TOP_Admin_UX')) {
+        $managed_gallery_items = TOP_Admin_UX::resolve_gallery_items($managed_gallery_items);
+    }
+    $managed_gallery_items = array_values(array_filter($managed_gallery_items, static function($item) {
+        return is_array($item) && !empty($item['src']);
+    }));
+
+    // Preserve original post_content byte-for-byte in the database. On managed products
+    // the migrated sidebar is only suppressed at render time so Reset can safely fall
+    // back to the exact legacy gallery.
+    $content = preg_replace_callback(
+        '~<div\b([^>]*class=(["\']))([^"\']*\bslideout-sidebar\b[^"\']*)(\2[^>]*)>~i',
+        static function($m) {
+            if (strpos($m[3], 'thai-legacy-gallery-suppressed') !== false) return $m[0];
+            return '<div' . $m[1] . trim($m[3] . ' thai-legacy-gallery-suppressed') . $m[4] . '>';
+        },
+        $content,
+        1
+    );
+}
+
+$has_gallery = $gallery_managed
+    ? !empty($managed_gallery_items)
+    : strpos($content, 'slideout-sidebar') !== false;
+
+$managed_gallery_html = '';
+if ($gallery_managed && $managed_gallery_items) {
+    $managed_gallery_html .= '<div class="slideout-sidebar thai-managed-gallery" data-gallery-source="managed">';
+    $managed_gallery_html .= '<h3>' . esc_html($p->post_title . ' — фотографии') . '</h3>';
+    foreach ($managed_gallery_items as $gallery_item) {
+        $src = (string) ($gallery_item['src'] ?? '');
+        if ($src === '') continue;
+        $alt = (string) ($gallery_item['alt'] ?? '');
+        $title = (string) ($gallery_item['title'] ?? '');
+        $managed_gallery_html .= '<img loading="lazy" src="' . esc_url($src) . '" alt="' . esc_attr($alt) . '"';
+        if ($title !== '') $managed_gallery_html .= ' title="' . esc_attr($title) . '"';
+        $managed_gallery_html .= '>';
+    }
+    $managed_gallery_html .= '</div>';
+}
+
 $gallery_url = (string) get_post_meta($p->ID, '_thai_gallery_url', true);
-if ($has_gallery && $gallery_url === '') {
+if ($has_gallery && !$gallery_managed && $gallery_url === '') {
     $gallery_source = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     if (preg_match('~a_href\s*=\s*[\'"]([^\'"]+)~i', $gallery_source, $gallery_match)) {
         $gallery_url = trim($gallery_match[1]);
@@ -453,6 +499,8 @@ $render_recommendations = static function ($ucoz_ids) {
 <div class="page width clearfix thai-product-page" id="maincont" data-gallery-url="<?php echo esc_attr($gallery_href); ?>">
 <div class="content clearfix" style="width:100%">
 <div class="content-view">
+
+    <?php if ($managed_gallery_html !== '') echo $managed_gallery_html; ?>
 
     <?php if ($has_legacy_product): ?>
 

@@ -182,18 +182,19 @@ function bindLegacyTables(){
 }
 
 function bindProductGallery(){
-  var $sidebar=$('.thai-product-page .slideout-sidebar').first();
+  var $sidebar=$('.thai-product-page .slideout-sidebar:not(.thai-legacy-gallery-suppressed)').first();
   if(!$sidebar.length)return;
 
+  var managedGallery=$sidebar.attr('data-gallery-source')==='managed';
   var albumUrl=$('.thai-product-page').first().attr('data-gallery-url')||'';
-  if(!albumUrl&&typeof window.a_href==='string'&&window.a_href)albumUrl=window.a_href;
-  if(!albumUrl){
+  if(!managedGallery&& !albumUrl&&typeof window.a_href==='string'&&window.a_href)albumUrl=window.a_href;
+  if(!managedGallery&& !albumUrl){
     $sidebar.find('script').each(function(){
       var m=(this.textContent||'').match(/a_href\s*=\s*['"]([^'"]+)['"]/);
       if(m&&!albumUrl)albumUrl=m[1];
     });
   }
-  if(!albumUrl){
+  if(!managedGallery&& !albumUrl){
     var firstSrc=$sidebar.find('img').first().attr('src')||'';
     var albumMatch=firstSrc.match(/\/_ph\/([0-9]+)\//);
     if(albumMatch)albumUrl='/photo/'+albumMatch[1];

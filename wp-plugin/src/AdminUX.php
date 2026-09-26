@@ -33,7 +33,7 @@ class TOP_Admin_UX {
         wp_enqueue_script(
             'thai-online-admin-excursion',
             plugins_url('assets/admin-excursion.js', TOP_PLUGIN_FILE),
-            ['jquery'],
+            ['jquery', 'jquery-ui-sortable'],
             TOP_VERSION,
             true
         );
@@ -44,6 +44,14 @@ class TOP_Admin_UX {
             'top-excursion-main',
             'Параметры экскурсии',
             [__CLASS__, 'render_main_box'],
+            'thai_excursion',
+            'normal',
+            'high'
+        );
+        add_meta_box(
+            'top-excursion-gallery',
+            'Фотографии товара',
+            [__CLASS__, 'render_gallery_box'],
             'thai_excursion',
             'normal',
             'high'
@@ -148,6 +156,173 @@ class TOP_Admin_UX {
         self::image_field($post->ID, 'hero_image', '_thai_hero_image', 'Hero-изображение', 'Если пусто, используется главное/карточное изображение.');
         self::image_field($post->ID, 'card_image', '_thai_card_image', 'Изображение карточки', 'Используется в каталогах и рекомендациях.');
         echo '</div>';
+    }
+
+    public static function render_gallery_box($post) {
+        $managed = (string) get_post_meta($post->ID, '_thai_gallery_mode', true) === 'managed';
+        $legacy_items = self::resolve_gallery_items(self::legacy_gallery_items((string) $post->post_content));
+        $items = $managed
+            ? get_post_meta($post->ID, '_thai_gallery_items', true)
+            : $legacy_items;
+        if (!is_array($items)) $items = [];
+        $items = self::resolve_gallery_items($items);
+
+        echo '<div class="top-admin-gallery-editor" data-gallery-editor data-gallery-source="' . ($managed ? 'managed' : 'legacy') . '">';
+        echo '<input type="hidden" name="top_excursion[gallery_mode]" value="' . ($managed ? 'managed' : 'legacy') . '" data-gallery-mode>';
+        echo '<input type="hidden" name="top_excursion[gallery_json]" value="' . esc_attr(wp_json_encode($items, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) . '" data-gallery-json>';
+
+        echo '<div class="top-admin-gallery-toolbar">';
+        echo '<div>';
+        echo '<strong>Источник:</strong> <span data-gallery-mode-label>' . ($managed ? 'управляемая галерея WordPress' : 'исходная legacy-галерея') . '</span>';
+        echo '<p class="description">Пока legacy-список не меняется, frontend использует исходный HTML без изменений. Добавление, удаление, перестановка или редактирование фото автоматически переводит товар в управляемый режим.</p>';
+        echo '</div>';
+        echo '<div class="top-admin-gallery-buttons">';
+        echo '<button type="button" class="button button-primary" data-gallery-add>+ Добавить фото из медиатеки</button>';
+        if ($managed) echo '<button type="button" class="button" data-gallery-reset>Вернуть исходную legacy-галерею</button>';
+        echo '<button type="button" class="button-link-delete" data-gallery-clear>Очистить галерею</button>';
+        echo '</div>';
+        echo '</div>';
+
+        echo '<div class="top-admin-gallery-grid" data-gallery-grid>';
+        foreach ($items as $i => $item) self::render_gallery_item($i, $item);
+        echo '</div>';
+
+        if (!$items) {
+            echo '<p class="top-admin-gallery-empty" data-gallery-empty>Фотографий нет. Добавьте изображения из медиатеки.</p>';
+        } else {
+            echo '<p class="top-admin-gallery-empty" data-gallery-empty style="display:none">Фотографий нет. Добавьте изображения из медиатеки.</p>';
+        }
+
+        echo '<template data-gallery-item-template>';
+        self::render_gallery_item('__INDEX__', [
+            'attachment_id' => 0,
+            'src' => '',
+            'alt' => '',
+            'title' => '',
+        ], true);
+        echo '</template>';
+        echo '<script type="application/json" data-gallery-legacy-json>' . wp_json_encode(
+            $legacy_items,
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+        ) . '</script>';
+        echo '</div>';
+    }
+
+    private static function render_gallery_item($i, $item, $template = false) {
+        $idx = esc_attr((string) $i);
+        $src = (string) ($item['src'] ?? '');
+        $preview = $src !== '' ? self::preview_url($src) : '';
+        $attachment_id = absint($item['attachment_id'] ?? 0);
+        echo '<div class="top-admin-gallery-item" data-gallery-item>';
+        echo '<div class="top-admin-gallery-thumb" data-gallery-drag title="Перетащите для изменения порядка">';
+        if ($preview !== '') echo '<img src="' . esc_url($preview) . '" alt="">';
+        else echo '<span class="dashicons dashicons-format-image"></span>';
+        echo '<span class="top-admin-gallery-grip dashicons dashicons-move"></span>';
+        echo '</div>';
+        echo '<input type="hidden" value="' . esc_attr($attachment_id) . '" data-gallery-attachment>';
+        echo '<label>Файл / URL<input type="text" class="widefat code" value="' . esc_attr($src) . '" data-gallery-src></label>';
+        echo '<label>Alt<input type="text" class="widefat" value="' . esc_attr($item['alt'] ?? '') . '" data-gallery-alt></label>';
+        echo '<label>Title<input type="text" class="widefat" value="' . esc_attr($item['title'] ?? '') . '" data-gallery-title></label>';
+        echo '<button type="button" class="button-link-delete" data-gallery-remove>Удалить</button>';
+        echo '</div>';
+    }
+
+    public static function legacy_gallery_items($content) {
+        $items = [];
+        $content = (string) $content;
+        if ($content === '') return $items;
+        if (!preg_match('~<div\b[^>]*class=(["\'])[^"\']*\bslideout-sidebar\b[^"\']*\1[^>]*>(.*?)</div>~is', $content, $m)) {
+            return $items;
+        }
+        if (!preg_match_all('~<img\b[^>]*>~i', $m[2], $imgs)) return $items;
+        foreach ($imgs[0] as $tag) {
+            $src = self::html_attr($tag, 'src');
+            if ($src === '') $src = self::html_attr($tag, 'data-src');
+            if ($src === '') continue;
+            $items[] = [
+                'attachment_id' => 0,
+                'src' => html_entity_decode($src, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                'alt' => html_entity_decode(self::html_attr($tag, 'alt'), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                'title' => html_entity_decode(self::html_attr($tag, 'title'), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+            ];
+        }
+        return $items;
+    }
+
+    private static function html_attr($tag, $name) {
+        if (preg_match('~\b' . preg_quote($name, '~') . '\s*=\s*(["\'])(.*?)\1~is', (string) $tag, $m)) {
+            return (string) $m[2];
+        }
+        return '';
+    }
+
+    public static function sanitize_gallery_items($items) {
+        if (!is_array($items)) return [];
+        $out = [];
+        foreach ($items as $item) {
+            if (!is_array($item)) continue;
+            $attachment_id = absint($item['attachment_id'] ?? 0);
+            $src = self::sanitize_url_or_path($item['src'] ?? '');
+            if ($attachment_id) {
+                $attachment_url = wp_get_attachment_url($attachment_id);
+                if ($attachment_url) $src = self::localize_url($attachment_url);
+            }
+            if ($src === '') continue;
+            $out[] = [
+                'attachment_id' => $attachment_id,
+                'src' => $src,
+                'alt' => trim(self::sanitize_inline_preserve($item['alt'] ?? '')),
+                'title' => trim(self::sanitize_inline_preserve($item['title'] ?? '')),
+            ];
+        }
+        return $out;
+    }
+
+    public static function resolve_gallery_items($items) {
+        if (!is_array($items)) return [];
+        $out = [];
+        foreach ($items as $item) {
+            if (!is_array($item)) continue;
+            $attachment_id = absint($item['attachment_id'] ?? 0);
+            $src = (string) ($item['src'] ?? '');
+            $alt = (string) ($item['alt'] ?? '');
+            $title = (string) ($item['title'] ?? '');
+            if ($attachment_id) {
+                $attachment_url = wp_get_attachment_url($attachment_id);
+                if ($attachment_url) $src = self::localize_url($attachment_url);
+                if ($alt === '') $alt = (string) get_post_meta($attachment_id, '_wp_attachment_image_alt', true);
+                if ($title === '') $title = (string) get_the_title($attachment_id);
+            }
+            if ($src === '') continue;
+            $out[] = [
+                'attachment_id' => $attachment_id,
+                'src' => $src,
+                'alt' => $alt,
+                'title' => $title,
+            ];
+        }
+        return $out;
+    }
+
+    private static function localize_url($url) {
+        $url = (string) $url;
+        $parts = wp_parse_url($url);
+        $home = wp_parse_url(home_url('/'));
+        if (!empty($parts['host']) && !empty($home['host']) && strtolower($parts['host']) === strtolower($home['host'])) {
+            $path = $parts['path'] ?? '/';
+            if (!empty($parts['query'])) $path .= '?' . $parts['query'];
+            return $path;
+        }
+        return $url;
+    }
+
+    public static function strip_legacy_gallery_sidebar($content) {
+        return preg_replace(
+            '~<div\b[^>]*class=(["\'])[^"\']*\bslideout-sidebar\b[^"\']*\1[^>]*>.*?</div>~is',
+            '',
+            (string) $content,
+            1
+        );
     }
 
     public static function render_pricing_box($post) {
@@ -295,6 +470,17 @@ class TOP_Admin_UX {
         self::set_meta($post_id, '_thai_hero_image', self::sanitize_url_or_path($data['hero_image'] ?? ''));
         self::set_meta($post_id, '_thai_card_image', self::sanitize_url_or_path($data['card_image'] ?? ''));
 
+        $gallery_mode = (($data['gallery_mode'] ?? '') === 'managed') ? 'managed' : 'legacy';
+        $gallery_payload = json_decode((string) ($data['gallery_json'] ?? '[]'), true);
+        if (!is_array($gallery_payload)) $gallery_payload = [];
+        if ($gallery_mode === 'managed') {
+            update_post_meta($post_id, '_thai_gallery_mode', 'managed');
+            update_post_meta($post_id, '_thai_gallery_items', self::sanitize_gallery_items($gallery_payload));
+        } else {
+            delete_post_meta($post_id, '_thai_gallery_mode');
+            delete_post_meta($post_id, '_thai_gallery_items');
+        }
+
         self::set_meta($post_id, '_thai_price_variants', self::serialize_price_variants($data['price_variants'] ?? []));
         self::set_meta($post_id, '_thai_quick_facts', self::serialize_quick_facts($data['quick_facts'] ?? []));
         self::set_meta($post_id, '_thai_transport_variants', self::serialize_pairs($data['transport'] ?? []));
@@ -316,7 +502,14 @@ class TOP_Admin_UX {
 
     private static function set_meta($post_id, $key, $value) {
         if ($value === '' || $value === []) {
-            delete_post_meta($post_id, $key);
+            // Preserve an existing explicit empty value so opening/saving an excursion
+            // is a true no-op at the metadata level. If the key never existed, do not
+            // create a new empty row.
+            if (metadata_exists('post', $post_id, $key)) {
+                update_post_meta($post_id, $key, $value);
+            } else {
+                delete_post_meta($post_id, $key);
+            }
         } else {
             update_post_meta($post_id, $key, $value);
         }

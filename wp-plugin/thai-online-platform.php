@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Thai Online Platform
  * Description: uCoz-compatible migration and CMS platform for Thai Online RU/EN websites.
- * Version: 1.0.2-lts
+ * Version: 1.0.3-lts
  * Author: Thai Online
  * Text Domain: thai-online-platform
  */
 
 if (!defined('ABSPATH')) exit;
 
-define('TOP_VERSION', '1.0.2-lts');
+define('TOP_VERSION', '1.0.3-lts');
 define('TOP_PLUGIN_FILE', __FILE__);
 define('TOP_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
