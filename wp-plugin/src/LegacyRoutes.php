@@ -4,12 +4,21 @@ if (!defined('ABSPATH')) exit;
 /** Public URL compatibility; does not create users or publish content. */
 class TOP_Legacy_Routes {
     public static function boot() {
+        add_filter('request', [__CLASS__, 'faq_legacy_request'], 0);
         add_action('init', [__CLASS__, 'routes'], 40);
         add_action('pre_get_posts', [__CLASS__, 'faq_archive_order'], 50);
         add_action('template_redirect', [__CLASS__, 'legacy_asset'], 0);
         add_action('template_redirect', [__CLASS__, 'forum_jump'], 0);
         add_action('template_redirect', [__CLASS__, 'shop_people_jump'], 0);
         add_filter('template_include', [__CLASS__, 'missing_jump'], 200);
+    }
+
+    public static function faq_legacy_request($query_vars) {
+        $path = trim((string) wp_parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), '/');
+        if ($path !== 'faq/1-1') return $query_vars;
+        $query_vars['tocms_module'] = 'faq';
+        unset($query_vars['tocms_ucoz_id']);
+        return $query_vars;
     }
 
     public static function routes() {
