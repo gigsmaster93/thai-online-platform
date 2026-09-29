@@ -27,7 +27,7 @@ class TOP_Legacy_Routes {
         add_rewrite_tag('%top_shop_people_jump%', '([01])');
         add_rewrite_tag('%top_legacy_asset%', '([a-z0-9_]+)');
         add_rewrite_rule('^faq/1-1/?$', 'index.php?tocms_module=faq', 'top');
-        add_rewrite_rule('^\\.s/sm/1/(smile|tongue)\\.gif$', 'index.php?top_legacy_asset=$matches[1]', 'top');
+        add_rewrite_rule('^\\.s/sm/1/(smile|tongue|killed)\\.gif$', 'index.php?top_legacy_asset=$matches[1]', 'top');
         add_rewrite_rule('^\\.s/img/icon/(thumbu_|thumbd_)\\.png$', 'index.php?top_legacy_asset=$matches[1]', 'top');
         add_rewrite_rule('^js/masterslider\\.main\\.css$', 'index.php?top_legacy_asset=masterslider_css', 'top');
         add_rewrite_rule('^shop/([0-9]+)/desc/people/[0-9]+/?$', 'index.php?top_shop_people_jump=1&top_id=$matches[1]', 'top');
@@ -50,6 +50,7 @@ class TOP_Legacy_Routes {
         $map = [
             'smile' => ['smile.gif', 'image/gif'],
             'tongue' => ['tongue.gif', 'image/gif'],
+            'killed' => ['killed.gif', 'image/gif'],
             'thumbu_' => ['thumbu_.png', 'image/png'],
             'thumbd_' => ['thumbd_.png', 'image/png'],
             'masterslider_css' => ['masterslider.main.css', 'text/css; charset=UTF-8'],

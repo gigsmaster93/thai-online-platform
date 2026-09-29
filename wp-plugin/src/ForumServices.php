@@ -38,6 +38,33 @@ class TOP_Forum_Services {
         }
         echo ' ]</td></tr></table>';
     }
+    public static function post_date($comment) {
+        // Public legacy dates are Russian even when the WP admin locale is English.
+        $days=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+        return $days[(int)get_comment_date('w',$comment)].', '.get_comment_date('d.m.Y, H:i',$comment);
+    }
+
+    public static function statistics() {
+        global $wpdb;
+        // Imported opening messages live in comments; native topics use post_content.
+        $counts=$wpdb->get_row("SELECT COUNT(*) topics,COALESCE(SUM(GREATEST(COALESCE(c.messages,0)-IF(TRIM(p.post_content)='',1,0),0)),0) replies FROM {$wpdb->posts} p LEFT JOIN (SELECT comment_post_ID,COUNT(*) messages FROM {$wpdb->comments} WHERE comment_approved='1' GROUP BY comment_post_ID) c ON c.comment_post_ID=p.ID WHERE p.post_type='thai_forum_topic' AND p.post_status='publish'");
+        if(!$counts)return;
+        $members=get_option('thai_forum_public_members',[]);
+        if(!is_array($members))$members=[];
+        $newest=null;$newest_time=0;
+        foreach($members as $member){
+            $time=strtotime($member['date']??'');
+            if($time&&$time>$newest_time&&!empty($member['name'])){$newest=$member;$newest_time=$time;}
+        }
+        echo '<section class="thai-forum-statistics" aria-label="Статистика форума"><div class="gDivLeft"><div class="gDivRight"><table class="gTable" cellspacing="1" cellpadding="0"><tbody><tr><th class="gTableTop">Статистика форума</th></tr><tr><td class="gTableBody">';
+        echo 'Всего создано '.(int)$counts->topics.' тем, в которые добавлено '.(int)$counts->replies.' ответов.';
+        if($members){
+            echo '<br>Участников в перенесённом справочнике: <a href="'.esc_url(self::url('members')).'">'.count($members).'</a>.';
+            if($newest)echo ' Последний зарегистрированный участник справочника: '.esc_html($newest['name']).'.';
+        }
+        echo '</td></tr></tbody></table></div></div></section>';
+    }
+
     public static function comment_url($comment) {
         global $wpdb;
         $topic=(int)get_post_meta($comment->comment_post_ID,'_ucoz_forum_id',true);

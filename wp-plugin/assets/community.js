@@ -47,3 +47,34 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+// Forum-only viewer: capture before the shared album handler; leave other galleries intact.
+document.addEventListener('click', function (event) {
+  var link = event.target.closest('.thai-forum a.ulightbox');
+  if (!link || typeof HTMLDialogElement === 'undefined') return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  var dialog = document.createElement('dialog');
+  dialog.className = 'thai-lightbox-dialog thai-forum-lightbox';
+  dialog.setAttribute('aria-label', 'Фотография из сообщения форума');
+  var close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'thai-forum-lightbox-close';
+  close.setAttribute('aria-label', 'Закрыть фотографию');
+  close.textContent = '×';
+  var photo = document.createElement('img');
+  photo.src = link.href;
+  photo.alt = link.querySelector('img')?.alt || 'Фотография из сообщения форума';
+  close.addEventListener('click', function () { dialog.close(); });
+  dialog.addEventListener('click', function (e) {
+    var rect = dialog.getBoundingClientRect();
+    if (e.target === dialog && (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom)) dialog.close();
+  });
+  dialog.addEventListener('close', function () {
+    dialog.remove();
+    if (link.isConnected) link.focus({preventScroll: true});
+  });
+  dialog.append(close, photo);
+  document.body.appendChild(dialog);
+  dialog.showModal();
+  close.focus();
+}, true);

@@ -130,3 +130,9 @@
 .thai-guestbook .thai-gb-review-note{min-height:77px;display:flex;align-items:center;color:#666}
 .thai-guestbook .thai-gb-submit-status{text-align:center}
 @media(max-width:500px){.thai-guestbook #acform{width:95%;margin:auto!important}.thai-guestbook #message{padding:10px 0;width:100%}.thai-guestbook #acform .commTable,.thai-guestbook #acform .commTable tbody,.thai-guestbook #acform .commTable tr,.thai-guestbook #acform .commTable td{display:block;width:100%;margin:auto}}
+/* Forum-only image viewer; shared photo/product controls are unaffected. */
+.thai-forum-lightbox{padding:46px 12px 12px;box-sizing:border-box}
+.thai-forum-lightbox .thai-forum-lightbox-close{position:absolute;top:0;right:0;width:44px;height:44px;margin:0;padding:0;border:0;background:transparent;color:#333;font:32px/44px Arial;cursor:pointer}
+.thai-forum-lightbox .thai-forum-lightbox-close:focus-visible{outline:2px solid #0094fe;outline-offset:-4px}
+.thai-forum-lightbox img{max-width:calc(95vw - 24px);max-height:calc(95vh - 70px)}
+.thai-forum .thai-forum-statistics .gTableBody{padding:20px;overflow-wrap:anywhere}
