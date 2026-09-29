@@ -273,13 +273,13 @@ $render_order_block = static function ($p, $ucoz_id, $price, $price_text, $varia
 
           <div class="clr"></div>
 
-          <div class="button-container" data-product-title="<?php echo esc_attr($p->post_title); ?>" data-product-url="<?php echo esc_url($product_url); ?>">
+          <?php if(isset($_GET['booked'])): ?><p class="thai-booking-success" role="status">Заявка принята. Мы свяжемся с тобой для подтверждения.</p><?php endif; ?>
+          <div class="button-container" data-product-id="<?php echo esc_attr($ucoz_id); ?>" data-product-title="<?php echo esc_attr($p->post_title); ?>" data-product-url="<?php echo esc_url($product_url); ?>" data-checkout-url="<?php echo esc_url(home_url('/shop/checkout?product=' . $ucoz_id)); ?>">
             <a
               id="id-<?php echo esc_attr($ucoz_id); ?>-buynow"
               class="basket now thai-book-now"
-              href="<?php echo esc_url('https://wa.me/66838383539?text=' . rawurlencode('Хочу забронировать: ' . $p->post_title . ' (' . $product_url . ')')); ?>"
-              target="_blank"
-              rel="noopener"
+              href="<?php echo esc_url(home_url('/shop/checkout?product=' . $ucoz_id)); ?>"
+              title="Перейти к оформлению заказа!"
             >Забронировать сейчас!</a>
 
             <a href="" target="_blank" rel="noopener" class="altorder" style="display:none;">
@@ -294,6 +294,7 @@ $render_order_block = static function ($p, $ucoz_id, $price, $price_text, $varia
                 <option value="viber">Viber</option>
                 <option value="line">Line</option>
                 <option value="phone">По телефону</option>
+                <option value="form">Форма на сайте</option>
               </select>
             </div>
           </div>

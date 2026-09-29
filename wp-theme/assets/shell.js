@@ -80,6 +80,46 @@ function loadLegacyMedia(){
   });
 }
 
+function buildCheckoutUrl(){
+  var $container=$('.thai-legacy-order-block .button-container').first();
+  var base=$container.attr('data-checkout-url')||'';
+  if(!base)return '';
+
+  var url;
+  try{url=new URL(base,window.location.href);}catch(e){return base;}
+
+  var details=[];
+  var quantity=0;
+  var $transport=$('#thai-transport');
+  if($transport.length&&parseFloat($transport.val()||'0')>0){
+    details.push('Транспорт: '+($.trim($transport.find(':selected').text())||''));
+  }
+
+  var $variant=$('#thai-price-group,#thai-tour-variant').first();
+  if($variant.length&&$variant.find(':selected').length){
+    details.push('Вариант: '+$.trim($variant.find(':selected').text()));
+  }
+
+  $('.thai-person-qty').each(function(){
+    var qty=parseInt(this.value||'0',10);
+    if(!isFinite(qty)||qty<1)return;
+    quantity+=qty;
+    var label=$.trim($(this).closest('.form-group').find('label').first().text());
+    details.push((label||'Количество')+': '+qty);
+  });
+
+  if(quantity>0)url.searchParams.set('quantity',String(quantity));
+  var total=$.trim($('#total > span').text()||'');
+  if(total)url.searchParams.set('total',total);
+  if(details.length)url.searchParams.set('details',details.join('; '));
+  return url.toString();
+}
+
+function syncCheckoutLink(){
+  var href=buildCheckoutUrl();
+  if(href)$('.thai-legacy-order-block .thai-book-now').attr('href',href);
+}
+
 function updateLegacyTotal(showTotal){
   var total=0;
   var hasQty=false;
@@ -112,7 +152,8 @@ function updateLegacyTotal(showTotal){
     var formatted=(Math.round(total)===total)?String(total):total.toFixed(2);
     $('#total > span').text(formatted+' ฿');
     $('#total').stop(true,true).slideDown('slow');
-    $('.thai-legacy-order-block .basket.now').stop(true,true).slideDown('slow');
+    syncCheckoutLink();
+    $('.thai-legacy-order-block .basket.now').stop(true,true).css('display','block');
   }
 }
 
@@ -383,6 +424,14 @@ function bindLegacyProduct(){
     var value=this.value;
     if(!value)return;
 
+    if(value==='form'){
+      syncCheckoutLink();
+      $('.altorder').hide().attr('href','').find('.thai-order-method-icon').remove();
+      $('.basket.now').css('display','block');
+      $(this).closest('.type-select').addClass('hidden').removeClass('visible');
+      return;
+    }
+
     var links={
       telegram:'tg://resolve?domain=thaionlinetours',
       whatsapp:'https://wa.me/66838383539',
@@ -390,15 +439,25 @@ function bindLegacyProduct(){
       line:'https://line.me/ti/p/~explosivepage',
       phone:'tel:+66838383539'
     };
+    var icons={
+      telegram:'/img/icons/telegram.png',
+      whatsapp:'/img/icons/whatsapp.png',
+      viber:'/img/icons/viber.png',
+      line:'/img/icons/line.png',
+      phone:'/img/icons/phone2.png'
+    };
 
     var href=links[value];
     if(!href)return;
 
-    $('.altorder').attr('href',href).show();
+    var $alt=$('.altorder');
+    $alt.attr('href',href).css('display','block').find('.thai-order-method-icon').remove();
+    if(icons[value])$alt.prepend($('<img>',{'class':'thai-order-method-icon',src:icons[value],alt:'',width:20,height:20}));
     $('.basket.now').hide();
     $(this).closest('.type-select').addClass('hidden').removeClass('visible');
   });
 
+  syncCheckoutLink();
   updateLegacyTotal(false);
 }
 
@@ -507,3 +566,28 @@ window.addEventListener('resize',function(){
 
 // Native image viewer for migrated photo albums.
 document.addEventListener('click',function(e){var a=e.target.closest('a.thai-lightbox, .thai-forum a.ulightbox');if(!a||typeof HTMLDialogElement==='undefined')return;e.preventDefault();var d=document.createElement('dialog');d.className='thai-lightbox-dialog';var close=document.createElement('button');close.type='button';close.textContent='Закрыть';close.onclick=function(){d.close();};var img=document.createElement('img');img.src=a.href;img.alt=a.querySelector('img')?.alt||'';d.append(close,img);document.body.appendChild(d);d.addEventListener('close',function(){d.remove();});d.addEventListener('click',function(ev){if(ev.target===d)d.close();});d.showModal();});
+
+/* VISUAL-SHELL parity: restore legacy scroll thresholds without altering mobile menu behavior. */
+(function($){
+  function bindVisualShellScroll(){
+    var $win=$(window);
+    var $navigation=$('#navigation');
+    var $upButton=$('#up-me');
+    var $photoReturn=$('.thai-photo-detail #adv');
+
+    function syncVisualShell(){
+      var scrollTop=$win.scrollTop();
+      var desktop=(window.innerWidth||document.documentElement.clientWidth)>760;
+      $navigation.toggleClass('fixedx',desktop&&scrollTop>170);
+      if($upButton.length){
+        $upButton.css('position','fixed');
+        if(scrollTop>400)$upButton.show();else $upButton.hide();
+      }
+      if($photoReturn.length)$photoReturn.toggleClass('thai-visual-shell-fixed',scrollTop>400);
+    }
+
+    $win.off('scroll.thaiVisualShell').on('scroll.thaiVisualShell',syncVisualShell);
+    syncVisualShell();
+  }
+  $(bindVisualShellScroll);
+})(jQuery);

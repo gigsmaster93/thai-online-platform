@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-define('THAI_ONLINE_THEME_VERSION', '4.4.57');
+define('THAI_ONLINE_THEME_VERSION', '4.4.58');
 require_once get_template_directory() . '/inc/parity.php';
 
 add_action('after_setup_theme', function () {
@@ -207,8 +207,8 @@ add_action('wp_enqueue_scripts', function () {
         $previous = 'ucoz-main-page-final';
     }
 
-    wp_enqueue_style('thai-online-theme', get_stylesheet_uri(), [$previous], $v);
-    wp_enqueue_script('thai-shell', get_template_directory_uri() . '/assets/shell.js', ['jquery'], $v, true);
+    wp_enqueue_style('thai-online-theme', get_stylesheet_uri(), [$previous], $v . '-product-checkout-1');
+    wp_enqueue_script('thai-shell', get_template_directory_uri() . '/assets/shell.js', ['jquery'], $v . '-product-checkout-1', true);
 }, 999);
 
 add_action('customize_register', function ($wp_customize) {

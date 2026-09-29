@@ -3,7 +3,7 @@ Theme Name: Thai Online Theme
 Theme URI: https://thai-online.org
 Author: Thai Online
 Description: Original Thai Online visual layer with WordPress-managed content.
-Version: 4.4.57
+Version: 4.4.58
 Text Domain: thai-online-theme
 */
 
@@ -34,16 +34,21 @@ Text Domain: thai-online-theme
 .flaticon-avatar:before{content:'\f10a'}
 
 @font-face{font-family:'FontAwesome';src:url('/css/fonts/fontawesome-webfont.woff2?v=4.3.0') format('woff2'),url('/css/fonts/fontawesome-webfont.woff?v=4.3.0') format('woff');font-weight:normal;font-style:normal;font-display:block}.fa{display:inline-block;font:normal normal normal 14px/1 FontAwesome;text-rendering:auto;-webkit-font-smoothing:antialiased}.fa-phone:before{content:'\f095'}.fa-envelope:before{content:'\f0e0'}.fa-user:before{content:'\f007'}.fa-language:before{content:'\f1ab'}.fa-search:before{content:'\f002'}.fa-eye:before{content:'\f06e'}.fa-cart-arrow-down:before{content:'\f218'}.fa-globe:before{content:'\f0ac'}.fa-car:before{content:'\f1b9'}.fa-camera:before{content:'\f030'}.fa-list-alt:before{content:'\f022'}.fa-comments:before{content:'\f086'}.fa-book:before{content:'\f02d'}.fa-info-circle:before{content:'\f05a'}.fa-chevron-circle-right:before{content:'\f138'}.fa-facebook:before{content:'\f09a'}.fa-instagram:before{content:'\f16d'}.fa-youtube-play:before{content:'\f16a'}.fa-mobile:before{content:'\f10b'}.fa-calendar:before{content:'\f073'}.fa-shield:before{content:'\f132'}.fa-money:before{content:'\f0d6'}
-body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar .header{margin-top:32px}#preloader{transition:opacity .2s ease}.thai-preloader-hidden{opacity:0!important;pointer-events:none!important;visibility:hidden!important}.videox{background-image:url('/img/bgmain.webp')!important;background-position:center!important;background-size:cover!important}.thai-vk{font-family:Arial,sans-serif!important;font-weight:700;font-size:13px}.searchSbmFl{cursor:pointer}
+body{margin:0;background-color:#fff}
+body.lazyload.replacex{background-image:url('/img/bgx.webp')!important;background-repeat:no-repeat!important;background-size:cover!important;background-position:50% 50%!important;background-attachment:fixed!important}
+.top-wp-runtime{min-height:360px}.admin-bar .header{margin-top:32px}#preloader{transition:opacity .2s ease}.thai-preloader-hidden{opacity:0!important;pointer-events:none!important;visibility:hidden!important}.videox{background-image:url('/img/bgmain.webp')!important;background-position:center!important;background-size:cover!important}.thai-vk{font-family:Arial,sans-serif!important;font-weight:700;font-size:13px}.searchSbmFl{cursor:pointer}
 
 /* uCoz product tile compatibility */
 .product-url{display:block;position:relative;background-position:center!important;background-repeat:no-repeat!important;background-size:cover!important;overflow:hidden}.product-url .sml-img{position:relative}.product-url .sml-meta{position:absolute;left:0;right:0;bottom:0}.product-url .sml-price{position:relative;z-index:2}.buy-it-now .flaticon-search:before{content:'\f002';font-family:'FontAwesome'}.wish:before{content:'\f005';font-family:'FontAwesome'}
 
 /* Shop/all keeps the original content width and layout instead of generic plugin cards */
 .thai-shop-page{width:100%}.thai-shop-page .content-view{width:100%}.thai-shop-page .topbar{margin-bottom:20px}.thai-shop-page .shop-sort-selector{text-align:center;margin:25px 0 18px}.thai-shop-page #slider-range{max-width:50%;margin:0 auto 20px}.thai-shop-page .flist{display:block;text-align:center;margin-bottom:25px}.thai-shop-page .flist-item{display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}.thai-shop-page .price_filter{width:110px;padding:8px}.thai-filter-reset{display:inline-block;padding:8px 12px;text-decoration:none}.shop-page-wrap{text-align:center;padding:25px 0}.shop-page-wrap .page-numbers{display:inline-block;margin:0 3px;padding:5px 9px}
+body.thai-module-shop_all .thai-shop-page{margin-top:-27px!important}
 
-.goods-tab>ul{list-style:none}.goods-tab>.tab-body{width:100%}.category-main{clear:both}.whywe{clear:both}.thai-home-reviews{clear:both;padding-top:30px}.thai-home-reviews #allEntries>div{width:75%;float:none;background:#fafafa;color:#424242;padding:20px;border-radius:15px;box-shadow:0 1px 4px -1px #9a9fad;margin:0 auto 20px}
+.goods-tab>ul{list-style:none}.goods-tab>.tab-body{width:100%}.category-main{clear:both}.category-main>h2{text-align:center!important}.whywe{clear:both}.thai-home-reviews{clear:both;padding-top:30px}.thai-home-reviews #allEntries>div{width:75%;float:none;background:#fafafa;color:#424242;padding:20px;border-radius:15px;box-shadow:0 1px 4px -1px #9a9fad;margin:0 auto 20px}.thai-home-seo{margin-top:78.75px!important}
+.thai-photo-detail #adv.thai-visual-shell-fixed{position:fixed!important;top:0!important;left:0!important;right:0!important;width:100vw!important;margin:0!important;z-index:1000!important}
 
+@media(max-width:834px){body.thai-module-shop_all .thai-shop-page{margin-top:0!important}}
 @media(max-width:782px){.admin-bar .header{margin-top:46px}}
 @media(max-width:760px){
     #navigation .uMenuRoot{display:none}
@@ -68,6 +73,28 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 .thai-product-hero .bread a,
 .thai-product-hero .bread span{color:#fff}
 .thai-legacy-order-block .button-container{position:relative}
+.thai-legacy-order-block .basket.now,
+.thai-legacy-order-block .altorder{
+    display:none;
+    width:100%;
+    box-sizing:border-box;
+    color:#fff;
+    text-align:center;
+    border-radius:0 0 20px 20px;
+    margin:0 0 -24px;
+    font-size:14pt;
+    line-height:26.1333px;
+    cursor:pointer;
+    box-shadow:0 3px 2px 2px #860d0d;
+    background:#cc1818;
+    padding:16px 40px;
+    border-bottom:3px solid transparent;
+    border-top:2px solid #cc1818;
+    text-decoration:none;
+}
+.thai-legacy-order-block .altorder:hover,
+.thai-legacy-order-block .basket.now:hover{color:#fff}
+.thai-legacy-order-block .thai-order-method-icon{width:20px;height:20px;margin-right:8px;vertical-align:middle}
 .thai-legacy-order-block .type-select{
     display:none;
     position:absolute;
@@ -76,6 +103,9 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
     align-items:center;
     justify-content:center;
     border-radius:20px;
+    width:100%;
+    height:100%;
+    box-sizing:border-box;
 }
 .thai-legacy-order-block .button-container:hover .type-select.visible{display:flex}
 .thai-legacy-order-block .type-select.hidden{display:none!important}
@@ -281,6 +311,17 @@ body{margin:0;background-color:#fff}.top-wp-runtime{min-height:360px}.admin-bar 
 
 .thai-product-page #order-form{height:335px;overflow:hidden}.thai-product-page #order-form:focus-within{height:auto;overflow:visible}
 @media(hover:hover){.thai-product-page #order-form:hover{height:auto;overflow:visible}}
+
+.thai-product-page #tabContainer .tabContent img,
+.thai-product-page #dscr .tabs .tab img{
+    max-width:100%!important;
+    height:auto!important;
+    box-sizing:border-box!important;
+}
+
+.thai-checkout-page #cont-shop-checkout{max-width:820px;margin:0 auto 40px}
+.thai-checkout-page .thai-checkout-product,.thai-checkout-page .thai-checkout-form{box-sizing:border-box;margin:0 0 20px;padding:20px;background:#fafafa;border:1px solid #cecece}
+.thai-checkout-page .thai-checkout-empty{text-align:center;padding:30px 10px}
 
 .thai-table-dialog{border:0;padding:16px;max-width:94vw;box-sizing:border-box;max-height:90vh}.thai-table-dialog::backdrop{background:#0009}.thai-table-dialog>button{display:block;margin:0 0 12px auto}.thai-table-scroll{overflow:auto;max-height:75vh}.thai-table-scroll table{display:table!important;min-width:420px;max-width:none}.thai-table-open{cursor:pointer}
 @media(min-width:768px){.thai-table-open{display:none!important}}

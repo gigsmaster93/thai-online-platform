@@ -142,6 +142,7 @@ class TOP_Core {
         add_rewrite_rule('^faq/?$', 'index.php?top_module=faq', 'top');
         add_rewrite_rule('^faq/([0-9]+)-([0-9]+)/?$', 'index.php?top_module=faq_single&top_id=$matches[2]', 'top');
         add_rewrite_rule('^shop/all/?$', 'index.php?top_module=shop_all', 'top');
+        add_rewrite_rule('^shop/checkout/?$', 'index.php?top_module=shop_checkout', 'top');
         add_rewrite_rule('^shop/wishlist/?$', 'index.php?top_module=shop_wishlist', 'top');
         add_rewrite_rule('^news/?$', 'index.php?top_module=news', 'top');
         add_rewrite_rule('^news/([0-9]+)-([0-9]+)/?$', 'index.php?top_module=news_single&top_id=$matches[2]', 'top');
@@ -162,6 +163,7 @@ class TOP_Core {
             'faq' => 'templates/faq.php',
             'faq_single' => 'templates/faq-single.php',
             'shop_all' => 'templates/shop-all.php',
+            'shop_checkout' => 'templates/shop-checkout.php',
             'shop_wishlist' => 'templates/shop-all.php',
             'shop_category' => 'templates/shop-all.php',
             'shop_single' => 'templates/shop-single.php',
