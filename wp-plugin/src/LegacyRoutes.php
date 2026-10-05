@@ -82,7 +82,7 @@ class TOP_Legacy_Routes {
             'post_id'=>$post_id, 'status'=>'approve', 'number'=>1,
             'orderby'=>['comment_date'=>'DESC', 'comment_ID'=>'DESC'],
         ]);
-        $url = home_url('/forum/' . $section . '-' . $legacy_topic . '-' . max(1, (int) ceil($count / 20)));
+        $url = home_url('/forum/' . $section . '-' . $legacy_topic . '-' . TOP_Forum_Services::topic_page_for_position($count, $legacy_topic));
         if ($last) {
             $legacy_post = (int) get_comment_meta($last[0]->comment_ID, '_ucoz_forum_post', true);
             $url .= '#' . ($legacy_post ? 'post' . $legacy_post : 'comment' . $last[0]->comment_ID);

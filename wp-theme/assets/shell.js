@@ -290,8 +290,9 @@ function bindProductGallery(){
   }
 
   $toggle.off('change.thaiGallery').on('change.thaiGallery',function(){setOpen(this.checked);});
-  $('.slideout-sidebar-shade').off('click.thaiGallery').on('click.thaiGallery',function(){setOpen(false);});
-  $(document).off('keydown.thaiGallery').on('keydown.thaiGallery',function(e){if(e.key==='Escape'&&$toggle.prop('checked'))setOpen(false);});
+  // Legacy behavior: the dark shade is visual only; close with the gallery control.
+  $('.slideout-sidebar-shade').off('click.thaiGallery');
+  $(document).off('keydown.thaiGallery');
 
   var $triggers=$('label[for="menu-toggle"]').not('.menu-icon');
   var hasVisibleTrigger=$triggers.filter(function(){

@@ -65,13 +65,22 @@ class TOP_Forum_Services {
         echo '</td></tr></tbody></table></div></div></section>';
     }
 
+    public static function topic_page_size($legacy_topic) {
+        // Verified legacy exception: currency topic has 50 posts per page.
+        // Other topics retain their existing pagination contract.
+        return (int)$legacy_topic===102 ? 50 : 20;
+    }
+    public static function topic_page_for_position($position,$legacy_topic) {
+        return max(1,(int)ceil($position/self::topic_page_size($legacy_topic)));
+    }
+
     public static function comment_url($comment) {
         global $wpdb;
         $topic=(int)get_post_meta($comment->comment_post_ID,'_ucoz_forum_id',true);
         $section=(int)get_post_meta($comment->comment_post_ID,'_thai_forum_section',true);
         $position=(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->comments} WHERE comment_post_ID=%d AND comment_approved='1' AND (comment_date<%s OR (comment_date=%s AND comment_ID<=%d))",$comment->comment_post_ID,$comment->comment_date,$comment->comment_date,$comment->comment_ID));
         $legacy=(int)get_comment_meta($comment->comment_ID,'_ucoz_forum_post',true);
-        return home_url('/forum/'.$section.'-'.$topic.'-'.max(1,(int)ceil($position/20))).'#'.($legacy?'post'.$legacy:'comment'.$comment->comment_ID);
+        return home_url('/forum/'.$section.'-'.$topic.'-'.self::topic_page_for_position($position,$topic)).'#'.($legacy?'post'.$legacy:'comment'.$comment->comment_ID);
     }
     public static function comment_args() {
         return ['status'=>'approve','post_type'=>'thai_forum_topic','post_status'=>'publish','orderby'=>['comment_date'=>'DESC','comment_ID'=>'DESC']];
