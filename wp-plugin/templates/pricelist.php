@@ -35,4 +35,7 @@ if ($print_mode) {
     </div>
   </div>
 </div>
+<?php if ($print_mode): ?>
+<script>window.addEventListener('load', function () { window.print(); }, { once: true });</script>
+<?php endif; ?>
 <?php get_footer(); ?>
