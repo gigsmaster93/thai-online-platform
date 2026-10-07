@@ -49,8 +49,8 @@ $tg = ltrim(get_theme_mod('thai_telegram', 'thaionlinetours'), '@');
       <div id="navigation"><div class="width"><div id="mobile-navigation-button" role="button" tabindex="0" aria-controls="uNMenuDiv1" aria-expanded="false">Навигация</div><div id="uNMenuDiv1" class="uMenuV"><?php if (has_nav_menu('primary')) { wp_nav_menu(['theme_location'=>'primary','container'=>false,'menu_class'=>'uMenuRoot','fallback_cb'=>'thai_online_primary_menu_fallback','depth'=>2]); } else { thai_online_primary_menu_fallback(); } ?></div></div></div>
     </div>
   </div>
-  <div class="clr"></div>
   <?php if (is_front_page()): ?>
+  <div class="clr"></div>
   <div class="topButtons"><div class="width">
     <ul class="sn width"><li><a href="https://vk.com/thaibooking" rel="nofollow" target="_blank"><span class="fa thai-vk">VK</span></a></li><li><a href="https://www.facebook.com/thaibookingportal/" rel="nofollow" target="_blank"><span class="fa fa-facebook"></span></a></li><li><a href="https://www.instagram.com/thaionlineorg/" rel="nofollow" target="_blank"><span class="fa fa-instagram"></span></a></li><li><a href="https://www.youtube.com/channel/UCDIGpPr7O6JXF9icDT0bTEA" rel="nofollow" target="_blank"><span class="fa fa-youtube-play"></span></a></li></ul>
     <div class="clr"></div>

@@ -11,6 +11,7 @@ class TOP_Community {
         add_action('admin_post_thai_forum', [__CLASS__, 'submit_forum']);
         add_filter('template_include', [__CLASS__, 'template'], 100);
         add_filter('document_title_parts', [__CLASS__, 'title'], 100);
+        add_filter('posts_orderby', [__CLASS__, 'guestbook_orderby'], 10, 2);
         add_action('admin_post_nopriv_thai_contact', [__CLASS__, 'submit_contact']);
         add_action('admin_post_thai_contact', [__CLASS__, 'submit_contact']);
         add_action('admin_post_nopriv_thai_review', [__CLASS__, 'submit_review']);
@@ -19,7 +20,7 @@ class TOP_Community {
         add_shortcode('thai_contact_form', [__CLASS__, 'contact_form']);
         add_filter('redirect_canonical', static function($url){return get_query_var('top_community') ? false : $url;});
         add_action('wp_enqueue_scripts', static function(){
-            if(get_query_var('top_community') || is_page('contact')) wp_enqueue_style('thai-community',plugins_url('assets/community.css',TOP_PLUGIN_FILE),[], '4.4.51');
+            if(get_query_var('top_community') || is_page('contact')) wp_enqueue_style('thai-community',plugins_url('assets/community.css',TOP_PLUGIN_FILE),[], '4.4.60');
             if(get_query_var('top_community')==='photo') wp_enqueue_style('thai-photo-legacy',home_url('/_st/photo.css'),[], '525');
             if(in_array(get_query_var('top_community'),['forum','guestbook'],true)) wp_enqueue_script('thai-community-forum',plugins_url('assets/community.js',TOP_PLUGIN_FILE),[], '4.4.51',true);
             if(is_page('contact')) wp_enqueue_style('thai-contact-legacy',home_url('/css/pages/1.css'),[], '52535335');
@@ -52,6 +53,14 @@ class TOP_Community {
         $module=get_query_var('top_community');
         if($module) $parts['title']=['forum'=>'Форум','photo'=>'Фотогалерея','guestbook'=>'Отзывы о сервисе Thai-Online'][$module]??$parts['title'];
         return $parts;
+    }
+    public static function guestbook_orderby($orderby, $query) {
+        if ($query->get('top_legacy_guestbook_order') !== true || $query->get('post_type') !== 'thai_guestbook') return $orderby;
+        global $wpdb;
+        // Public legacy entries use their sequence number, even when edited dates differ.
+        // New native reviews have no legacy number and retain date order above the import.
+        $legacy = "(SELECT MAX(CAST(thai_review_meta.meta_value AS UNSIGNED)) FROM {$wpdb->postmeta} thai_review_meta WHERE thai_review_meta.post_id={$wpdb->posts}.ID AND thai_review_meta.meta_key='_ucoz_gb_id')";
+        return "CASE WHEN COALESCE({$legacy},0)=0 THEN 1 ELSE 0 END DESC, {$legacy} DESC, {$wpdb->posts}.post_date DESC, {$wpdb->posts}.ID DESC";
     }
     public static function page() {
         $page=max(1,(int)get_query_var('top_page'));
@@ -205,6 +214,12 @@ class TOP_Community {
         foreach($labels as $key=>$label){$values[$key]=sanitize_textarea_field(wp_unslash($_POST[$key]??''));$lines[]=$label.': '.$values[$key];}
         if(!preg_match('/^\d{4}-\d{2}-\d{2}$/',$values['date'])||!ctype_digit($values['quantity'])||(int)$values['quantity']<1||(int)$values['quantity']>1000||!$values['phone'])wp_die('Заполни дату, количество человек и телефон.', '', ['response'=>400]);
         if($values['email']&&!is_email($values['email']))wp_die('Укажи корректный E-mail.', '', ['response'=>400]);
+        $payment_raw = $_POST['payment'] ?? '';
+        if (!is_scalar($payment_raw)) wp_die('Выбери способ оплаты из списка.', '', ['response'=>400]);
+        $payment = sanitize_key(wp_unslash((string) $payment_raw));
+        $payment_methods = self::booking_payment_methods();
+        if ($payment !== '' && !isset($payment_methods[$payment])) wp_die('Выбери способ оплаты из списка.', '', ['response'=>400]);
+        if ($payment !== '') $lines[] = 'Способ оплаты: ' . $payment_methods[$payment];
         $_POST['name']=wp_slash('Заявка: '.mb_substr($product->post_title,0,85));$_POST['message']=wp_slash(implode("\n",$lines));
         [$name,$body]=self::validate_submission('thai_booking');
         $saved=wp_insert_post(wp_slash(['post_type'=>'thai_message','post_status'=>'private','post_title'=>$name,'post_content'=>$body,'meta_input'=>['_thai_product'=>$product->ID,'_thai_email'=>$values['email']]]),true);
@@ -217,10 +232,79 @@ class TOP_Community {
         if(isset($_GET['booked']))echo '<p role="status">Заявка принята. Мы свяжемся с тобой для подтверждения.</p>';
         $quantity = array_key_exists('quantity', $defaults) ? max(1, min(1000, absint($defaults['quantity']))) : '';
         $wishes = sanitize_textarea_field((string) ($defaults['wishes'] ?? ''));
+        if (!empty($defaults['checkout'])) {
+            self::checkout_booking_form($product, $quantity, $wishes);
+            return;
+        }
         echo '<form class="thai-booking-form" method="post" action="'.esc_url(admin_url('admin-post.php')).'">';wp_nonce_field('thai_booking');
         echo '<input type="hidden" name="action" value="thai_booking"><input type="hidden" name="product" value="'.(int)$product->ID.'"><p hidden><input name="website" tabindex="-1" autocomplete="off" aria-label="Website"></p>';
         echo '<input type="date" name="date" aria-label="Дата выезда" required style="width:95%"><br><br><input type="number" name="quantity" value="'.esc_attr($quantity).'" placeholder="Количество человек" aria-label="Количество человек" min="1" max="1000" required style="width:95%;margin-bottom:5px"><br><input name="hotel" placeholder="Отель" aria-label="Отель" maxlength="200" style="width:95%;margin-bottom:5px"><br><input name="room" placeholder="Комната" aria-label="Комната" maxlength="50" style="width:95%"><br><br><input type="email" name="email" placeholder="E-mail" aria-label="E-mail" maxlength="200" style="width:95%;margin-bottom:5px"><br><input type="tel" name="phone" placeholder="Телефон" aria-label="Телефон" maxlength="60" required style="width:95%"><br><br><textarea name="wishes" rows="7" placeholder="Пожелания" aria-label="Пожелания" maxlength="5000" style="width:95%">'.esc_textarea($wishes).'</textarea><br><br><label><input type="checkbox" name="policy" value="1" required> <a href="/index/0-4" target="_blank" rel="noopener" style="color:green">Согласен с Пользовательским соглашением</a></label><br><br><input type="submit" value="Заказать!" style="width:100%"></form>';
     }
+    /** Public legacy tour FAQ: MIR/SBP, Thai bank transfer and payment at the office. */
+    public static function booking_payment_methods() {
+        return [
+            'mir_sbp' => 'МИР / СБП — оплата в российских рублях',
+            'thai_bank' => 'Перевод в тайский банк',
+            'office' => 'Оплата в офисе',
+        ];
+    }
+
+    private static function checkout_booking_form($product, $quantity, $wishes) {
+        ?>
+        <form class="thai-booking-form" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+          <?php wp_nonce_field('thai_booking'); ?>
+          <input type="hidden" name="action" value="thai_booking">
+          <input type="hidden" name="product" value="<?php echo (int) $product->ID; ?>">
+          <p hidden><input name="website" tabindex="-1" autocomplete="off" aria-label="Website"></p>
+          <div class="thai-booking-fields">
+            <label class="thai-booking-field" for="thai-booking-date">
+              <span>Дата выезда *</span>
+              <input id="thai-booking-date" type="date" name="date" required>
+            </label>
+            <label class="thai-booking-field" for="thai-booking-quantity">
+              <span>Количество человек *</span>
+              <input id="thai-booking-quantity" type="number" name="quantity" value="<?php echo esc_attr($quantity); ?>" min="1" max="1000" required>
+            </label>
+            <label class="thai-booking-field" for="thai-booking-hotel">
+              <span>Отель</span>
+              <input id="thai-booking-hotel" name="hotel" maxlength="200" autocomplete="organization">
+            </label>
+            <label class="thai-booking-field" for="thai-booking-room">
+              <span>Комната</span>
+              <input id="thai-booking-room" name="room" maxlength="50">
+            </label>
+            <label class="thai-booking-field" for="thai-booking-email">
+              <span>E-mail</span>
+              <input id="thai-booking-email" type="email" name="email" maxlength="200" autocomplete="email">
+            </label>
+            <label class="thai-booking-field" for="thai-booking-phone">
+              <span>Телефон *</span>
+              <input id="thai-booking-phone" type="tel" name="phone" maxlength="60" autocomplete="tel" required>
+            </label>
+            <label class="thai-booking-field thai-booking-wide" for="thai-booking-wishes">
+              <span>Выбранный вариант и пожелания</span>
+              <textarea id="thai-booking-wishes" name="wishes" rows="5" maxlength="5000"><?php echo esc_textarea($wishes); ?></textarea>
+            </label>
+            <label class="thai-booking-field thai-booking-wide" for="thai-booking-payment">
+              <span>Способ оплаты</span>
+              <select id="thai-booking-payment" name="payment">
+                <option value="">Уточнить при подтверждении</option>
+                <?php foreach (self::booking_payment_methods() as $value => $label): ?>
+                  <option value="<?php echo esc_attr($value); ?>"><?php echo esc_html($label); ?></option>
+                <?php endforeach; ?>
+              </select>
+              <small>Способ оплаты согласуем при подтверждении заявки.</small>
+            </label>
+          </div>
+          <label class="thai-booking-policy">
+            <input type="checkbox" name="policy" value="1" required>
+            <a href="/index/0-4" target="_blank" rel="noopener">Согласен с Пользовательским соглашением</a>
+          </label>
+          <input class="thai-booking-submit" type="submit" value="Заказать!">
+        </form>
+        <?php
+    }
+
     public static function contact_form() {
         ob_start();
         if(isset($_GET['sent']))echo '<p role="status">Сообщение принято. Спасибо за обращение!</p>';

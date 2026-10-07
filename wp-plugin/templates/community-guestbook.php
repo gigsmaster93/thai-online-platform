@@ -1,6 +1,6 @@
 <?php
 if (!defined('ABSPATH')) exit;
-$current_page=TOP_Community::page();$q=new WP_Query(['post_type'=>'thai_guestbook','post_status'=>'publish','posts_per_page'=>15,'paged'=>$current_page,'meta_key'=>'_thai_live_review','meta_value'=>1,'orderby'=>'date','order'=>'DESC']);
+$current_page=TOP_Community::page();$q=new WP_Query(['post_type'=>'thai_guestbook','top_legacy_guestbook_order'=>true,'post_status'=>'publish','posts_per_page'=>15,'paged'=>$current_page,'meta_key'=>'_thai_live_review','meta_value'=>1,'orderby'=>'date','order'=>'DESC']);
 get_header(); ?>
 <div class="page width clearfix"><div class="content clearfix" style="width:100%"><div class="content-view thai-guestbook">
 <table class="thai-gb-breadcrumb" border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td width="80%"><a href="/">Главная</a> &raquo; Гостевая книга</td><td align="right" style="white-space:nowrap">[ <a href="#sign">Добавить запись</a> ]</td></tr></table><hr>

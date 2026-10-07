@@ -43,7 +43,7 @@ get_header();
           <p><a href="<?php echo esc_url($product_url); ?>">← Вернуться к экскурсии</a></p>
         </section>
         <section class="thai-checkout-form" aria-label="Форма заказа">
-          <?php TOP_Community::booking_form($product, ['quantity' => $quantity, 'wishes' => implode("\n", $wishes)]); ?>
+          <?php TOP_Community::booking_form($product, ['quantity' => $quantity, 'wishes' => implode("\n", $wishes), 'checkout' => true]); ?>
         </section>
       <?php endif; ?>
     </div>

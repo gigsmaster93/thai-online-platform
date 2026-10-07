@@ -486,3 +486,33 @@ body.thai-module-shop_all .thai-shop-page{margin-top:-27px!important}
 /* The standalone round album shortcut was not present on the legacy product page.
    Album access remains available through “Смотреть фото” and from inside the drawer. */
 .thai-product-page .thai-product-gallery-link-wrap{display:none!important}
+/* The product wrapper must not trap the legacy drawer below the sticky menu. */
+body.thai-module-shop_single #land-full.top-wp-runtime{z-index:auto}
+.thai-legacy-order-block .tourVarS .form-group{width:170px;max-width:100%;margin:0 auto}
+
+/* Checkout fields have visible labels and a responsive two-column layout. */
+.thai-checkout-page .thai-checkout-product,
+.thai-checkout-page .thai-checkout-form{margin-top:0!important}
+.thai-checkout-page .thai-checkout-product h2{margin-top:0}
+.thai-checkout-page .thai-checkout-form .thai-booking-form{margin:0}
+.thai-checkout-page .thai-booking-fields{
+    display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 20px;
+}
+.thai-checkout-page .thai-booking-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.thai-checkout-page .thai-booking-wide{grid-column:1/-1}
+.thai-checkout-page .thai-booking-field input,
+.thai-checkout-page .thai-booking-field select,
+.thai-checkout-page .thai-booking-field textarea{
+    box-sizing:border-box;width:100%;max-width:100%;min-width:0;
+    margin:0;border-radius:6px;padding:10px 12px;font-size:16px;
+}
+.thai-checkout-page .thai-booking-field textarea{min-height:130px;resize:vertical}
+.thai-checkout-page .thai-booking-field small{font-size:13px;color:#666}
+.thai-checkout-page .thai-booking-policy{display:flex;align-items:flex-start;gap:8px;margin:20px 0}
+.thai-checkout-page .thai-booking-policy input{flex:0 0 auto;width:auto;margin:4px 0 0}
+.thai-checkout-page .thai-booking-submit{box-sizing:border-box;width:100%;margin:0}
+@media(max-width:600px){
+    .thai-checkout-page .thai-booking-fields{grid-template-columns:minmax(0,1fr)}
+    .thai-checkout-page .thai-checkout-form,
+    .thai-checkout-page .thai-checkout-product{padding:16px}
+}

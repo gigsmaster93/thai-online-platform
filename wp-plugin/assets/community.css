@@ -33,7 +33,7 @@
 .thai-guestbook .csTop{line-height:1.4}.thai-guestbook #pagesBlock1{font-size:16px}
 @media(max-width:500px){.thai-gb-breadcrumb,.thai-gb-breadcrumb tbody,.thai-gb-breadcrumb tr,.thai-gb-breadcrumb td{display:block;width:100%;margin:auto}.thai-photo-toolbar,.thai-photo-toolbar tbody,.thai-photo-toolbar tr,.thai-photo-toolbar td{display:block;width:100%}.thai-guestbook #pagesBlock1{float:none!important;margin-bottom:22.390625px}}
 
-.thai-forum-home{margin-top:-27px!important}.thai-forum-home .gTable{font-size:14px}
+.thai-forum-home{margin-top:0!important}.thai-forum-home .gTable{font-size:14px}
 .thai-forum .forumNameTd{width:auto}.thai-forum .forumDescr{margin:0}.thai-forum .forumIcoTd{width:auto}.thai-forum .forumIcoTd img{width:auto;height:auto}
 .thai-forum .forum-stat{padding:20px}.thai-forum .gTableSubTop{padding:5px;font-size:12px}
 .thai-forum .gTableTop{padding:20px 0 20px 2%;background:#0094fe;font-size:14pt}
@@ -44,7 +44,7 @@
 
 .thai-gallery .photo-title{height:27px}.thai-forum .gTableSubTop{font-size:10px;padding:10px 0;text-align:center}
 
-.thai-contact-page{margin-top:-27px!important}.thai-contact-page .content{width:70.4%;margin-top:20px!important}.thai-contact-page #support{max-width:100%}
+.thai-contact-page{margin-top:0!important}.thai-contact-page .content{width:70.4%;margin-top:20px!important}.thai-contact-page #support{max-width:100%}
 .thai-forum-actions{text-align:right;margin:16px 0}.thai-forum-path{font-size:14px;padding:3px 0 5px}
 .thai-forum .thai-forum-post-wrap{padding:20px}.thai-forum .postTable{margin:40px 0 0;font-size:12px}
 .thai-forum .postTdTop{padding:2px;background:transparent;color:#424242;font-size:12px}
@@ -69,8 +69,8 @@
 @media(max-width:600px){.thai-forum .ThrTopButtonsTbl .frmBtns{padding-bottom:26px}}
 
 /* Original forum image spacing from the uCoz page-level stylesheet. */
-.thai-forum .ucoz-forum-post img:not(.smile){max-width:51%!important;margin:2% 0!important}
-@media(max-width:834px){.thai-forum .ucoz-forum-post img:not(.smile){width:99%!important;max-width:100%!important}.thai-forum .ucoz-forum-post img.smile{width:auto!important}}
+.thai-forum .ucoz-forum-post img:not(.smile):not(.emoji):not(.wp-smiley){max-width:51%!important;margin:2% 0!important}
+@media(max-width:834px){.thai-forum .ucoz-forum-post img:not(.smile):not(.emoji):not(.wp-smiley){width:99%!important;max-width:100%!important}.thai-forum .ucoz-forum-post img.smile{width:auto!important}}
 
 .thai-forum .threadpage-posts-table .gTableTop{font-size:16px}
 
@@ -136,3 +136,14 @@
 .thai-forum-lightbox .thai-forum-lightbox-close:focus-visible{outline:2px solid #0094fe;outline-offset:-4px}
 .thai-forum-lightbox img{max-width:calc(95vw - 24px);max-height:calc(95vh - 70px)}
 .thai-forum .thai-forum-statistics .gTableBody{padding:20px;overflow-wrap:anywhere}
+/* WordPress emoji fallback must retain inline text geometry on every viewport. */
+.thai-forum .ucoz-forum-post img.emoji,
+.thai-forum .ucoz-forum-post img.wp-smiley{
+    display:inline!important;float:none!important;
+    width:1em!important;height:1em!important;max-width:none!important;
+    margin:0 .07em!important;vertical-align:-.1em!important;
+}
+.thai-forum .frmBtns>div{display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:0 8px}
+.thai-forum .frmBtns>div>a{display:inline-flex}
+.thai-forum #thread_search_button,.thai-forum #thread_search_field{float:right}
+.thai-forum #thread_search_field{width:180px!important}
