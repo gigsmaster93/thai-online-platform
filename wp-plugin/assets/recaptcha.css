@@ -1,0 +1,21 @@
+.thai-found-cheaper-dialog[data-thai-recaptcha-dialog][open] {
+    position: fixed;
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    max-height: calc(100vh - 32px);
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    z-index: 10000;
+}
+.thai-recaptcha-shade {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, .62);
+}
+.thai-recaptcha-shade[hidden] { display: none; }
+html.thai-recaptcha-dialog-open { overflow: hidden; }
+.thai-recaptcha { display: grid; justify-items: center; }
+.thai-recaptcha-status { margin: 0; text-align: center; }
+.thai-found-cheaper-dialog button[disabled] { cursor: not-allowed; opacity: .65; }

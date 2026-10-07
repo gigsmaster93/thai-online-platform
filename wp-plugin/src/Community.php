@@ -1,8 +1,11 @@
 <?php
 if (!defined('ABSPATH')) exit;
+// Keep the dependency available when PHP still caches an older plugin entry point.
+require_once __DIR__ . '/Recaptcha.php';
 class TOP_Community {
     public static function boot() {
         add_action('init', [__CLASS__, 'routes'], 30);
+        add_action('wp_enqueue_scripts', ['TOP_Recaptcha', 'enqueue'], 1000);
         add_action('admin_post_nopriv_thai_booking', [__CLASS__, 'submit_booking']);
         add_action('admin_post_thai_booking', [__CLASS__, 'submit_booking']);
         add_action('admin_post_nopriv_thai_found_cheaper', [__CLASS__, 'submit_found_cheaper']);
@@ -91,6 +94,7 @@ class TOP_Community {
         $name=sanitize_text_field(wp_unslash($_POST['name']??''));
         $body=sanitize_textarea_field(wp_unslash($_POST['message']??''));
         if(!$name||mb_strlen($name)>100||mb_strlen($body)<5||mb_strlen($body)>10000)wp_die('Заполни имя и текст сообщения.', '', ['response'=>400]);
+        if ($action === 'thai_found_cheaper') TOP_Recaptcha::verify_submission();
         set_transient($key,1,60);return [$name,$body];
     }
     public static function submit_contact() {
@@ -200,7 +204,8 @@ class TOP_Community {
             <input type="text" name="offer_price" maxlength="100" required placeholder="Какая цена указана*" aria-label="Какая цена указана">
             <input type="email" name="email" maxlength="200" required placeholder="Ваш E-mail*" aria-label="Ваш E-mail">
             <input type="tel" name="phone" maxlength="100" required placeholder="Ваш телефон*" aria-label="Ваш телефон">
-            <button type="submit">Отправить</button>
+            <?php TOP_Recaptcha::widget(); ?>
+            <button type="submit" disabled aria-disabled="true">Отправить</button>
           </form>
         </dialog>
         <?php

@@ -1,5 +1,8 @@
 # Release closure preparation — 2026-10-07
 
+Publication update: the user authorized code integration/deploy later on October 7. Actual deployed code, trusted HTTPS acceptance and the current post-deploy dry-run manifest are recorded in [release-deploy-20261007.md](release-deploy-20261007.md). The preparation-only publication state and 37e2d1e8 manifest below are historical. Product-data application remains unauthorized.
+
+
 The remaining four-product data package now has fresh authoritative public sources, an executable guarded importer and receipt-based rollback. The previous UI and guestbook candidates are retained. Production application and publication remain prohibited by the user's standing instructions.
 
 Worktree: /home/thaionline/workstreams/release-finish-20261006
