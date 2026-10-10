@@ -215,9 +215,17 @@ class TOP_Community {
         $product=get_post(absint($_POST['product']??0));
         if(!$product||$product->post_type!=='thai_excursion'||$product->post_status!=='publish')wp_die('Экскурсия не найдена.', '', ['response'=>404]);
         if(empty($_POST['policy']))wp_die('Подтверди согласие с пользовательским соглашением.', '', ['response'=>400]);
+        $date = $_POST['date'] ?? '';
+        if (!is_string($date) || !preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/D', $date, $parts)
+            || !checkdate((int) $parts[2], (int) $parts[3], (int) $parts[1])) {
+            wp_die('Укажи корректную дату выезда.', '', ['response' => 400]);
+        }
+        if ($date < wp_date('Y-m-d', null, self::booking_timezone())) {
+            wp_die('Выбери сегодняшнюю или будущую дату выезда.', '', ['response' => 400]);
+        }
         $labels=['date'=>'Дата выезда','quantity'=>'Количество человек','hotel'=>'Отель','room'=>'Комната','email'=>'E-mail','phone'=>'Телефон','wishes'=>'Пожелания'];$values=[];$lines=[];
         foreach($labels as $key=>$label){$values[$key]=sanitize_textarea_field(wp_unslash($_POST[$key]??''));$lines[]=$label.': '.$values[$key];}
-        if(!preg_match('/^\d{4}-\d{2}-\d{2}$/',$values['date'])||!ctype_digit($values['quantity'])||(int)$values['quantity']<1||(int)$values['quantity']>1000||!$values['phone'])wp_die('Заполни дату, количество человек и телефон.', '', ['response'=>400]);
+        if(!ctype_digit($values['quantity'])||(int)$values['quantity']<1||(int)$values['quantity']>1000||!$values['phone'])wp_die('Заполни дату, количество человек и телефон.', '', ['response'=>400]);
         if($values['email']&&!is_email($values['email']))wp_die('Укажи корректный E-mail.', '', ['response'=>400]);
         $payment_raw = $_POST['payment'] ?? '';
         if (!is_scalar($payment_raw)) wp_die('Выбери способ оплаты из списка.', '', ['response'=>400]);
@@ -233,7 +241,27 @@ class TOP_Community {
         $id=get_post_meta($product->ID,'_ucoz_shop_id',true);
         wp_safe_redirect(home_url('/shop/'.(int)$id.'/desc/'.$product->post_name.'?booked=1#calculatey'));exit;
     }
+    /** Tour dates follow the business profile, independently of WordPress/visitor timezone. */
+    private static function booking_timezone() {
+        $profile = get_option('top_site_profile', []);
+        $name = is_array($profile) ? ($profile['timezone'] ?? 'Asia/Bangkok') : 'Asia/Bangkok';
+        try {
+            return new DateTimeZone(is_string($name) && $name !== '' ? $name : 'Asia/Bangkok');
+        } catch (Exception $e) {
+            return new DateTimeZone('Asia/Bangkok');
+        }
+    }
+
+    private static function booking_date_attributes() {
+        $timezone = self::booking_timezone();
+        $now = new DateTimeImmutable('now', $timezone);
+        return 'min="' . esc_attr(wp_date('Y-m-d', null, $timezone)) . '" data-thai-booking-date'
+            . ' data-thai-booking-timezone="' . esc_attr($timezone->getName()) . '"'
+            . ' data-thai-booking-offset="' . (int) $timezone->getOffset($now) . '"';
+    }
+
     public static function booking_form($product, $defaults = []) {
+        wp_enqueue_script('thai-booking-dates', plugins_url('assets/booking-dates.js', TOP_PLUGIN_FILE), [], '1.0.0', true);
         if(isset($_GET['booked']))echo '<p role="status">Заявка принята. Мы свяжемся с тобой для подтверждения.</p>';
         $quantity = array_key_exists('quantity', $defaults) ? max(1, min(1000, absint($defaults['quantity']))) : '';
         $wishes = sanitize_textarea_field((string) ($defaults['wishes'] ?? ''));
@@ -243,7 +271,7 @@ class TOP_Community {
         }
         echo '<form class="thai-booking-form" method="post" action="'.esc_url(admin_url('admin-post.php')).'">';wp_nonce_field('thai_booking');
         echo '<input type="hidden" name="action" value="thai_booking"><input type="hidden" name="product" value="'.(int)$product->ID.'"><p hidden><input name="website" tabindex="-1" autocomplete="off" aria-label="Website"></p>';
-        echo '<input type="date" name="date" aria-label="Дата выезда" required style="width:95%"><br><br><input type="number" name="quantity" value="'.esc_attr($quantity).'" placeholder="Количество человек" aria-label="Количество человек" min="1" max="1000" required style="width:95%;margin-bottom:5px"><br><input name="hotel" placeholder="Отель" aria-label="Отель" maxlength="200" style="width:95%;margin-bottom:5px"><br><input name="room" placeholder="Комната" aria-label="Комната" maxlength="50" style="width:95%"><br><br><input type="email" name="email" placeholder="E-mail" aria-label="E-mail" maxlength="200" style="width:95%;margin-bottom:5px"><br><input type="tel" name="phone" placeholder="Телефон" aria-label="Телефон" maxlength="60" required style="width:95%"><br><br><textarea name="wishes" rows="7" placeholder="Пожелания" aria-label="Пожелания" maxlength="5000" style="width:95%">'.esc_textarea($wishes).'</textarea><br><br><label><input type="checkbox" name="policy" value="1" required> <a href="/index/0-4" target="_blank" rel="noopener" style="color:green">Согласен с Пользовательским соглашением</a></label><br><br><input type="submit" value="Заказать!" style="width:100%"></form>';
+        echo '<input type="date" name="date" '.self::booking_date_attributes().' aria-label="Дата выезда" required style="width:95%"><br><br><input type="number" name="quantity" value="'.esc_attr($quantity).'" placeholder="Количество человек" aria-label="Количество человек" min="1" max="1000" required style="width:95%;margin-bottom:5px"><br><input name="hotel" placeholder="Отель" aria-label="Отель" maxlength="200" style="width:95%;margin-bottom:5px"><br><input name="room" placeholder="Комната" aria-label="Комната" maxlength="50" style="width:95%"><br><br><input type="email" name="email" placeholder="E-mail" aria-label="E-mail" maxlength="200" style="width:95%;margin-bottom:5px"><br><input type="tel" name="phone" placeholder="Телефон" aria-label="Телефон" maxlength="60" required style="width:95%"><br><br><textarea name="wishes" rows="7" placeholder="Пожелания" aria-label="Пожелания" maxlength="5000" style="width:95%">'.esc_textarea($wishes).'</textarea><br><br><label><input type="checkbox" name="policy" value="1" required> <a href="/index/0-4" target="_blank" rel="noopener" style="color:green">Согласен с Пользовательским соглашением</a></label><br><br><input type="submit" value="Заказать!" style="width:100%"></form>';
     }
     /** Public legacy tour FAQ: MIR/SBP, Thai bank transfer and payment at the office. */
     public static function booking_payment_methods() {
@@ -264,7 +292,7 @@ class TOP_Community {
           <div class="thai-booking-fields">
             <label class="thai-booking-field" for="thai-booking-date">
               <span>Дата выезда *</span>
-              <input id="thai-booking-date" type="date" name="date" required>
+              <input id="thai-booking-date" type="date" name="date" <?php echo self::booking_date_attributes(); ?> required>
             </label>
             <label class="thai-booking-field" for="thai-booking-quantity">
               <span>Количество человек *</span>

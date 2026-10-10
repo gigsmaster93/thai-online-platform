@@ -1,3 +1,7 @@
+# Publication follow-up — latest
+
+reCAPTCHA v2 is now deployed and verified at 1846c0512ccd80c1755085c8ceb1a21e1209c980. The earlier eb77896 code-release record below is historical. Current handoff: [recaptcha-setup-20261007.md](recaptcha-setup-20261007.md). Current unapplied four-product manifest is e9a2b13c; every previous manifest is superseded. Registration and IP enforcement remain unchanged.
+
 # Release deployment — 2026-10-07
 
 The user explicitly authorized integration and code deploy after receiving the reCAPTCHA registration instructions. Code is now published; product-data application remains unauthorized. This record supersedes the earlier preparation-only publication state in release-closure-20261007.md.
