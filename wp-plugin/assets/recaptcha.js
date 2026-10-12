@@ -1,3 +1,64 @@
+// Static contact form uses the same private server verifier as price-match requests.
+(function () {
+'use strict';
+var states = Array.prototype.map.call(document.querySelectorAll('form[data-thai-recaptcha-contact]'), function (form) {
+    var container = form.querySelector('[data-thai-recaptcha]');
+    if (!container) return null;
+    var submit = form.querySelector('button[type="submit"]');
+    var status = form.querySelector('[data-thai-recaptcha-status]');
+    var widget = null, sending = false;
+    function message(text) { status.textContent = text || ''; status.hidden = !text; }
+    function disabled(value) { submit.disabled = value; submit.setAttribute('aria-disabled', value ? 'true' : 'false'); }
+    function unavailable() { disabled(true); message('Проверка не загрузилась. Обновите страницу и попробуйте ещё раз.'); }
+    function mount() {
+        if (widget !== null) return;
+        try {
+            widget = window.grecaptcha.render(container, {
+                sitekey: container.getAttribute('data-sitekey'),
+                size: container.clientWidth >= 304 ? 'normal' : 'compact',
+                callback: function (token) { disabled(sending || !token); message(token ? '' : 'Подтвердите, что вы не робот.'); },
+                'expired-callback': function () { disabled(true); message('Проверка истекла. Подтвердите ещё раз, что вы не робот.'); },
+                'error-callback': unavailable
+            });
+            message('');
+        } catch (error) { unavailable(); }
+    }
+    form.addEventListener('submit', function (event) {
+        var token = widget !== null && window.grecaptcha ? window.grecaptcha.getResponse(widget) : '';
+        if (sending || !token) {
+            event.preventDefault(); disabled(true);
+            if (!sending) message('Подтвердите, что вы не робот.');
+            return;
+        }
+        sending = true; disabled(true);
+    });
+    window.addEventListener('pageshow', function (event) {
+        if (!event.persisted) return;
+        sending = false; disabled(true);
+        if (widget !== null && window.grecaptcha) {
+            try { window.grecaptcha.reset(widget); message(''); } catch (error) { unavailable(); }
+        }
+    });
+    disabled(true); message('Загрузка проверки…');
+    return { mount: mount, unavailable: unavailable };
+}).filter(Boolean);
+if (!states.length) return;
+var timer = window.setTimeout(function () { states.forEach(function (state) { state.unavailable(); }); }, 15000);
+window.thaiContactRecaptchaReady = function () {
+    window.clearTimeout(timer);
+    states.forEach(function (state) { state.mount(); });
+};
+if (window.grecaptcha && typeof window.grecaptcha.render === 'function') {
+    window.thaiContactRecaptchaReady();
+} else {
+    var script = document.createElement('script');
+    script.src = 'https://www.google.com/recaptcha/api.js?onload=thaiContactRecaptchaReady&render=explicit&hl=ru';
+    script.async = true; script.defer = true;
+    script.onerror = function () { window.clearTimeout(timer); states.forEach(function (state) { state.unavailable(); }); };
+    document.head.appendChild(script);
+}
+})();
+
 (function () {
 'use strict';
 var dialog = document.getElementById('foundCheaperDialog');
