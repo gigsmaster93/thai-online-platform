@@ -1,3 +1,11 @@
+# Latest code follow-up — booking dates, 2026-10-10
+
+Current develop/live/marker: d9068bff60116a37c54742c40cc4cfe0bc787958. Past/impossible departure dates are blocked on checkout and inline product booking forms and by the server. Business profile Asia/Bangkok is used; global WordPress UTC remains unchanged.
+Two scoped runtime files deployed; 74/74 files verified. Live browser 51/51, read-only installed controller 5/5, hermetic backend 72/72, clock fixtures 23/23, existing reCAPTCHA server 52/52. No real order/mail submitted; protected snapshots unchanged.
+Handoff: docs/booking-dates-20261010.md. Evidence: /home/thaionline/tmp-parity/booking-dates-20261010/. Backup: /home/thaionline/backups/booking-dates-code-before-20261010T125002Z.
+Product-data bundle e9a2b13c remains UNAPPLIED and fails both freshness and current-code guards; regenerate only for separately authorized future apply. Registration OFF; IP-ban requires authoritative source.
+The following October 7 records describe the previous code release.
+
 # Publication follow-up — latest
 
 reCAPTCHA v2 is now deployed and verified at 1846c0512ccd80c1755085c8ceb1a21e1209c980. The earlier eb77896 code-release record below is historical. Current handoff: [recaptcha-setup-20261007.md](recaptcha-setup-20261007.md). Current unapplied four-product manifest is e9a2b13c; every previous manifest is superseded. Registration and IP enforcement remain unchanged.

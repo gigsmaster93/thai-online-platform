@@ -3,7 +3,13 @@
 Scope: user-reported past dates available on the new checkout; integration/deploy remains authorized by the user's October 7 instruction. Work belongs to work/release-finish-20261006 only.
 
 Baseline develop/live: 1846c0512ccd80c1755085c8ceb1a21e1209c980.
-Status: implementation and pre-deploy validation complete; actual deployment/acceptance receipt is recorded separately after publication.
+Status: DEPLOYED AND VERIFIED.
+GitHub develop / local develop / live / deploy marker: d9068bff60116a37c54742c40cc4cfe0bc787958.
+Runtime files verified: 74/74. Backup: /home/thaionline/backups/booking-dates-code-before-20261010T125002Z.
+Actual live browser acceptance: 51/51 across checkout 1440/402/320 and inline product 470 at 390, without substitution/certificate bypass.
+Actual deployed PHP controller, read-only WP bootstrap: 5/5, 4 SELECT / 0 writes / 0 mail. Past/impossible/array dates reject with 400; today/tomorrow reach the intentionally invalid nonce (403), so no accepted real order is submitted.
+Final protected DB comparison: 26 SELECT / 0 writes; products/accounts/counts/4107 comments unchanged from the deployment baseline. Private wp-config and backup-root ACL preserved. Registration stays 0/subscriber/users=1.
+Deployment receipt: /home/thaionline/tmp-parity/booking-dates-20261010/deployment-receipt.json. Never rerun deploy.py or reuse publication-signal.json.
 
 ## Cause and resulting behavior
 

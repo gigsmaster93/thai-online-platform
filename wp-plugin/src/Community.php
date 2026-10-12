@@ -94,13 +94,13 @@ class TOP_Community {
         $name=sanitize_text_field(wp_unslash($_POST['name']??''));
         $body=sanitize_textarea_field(wp_unslash($_POST['message']??''));
         if(!$name||mb_strlen($name)>100||mb_strlen($body)<5||mb_strlen($body)>10000)wp_die('Заполни имя и текст сообщения.', '', ['response'=>400]);
-        if ($action === 'thai_found_cheaper') TOP_Recaptcha::verify_submission();
+        if (in_array($action, ['thai_found_cheaper', 'thai_contact'], true)) TOP_Recaptcha::verify_submission();
         set_transient($key,1,60);return [$name,$body];
     }
     public static function submit_contact() {
-        [$name,$body]=self::validate_submission('thai_contact');
         $email=sanitize_email(wp_unslash($_POST['email']??''));
         if(!is_email($email))wp_die('Укажи корректный E-mail.', '', ['response'=>400]);
+        [$name,$body]=self::validate_submission('thai_contact');
         $id=wp_insert_post(wp_slash(['post_type'=>'thai_message','post_status'=>'private','post_title'=>$name,'post_content'=>$body."\n\nE-mail: ".$email,'meta_input'=>['_thai_email'=>$email]]),true);
         if(is_wp_error($id))wp_die('Не удалось сохранить сообщение. Попробуй позже.', '', ['response'=>500]);
         wp_mail('info@thai-online.org','Обратная связь: '.$name,$body."\n\n".$email,['Reply-To: '.$email]);
@@ -338,18 +338,48 @@ class TOP_Community {
         <?php
     }
 
+    /** Resolve the existing imported album-to-published-tour mapping without changing data. */
+    public static function photo_booking_link($photo_id) {
+        static $by_album = [];
+        $terms = get_the_terms($photo_id, 'thai_photo_album');
+        if (!is_array($terms)) return [];
+        $albums = [];
+        foreach ($terms as $term) {
+            $albums[] = $term->term_id;
+            $albums = array_merge($albums, get_ancestors($term->term_id, 'thai_photo_album', 'taxonomy'));
+        }
+        foreach (array_unique($albums) as $album_id) {
+            if (!array_key_exists($album_id, $by_album)) {
+                $by_album[$album_id] = [];
+                $shop_id = (int) get_term_meta($album_id, '_thai_shop_id', true);
+                if (!$shop_id) continue;
+                $posts = get_posts(['post_type' => 'thai_excursion', 'post_status' => 'publish', 'numberposts' => 1, 'meta_key' => '_ucoz_shop_id', 'meta_value' => $shop_id]);
+                if (!$posts) continue;
+                $label = get_term_meta($album_id, '_thai_shop_label', true);
+                if (!$label) { $term = get_term($album_id, 'thai_photo_album'); $label = $term && !is_wp_error($term) ? $term->name : $posts[0]->post_title; }
+                $by_album[$album_id] = [
+                    'url' => home_url('/shop/' . $shop_id . '/desc/' . $posts[0]->post_name),
+                    'label' => 'Забронировать «' . $label . '» в Таиланде в ' . wp_date('Y'),
+                ];
+            }
+            if ($by_album[$album_id]) return $by_album[$album_id];
+        }
+        return [];
+    }
+
     public static function contact_form() {
         ob_start();
         if(isset($_GET['sent']))echo '<p role="status">Сообщение принято. Спасибо за обращение!</p>';
         ?>
-        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" id="support">
+        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" id="support" data-thai-recaptcha-contact>
           <?php wp_nonce_field('thai_contact'); ?><input type="hidden" name="action" value="thai_contact">
           <p hidden><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></p>
           <table width="100%" cellspacing="1" cellpadding="2">
             <tr><td width="35%"><label for="contact-name">Ваше Имя *</label></td><td><input id="contact-name" name="name" maxlength="100" required style="width:95%"></td></tr>
             <tr><td><label for="contact-email">Ваш E-mail *</label></td><td><input id="contact-email" name="email" type="email" required style="width:95%"></td></tr>
             <tr><td><label for="contact-message">Ваше сообщение *</label></td><td><textarea id="contact-message" name="message" rows="7" minlength="5" maxlength="10000" required style="width:95%"></textarea></td></tr>
-            <tr><td colspan="2" align="center"><br><button type="submit" style="width:50%">Отправить</button></td></tr>
+            <tr><td colspan="2" class="thai-contact-recaptcha-cell"><?php TOP_Recaptcha::widget(); ?></td></tr>
+            <tr><td colspan="2" align="center"><br><button type="submit" disabled aria-disabled="true" style="width:50%">Отправить</button></td></tr>
           </table>
         </form>
         <?php return ob_get_clean();
