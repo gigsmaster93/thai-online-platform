@@ -1,9 +1,9 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-/** reCAPTCHA v2 protection for the product price-match form only. */
+/** reCAPTCHA v2 protection for contact and product price-match forms. */
 class TOP_Recaptcha {
-    const VERSION = '1.0.0';
+    const VERSION = '1.1.0';
 
     private static function setting($name, $fallback = '') {
         $value = defined($name) ? constant($name) : getenv($name);
@@ -24,7 +24,7 @@ class TOP_Recaptcha {
     }
 
     public static function enqueue() {
-        if (get_query_var('top_module') !== 'shop_single' || !self::configured()) return;
+        if ((get_query_var('top_module') !== 'shop_single' && !is_page('contact')) || !self::configured()) return;
         wp_enqueue_style('thai-price-match-recaptcha', plugins_url('assets/recaptcha.css', TOP_PLUGIN_FILE), [], self::VERSION);
         wp_enqueue_script('thai-price-match-recaptcha', plugins_url('assets/recaptcha.js', TOP_PLUGIN_FILE), [], self::VERSION, true);
     }
