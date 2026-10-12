@@ -117,20 +117,8 @@ try {
     check('verification precedes all writes',array_search('http',$events,true)<array_search('write-rate',$events,true)&&array_search('http',$events,true)<array_search('insert',$events,true));
     $validation=new ReflectionMethod('TOP_Community','validate_submission');
     reset_case();$_POST['name']='Fixture';$_POST['message']='Fixture message';unset($_POST['g-recaptcha-response']);
-    $validation->invoke(null,'thai_review');
-    check('review form unchanged',count($http)===0&&in_array('write-rate',$events,true));
-    // Contact now uses the same fail-closed verifier before every write/mail.
-    foreach([['missing','',null,400],['invalid','fixture-token',['code'=>200,'body'=>'{"success":false}'],400],['network','fixture-token',new WP_Error('timeout'),503],['wrong host','fixture-token',['code'=>200,'body'=>'{"success":true,"hostname":"attacker.example"}'],400]] as [$label,$token,$response_case,$status]) {
-        reset_case($response_case);$_POST['name']='Fixture';$_POST['message']='Fixture contact message';$_POST['g-recaptcha-response']=$token;
-        try {TOP_Community::submit_contact();check('contact rejection '.$label,false);}catch(RecaptchaTestDie $e){check('contact rejection '.$label,$e->status===$status);}
-        check('contact no writes/mail '.$label,!in_array('write-rate',$events,true)&&!$insertions&&!$mails);
-    }
-    reset_case();$_POST['name']='Fixture';$_POST['message']='Fixture contact message';
-    try {TOP_Community::submit_contact();check('valid contact redirects',false);}catch(RecaptchaTestRedirect $e){check('valid contact redirects',true);}
-    check('valid contact saved and mailed once',count($http)===1&&count($insertions)===1&&count($mails)===1);
-    check('contact verification before writes',array_search('http',$events,true)<array_search('write-rate',$events,true)&&array_search('http',$events,true)<array_search('insert',$events,true));
-    reset_case();$_POST['name']='Fixture';$_POST['message']='Fixture contact message';$_POST['email']='invalid';
-    try {TOP_Community::submit_contact();check('invalid contact email',false);}catch(RecaptchaTestDie $e){check('invalid contact email',$e->status===400&&!$http&&!$insertions&&!$mails&&!in_array('write-rate',$events,true));}
+    $validation->invoke(null,'thai_contact');
+    check('other forms unchanged',count($http)===0&&in_array('write-rate',$events,true));
     $result=['checks'=>count($checks),'pass'=>count(array_filter($checks,fn($x)=>$x['pass'])),'failed'=>array_values(array_filter($checks,fn($x)=>!$x['pass'])),'real_db_connections'=>0,'real_http_requests'=>0,'real_emails'=>0];
     echo json_encode($result,JSON_PRETTY_PRINT)."\n";
 } catch(Throwable $e) {

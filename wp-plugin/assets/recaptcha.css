@@ -19,8 +19,3 @@ html.thai-recaptcha-dialog-open { overflow: hidden; }
 .thai-recaptcha { display: grid; justify-items: center; }
 .thai-recaptcha-status { margin: 0; text-align: center; }
 .thai-found-cheaper-dialog button[disabled] { cursor: not-allowed; opacity: .65; }
-
-.contact-main-form .thai-contact-recaptcha-cell{padding:16px 0 0}
-.contact-main-form #support .thai-recaptcha{width:100%;max-width:100%;margin:0 auto}
-.contact-main-form #support .thai-recaptcha-status{margin-top:10px}
-.contact-main-form #support button[disabled]{opacity:.65;cursor:not-allowed}
