@@ -3,7 +3,6 @@ if (!defined('ABSPATH')) exit;
 $photo_id=(int)get_query_var('top_id');
 $album=(int)get_query_var('top_section');
 $current_page=TOP_Community::page();
-$booking_link = static function ($pid) { return method_exists('TOP_Community', 'photo_booking_link') ? TOP_Community::photo_booking_link($pid) : []; };
 $term=$album?get_term_by('slug','album-'.$album,'thai_photo_album'):null;
 $args=['post_type'=>'thai_photo','post_status'=>'publish','posts_per_page'=>50,'paged'=>$current_page,'orderby'=>'title','order'=>'ASC'];
 if($photo_id){$args['meta_key']='_ucoz_photo_id';$args['meta_value']=$photo_id;$args['posts_per_page']=1;$args['paged']=1;}
@@ -22,7 +21,7 @@ get_header(); ?>
 <div class="thai-photo-breadcrumb"><a href="/">Главная</a> &raquo; <a href="/photo/">Фотоальбом</a><?php foreach($crumb_terms as $ct){$cu=get_term_meta($ct->term_id,'_thai_legacy_url',true);echo ' &raquo; <a href="'.esc_url($cu?:'/photo/'.substr($ct->slug,6)).'">'.esc_html($ct->name).'</a>';}if($photo_post)echo ' &raquo; '.esc_html($photo_post->post_title); ?></div><br><br>
 <?php endif; ?>
 <?php if($photo_post){setup_postdata($photo_post);
-$pid=$photo_post->ID;$booking=$booking_link($pid);$legacy_id=(int)get_post_meta($pid,'_ucoz_photo_id',true);$full=get_post_meta($pid,'_thai_photo_full',true);$title=$photo_post->post_title;
+$pid=$photo_post->ID;$legacy_id=(int)get_post_meta($pid,'_ucoz_photo_id',true);$full=get_post_meta($pid,'_thai_photo_full',true);$title=$photo_post->post_title;
 $date_display=get_post_meta($pid,'_thai_photo_date_display',true)?:get_the_date('d.m.Y',$pid);$author=get_post_meta($pid,'_thai_photo_author',true)?:'Thai-Online';$views=get_post_meta($pid,'_thai_photo_views',true);$comments=get_post_meta($pid,'_thai_photo_comments',true);$rating=get_post_meta($pid,'_thai_photo_rating',true);
 $image_title=get_post_meta($pid,'_thai_photo_image_title',true)?:$title;$image_alt=get_post_meta($pid,'_thai_photo_image_alt',true)?:$title;
 $shop_id=$term?(int)get_term_meta($term->term_id,'_thai_shop_id',true):0;$shop_label=$term?get_term_meta($term->term_id,'_thai_shop_label',true):'';
@@ -32,7 +31,7 @@ $shop_url='';if($shop_id){$sp=get_posts(['post_type'=>'thai_excursion','post_sta
 <div id="u-photos"><div class="uphoto-entry">
 <h1 class="photo-etitle"><?php echo esc_html($title); ?></h1>
 <div class="photo-edescr"><?php echo wp_kses_post($photo_post->post_content); ?></div>
-<div class="u-center"><div class="photo-block"><div class="ph-wrap"><a class="photo-expand thai-lightbox" href="<?php echo esc_url($full); ?>" data-url="<?php echo esc_url(get_post_meta($pid, '_thai_legacy_url', true)); ?>" data-booking-url="<?php echo esc_url($booking['url'] ?? ''); ?>" data-booking-label="<?php echo esc_attr($booking['label'] ?? ''); ?>"><img title="<?php echo esc_attr($image_title); ?>" alt="<?php echo esc_attr($image_alt); ?>" src="<?php echo esc_url($full); ?>"></a></div>
+<div class="u-center"><div class="photo-block"><div class="ph-wrap"><span class="photo-expand"><img title="<?php echo esc_attr($image_title); ?>" alt="<?php echo esc_attr($image_alt); ?>" src="<?php echo esc_url($full); ?>"></span></div>
 <div class="photo-edetails ph-js-details"><span class="phd-views"><?php echo esc_html($views); ?></span> <span class="phd-comments"><?php echo esc_html($comments); ?></span> <span class="phd-rating"><span id="entRating<?php echo $legacy_id; ?>"><?php echo esc_html($rating); ?></span></span></div>
 <hr class="photo-hr"><div class="photo-edetails2">Добавлено <?php echo esc_html($date_display); ?> <span class="phd-author"><?php echo esc_html($author); ?></span></div>
 </div></div></div></div>
@@ -43,12 +42,12 @@ $shop_url='';if($shop_id){$sp=get_posts(['post_type'=>'thai_excursion','post_sta
 <?php if($term)echo '<h1>'.esc_html($term->name).'</h1>'; ?>
 <table class="thai-photo-toolbar" border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td width="70%">Фото: <b><?php echo (int)$q->found_posts; ?></b> | Категорий: <b><?php echo count(get_terms(['taxonomy'=>'thai_photo_album','hide_empty'=>false,'childless'=>true])); ?></b></td><td align="right" style="white-space:nowrap">Страницы: <?php TOP_Community::legacy_pages($q->found_posts,50,$current_page,($term?get_term_meta($term->term_id,'_thai_legacy_url',true):'/photo/').'?page{page}'); ?><br></td></tr></table>
 <div id="allEntries"><ul id="uEntriesList" class="allEntriesTable thai-photo-grid">
-<?php while($q->have_posts()){$q->the_post();$pid=get_the_ID();$booking=$booking_link($pid);$legacy_id=(int)get_post_meta($pid,'_ucoz_photo_id',true);$full=get_post_meta($pid,'_thai_photo_full',true);$thumb=get_post_meta($pid,'_thai_photo_thumb',true);$url=get_post_meta($pid,'_thai_legacy_url',true);$title=get_the_title();
+<?php while($q->have_posts()){$q->the_post();$pid=get_the_ID();$legacy_id=(int)get_post_meta($pid,'_ucoz_photo_id',true);$full=get_post_meta($pid,'_thai_photo_full',true);$thumb=get_post_meta($pid,'_thai_photo_thumb',true);$url=get_post_meta($pid,'_thai_legacy_url',true);$title=get_the_title();
 $date_display=get_post_meta($pid,'_thai_photo_date_display',true)?:get_the_date('d.m.Y');$descr=get_post_meta($pid,'_thai_photo_descr',true);$author=get_post_meta($pid,'_thai_photo_author',true)?:'Thai-Online';$views=get_post_meta($pid,'_thai_photo_views',true);$comments=get_post_meta($pid,'_thai_photo_comments',true);$rating=get_post_meta($pid,'_thai_photo_rating',true);$image_title=get_post_meta($pid,'_thai_photo_image_title',true)?:$title;$image_alt=get_post_meta($pid,'_thai_photo_image_alt',true)?:$title;$link_title=get_post_meta($pid,'_thai_photo_link_title',true); ?>
 <li class="phtTdMain uEntryWrap" prev="0"><div id="entryID<?php echo $legacy_id; ?>" class="entryBlock"><span class="uphoto">
 <span class="photo-title"><a href="<?php echo esc_url($url); ?>"><?php echo esc_html($title); ?></a></span>
 <span class="photo-block"><span class="ph-wrap"><span class="ph-tc"><img loading="lazy" title="<?php echo esc_attr($image_title); ?>" alt="<?php echo esc_attr($image_alt); ?>" style="padding:0;border:0" src="<?php echo esc_url($thumb); ?>"></span>
-<a href="<?php echo esc_url($full); ?>" data-title="<?php echo esc_attr($image_title); ?>" data-alt="<?php echo esc_attr($image_alt); ?>" class="ulightbox ph-link thai-lightbox" data-booking-url="<?php echo esc_url($booking['url'] ?? ''); ?>" data-booking-label="<?php echo esc_attr($booking['label'] ?? ''); ?>" data-url="<?php echo esc_url($url); ?>" title="<?php echo esc_attr($link_title); ?>"><span class="ph-tc"><span class="ph-data"><span class="ph-date"><?php echo esc_html($date_display); ?></span><span class="ph-descr"><?php echo esc_html($descr); ?></span><span class="ph-author"><?php echo esc_html($author); ?></span></span></span></a></span>
+<a href="<?php echo esc_url($full); ?>" data-title="<?php echo esc_attr($image_title); ?>" data-alt="<?php echo esc_attr($image_alt); ?>" class="ulightbox ph-link thai-lightbox" data-url="<?php echo esc_url($url); ?>" title="<?php echo esc_attr($link_title); ?>"><span class="ph-tc"><span class="ph-data"><span class="ph-date"><?php echo esc_html($date_display); ?></span><span class="ph-descr"><?php echo esc_html($descr); ?></span><span class="ph-author"><?php echo esc_html($author); ?></span></span></span></a></span>
 <span class="ph-details ph-js-details"><span class="phd-views"><?php echo esc_html($views); ?></span> <a href="<?php echo esc_url($url.'#comments'); ?>" class="phd-comments"><?php echo esc_html($comments); ?></a> <span class="phd-rating"><span id="entRating<?php echo $legacy_id; ?>"><?php echo esc_html($rating); ?></span></span></span>
 </span></div></li>
 <?php }wp_reset_postdata(); ?></ul></div>

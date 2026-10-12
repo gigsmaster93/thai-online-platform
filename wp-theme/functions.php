@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-define('THAI_ONLINE_THEME_VERSION', '4.4.61');
+define('THAI_ONLINE_THEME_VERSION', '4.4.60');
 require_once get_template_directory() . '/inc/parity.php';
 
 add_action('after_setup_theme', function () {
@@ -209,9 +209,6 @@ add_action('wp_enqueue_scripts', function () {
 
     wp_enqueue_style('thai-online-theme', get_stylesheet_uri(), [$previous], $v . '-product-checkout-1');
     wp_enqueue_script('thai-shell', get_template_directory_uri() . '/assets/shell.js', ['jquery'], $v . '-product-checkout-1', true);
-    if (get_query_var('top_community') === 'photo') {
-        wp_enqueue_script('thai-photo-viewer', get_template_directory_uri() . '/assets/photo-viewer.js', ['thai-shell'], '1.0.0', true);
-    }
 }, 999);
 
 add_action('customize_register', function ($wp_customize) {
@@ -295,24 +292,3 @@ add_filter('body_class', function ($classes) {
 
     return array_unique($classes);
 }, 99);
-/** Original public social destinations, with vector icons independent of icon fonts. */
-function thai_online_social_links() {
-    $links = [
-        ['vk', 'https://vk.com/thaibooking', 'Мы вКонтакте'],
-        ['facebook', 'https://www.facebook.com/thaibookingportal/', 'Мы на Facebook'],
-        ['instagram', 'https://www.instagram.com/thaionlineorg/', 'Мы в Instagram'],
-        ['odnoklassniki', 'https://ok.ru/thaionline', 'Мы в Одноклассниках'],
-        ['tripadvisor', 'https://www.tripadvisor.ru/Attraction_Review-g293919-d24110779-Reviews-Thai_Online_Tours_And_Travel_Pattaya-Pattaya_Chonburi_Province.html', 'Мы в Tripadvisor'],
-        ['otzovik', 'https://otzovik.com/reviews/turagentstvo_thai-online_tailand_dzhomten/', 'Мы в Otzovik'],
-        ['youtube', 'https://www.youtube.com/channel/UCDIGpPr7O6JXF9icDT0bTEA', 'Наш Youtube-канал'],
-        ['twitter', 'https://twitter.com/SCPattaya', 'Наш Twitter'],
-        ['dzen', 'https://dzen.ru/thaionline/', 'Мы в Дзен'],
-    ];
-    $sprite = get_template_directory_uri() . '/assets/social-icons.svg?ver=1.0.0';
-    echo '<ul class="sn width thai-social-links">';
-    foreach ($links as [$icon, $url, $label]) {
-        echo '<li><a href="' . esc_url($url) . '" rel="nofollow noopener" target="_blank" title="' . esc_attr($label) . '" aria-label="' . esc_attr($label) . '">';
-        echo '<svg class="thai-social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="' . esc_url($sprite . '#' . $icon) . '"></use></svg></a></li>';
-    }
-    echo '</ul>';
-}
